@@ -1,6 +1,4 @@
-import { View } from "react-native";
-
-import Text from "@/components/Text/Text";
+import { View, Text } from "react-native";
 
 import { styles } from "./StatsCard.styles";
 

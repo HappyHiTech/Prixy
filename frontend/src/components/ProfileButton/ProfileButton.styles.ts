@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors } from "@/constants/colors";
+import { COLORS, dropShadow } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -7,15 +7,10 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     height: 50,
     width: 50,
-    backgroundColor: colors.accent,
+    backgroundColor: COLORS.accent,
+    ...dropShadow("#000000", 0.35, 4, 0),
 
     borderRadius: "50%",
-    elevation: 2,
-    shadowColor: "#000000",
-    shadowOffset: { height: 0, width: 0 },
-    shadowOpacity: 0.35,
-
-    shadowRadius: 4,
   },
 
   icon: {

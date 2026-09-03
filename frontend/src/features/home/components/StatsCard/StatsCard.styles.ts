@@ -1,5 +1,7 @@
 import { StyleSheet } from "react-native";
 
+import { dropShadow, fontFamilly } from "@/constants";
+
 export const styles = StyleSheet.create({
   container: {
     alignItems: "center",
@@ -10,15 +12,11 @@ export const styles = StyleSheet.create({
 
     borderRadius: 13,
 
-    elevation: 2,
-    shadowColor: "#000000",
-    shadowOffset: { height: 0, width: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
+    ...dropShadow("#000000", 0.08, 4, 0),
   },
 
   stat: {
-    fontFamily: "DMSans_800ExtraBold",
+    ...fontFamilly(800),
     fontSize: 16,
   },
 });
