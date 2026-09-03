@@ -1,12 +1,12 @@
 import { StyleSheet } from "react-native";
 
-import { dropShadow, fontFamilly } from "@/constants";
+import { COLORS, dropShadow, fontFamilly } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    paddingHorizontal: 22,
-    paddingVertical: 11,
+    flexDirection: "row",
+
     backgroundColor: "#FFFFFF",
     borderColor: "blue",
 
@@ -16,7 +16,15 @@ export const styles = StyleSheet.create({
   },
 
   stat: {
+    paddingHorizontal: 22,
+    paddingVertical: 11,
+
     ...fontFamilly(800),
-    fontSize: 16,
+    fontSize: 12,
+  },
+
+  first: {
+    borderRightWidth: 1,
+    borderColor: COLORS.borderOne,
   },
 });

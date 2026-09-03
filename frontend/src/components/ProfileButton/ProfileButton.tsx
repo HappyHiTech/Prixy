@@ -6,7 +6,7 @@ import { styles } from "./ProfileButton.styles";
 const ProfileButton = () => {
   return (
     <View style={styles.container}>
-      <User size={26} color="#FFFFFF" />
+      <User size={20} color="#FFFFFF" />
     </View>
   );
 };

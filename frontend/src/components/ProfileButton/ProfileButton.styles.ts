@@ -5,8 +5,8 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     justifyContent: "center",
-    height: 50,
-    width: 50,
+    height: 40,
+    width: 40,
     backgroundColor: COLORS.accent,
     ...dropShadow("#000000", 0.35, 4, 0),
 
