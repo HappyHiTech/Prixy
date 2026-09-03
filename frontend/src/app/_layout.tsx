@@ -1,4 +1,5 @@
-import { DefaultTheme, ThemeProvider } from "expo-router";
+import { Slot } from "expo-router";
+
 import {
   DMSans_100Thin,
   DMSans_200ExtraLight,
@@ -11,8 +12,6 @@ import {
   DMSans_900Black,
   useFonts,
 } from "@expo-google-fonts/dm-sans";
-
-import AppTabs from "@/components/app-tabs";
 
 export default function TabLayout() {
   const [fontsLoaded] = useFonts({
@@ -28,9 +27,5 @@ export default function TabLayout() {
   });
   if (!fontsLoaded) return null;
 
-  return (
-    <ThemeProvider value={DefaultTheme}>
-      <AppTabs />
-    </ThemeProvider>
-  );
+  return <Slot />;
 }

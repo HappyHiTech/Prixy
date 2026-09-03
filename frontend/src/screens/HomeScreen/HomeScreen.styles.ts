@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { COLORS } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -8,6 +9,7 @@ export const styles = StyleSheet.create({
 
     // paddingHorizontal: 22,
     paddingTop: 70,
+    backgroundColor: COLORS.primaryBg,
   },
 
   header: {

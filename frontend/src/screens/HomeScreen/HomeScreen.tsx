@@ -5,6 +5,8 @@ import ProfileButton from "@/components/ProfileButton/ProfileButton";
 import SegmentedControlSection from "@/features/home/components/SegmentedControlSection/SegmentedControlSection";
 import RequestView from "@/features/home/components/RequestView/RequestView";
 
+import NavBar from "@/components/NavBar/Navbar";
+
 import { styles } from "./HomeScreen.styles";
 
 const HomeScreen = () => {
@@ -22,6 +24,7 @@ const HomeScreen = () => {
         <SegmentedControlSection />
         <RequestView />
       </ScrollView>
+      <NavBar />
     </View>
   );
 };
