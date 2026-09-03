@@ -1,13 +1,21 @@
+import { useRouter, usePathname } from "expo-router";
 import { View, Pressable, Text } from "react-native";
+
 import { Home, Plus } from "lucide-react-native";
 import { HandsPrayingIcon } from "phosphor-react-native";
 
 import { styles } from "./Navbar.styles";
 
 const NavBar = () => {
+  const pathName = usePathname();
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Pressable style={[styles.navButton, styles.navButtonActive]}>
+      <Pressable
+        style={[styles.navButton, pathName === "/" && styles.navButtonActive]}
+        onPress={() => router.push("/")}
+      >
         <Home size={24} color="#000000" />
         <Text style={styles.navButtonText}>Home</Text>
       </Pressable>
@@ -16,7 +24,13 @@ const NavBar = () => {
           <Plus size={50} color="#FFFFFF" />
         </Pressable>
       </View>
-      <Pressable style={styles.navButton}>
+      <Pressable
+        style={[
+          styles.navButton,
+          pathName === "/pray" && styles.navButtonActive,
+        ]}
+        onPress={() => router.push("/pray")}
+      >
         <HandsPrayingIcon size={24} color="#000000" weight="regular" />
         <Text style={styles.navButtonText}>Pray</Text>
       </Pressable>

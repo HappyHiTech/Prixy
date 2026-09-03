@@ -24,6 +24,7 @@ export const styles = StyleSheet.create({
 
   navButtonAdd: {
     position: "relative",
+    zIndex: 10,
     alignItems: "center",
   },
 
