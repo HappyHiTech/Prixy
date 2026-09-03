@@ -1,24 +1,30 @@
 import { StyleSheet } from "react-native";
 
-import { colors } from "@/constants/colors";
+import { COLORS, dropShadow, fontFamilly } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 15,
     paddingVertical: 5,
-    backgroundColor: colors.accent,
-    borderRadius: 92,
-    elevation: 2,
-    shadowColor: "#000000",
-    shadowOffset: { height: 0, width: 0 },
 
-    shadowOpacity: 0.25,
+    borderRadius: 92,
+
     shadowRadius: 4,
   },
 
+  activeSegment: {
+    backgroundColor: COLORS.accent,
+
+    ...dropShadow("#000000", 0.25, 4, 0),
+  },
+
   text: {
-    color: colors.primary,
-    fontFamily: "DMSans_600SemiBold",
+    color: COLORS.secondary,
+    ...fontFamilly(600),
     fontSize: 14,
+  },
+
+  activeText: {
+    color: COLORS.primary,
   },
 });

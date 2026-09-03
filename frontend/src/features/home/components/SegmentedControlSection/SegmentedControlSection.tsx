@@ -7,7 +7,8 @@ import { styles } from "./SegmentedControlSection.styles";
 const SegmentedControlSection = () => {
   return (
     <View style={styles.container}>
-      <SegmentedPill />
+      <SegmentedPill text="Inbox" />
+      <SegmentedPill text="Active Deck" />
     </View>
   );
 };
