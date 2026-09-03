@@ -25,4 +25,10 @@ export const styles = StyleSheet.create({
     fontWeight: "600",
     lineHeight: 52,
   },
+
+  body: {
+    alignSelf: "stretch",
+    flex: 1,
+    // borderWidth: 2,
+  },
 });
