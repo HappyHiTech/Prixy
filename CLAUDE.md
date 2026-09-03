@@ -51,9 +51,10 @@ Because of that:
 ```
 Prixy/
 ├── frontend/
-│   ├── app/             - Expo Router route files ONLY (thin — see below)
-│   ├── features/        - feature-based folders (see below)
-│   └── components/      - truly shared/generic UI (Button, Modal, etc.)
+│   └── src/
+│       ├── app/             - Expo Router route files ONLY (thin — see below)
+│       ├── features/        - feature-based folders (see below)
+│       └── components/      - truly shared/generic UI (Button, Modal, etc.)
 ├── backend/
 │   ├── functions/       - one folder per Lambda, e.g. functions/createPrayer/
 │   ├── shared/          - shared DB client, utils used across functions
@@ -69,14 +70,20 @@ function.
 
 ### Frontend structure: thin routes + feature folders
 
-Expo Router makes `frontend/app/` a router, not a free-form folder — file
-paths there map directly to routes. Keep files in `app/` thin: import and
-render a screen component from `features/`, wire up route params, nothing
-more. All real logic goes in `frontend/features/<feature>/`, one folder per
-feature (e.g. `prayers/`, `recipients/`, `categories/`, `profile/`), each
-containing its own `components/`, `hooks/`, `store/`, and `api.ts`. Don't put
-business logic, data fetching, or substantial UI directly in an `app/` route
-file — route files should stay small enough to read at a glance.
+Everything lives under `frontend/src/` (the Expo template's default layout —
+kept as-is rather than flattened to `frontend/app/`). Expo Router makes
+`frontend/src/app/` a router, not a free-form folder — file paths there map
+directly to routes. Keep files in `app/` thin: import and render a screen
+component from `features/`, wire up route params, nothing more. All real
+logic goes in `frontend/src/features/<feature>/`, one folder per feature
+(e.g. `prayers/`, `recipients/`, `categories/`, `profile/`), each containing
+its own `components/`, `hooks/`, `store/`, and `api.ts`. Don't put business
+logic, data fetching, or substantial UI directly in an `app/` route file —
+route files should stay small enough to read at a glance.
+
+The `@/*` TS path alias points at `frontend/src/*` — new code under
+`src/features/` or `src/components/` uses `@/features/...` / `@/components/...`
+imports like the rest of the app, not relative paths.
 
 ## Data Model & API — see docs/system-design.md
 
