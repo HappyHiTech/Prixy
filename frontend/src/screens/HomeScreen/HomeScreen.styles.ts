@@ -28,6 +28,7 @@ export const styles = StyleSheet.create({
 
   body: {
     alignSelf: "stretch",
+    gap: 8,
     flex: 1,
     // borderWidth: 2,
   },
