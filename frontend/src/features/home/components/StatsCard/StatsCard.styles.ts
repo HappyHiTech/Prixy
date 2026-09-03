@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     paddingVertical: 11,
 
     ...fontFamilly(800),
-    fontSize: 12,
+    fontSize: 14,
   },
 
   first: {
