@@ -93,12 +93,6 @@ Do not invent field names or endpoints. Core entities: `User`, `Recipient`,
 live in `docs/system-design.md` — check it before writing backend code that
 touches these entities.
 
-## Current Focus
-
-Building frontend UI screens against mock/hardcoded data. No backend is
-wired up yet. Do not assume API calls, auth, or a live database exist until
-this section is updated to say otherwise.
-
 ## Do Not
 
 - Do not add LangChain, RAG, or agent frameworks for features that are a
