@@ -2,10 +2,23 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    gap: 20,
+
+    paddingHorizontal: 22,
+    paddingTop: 70,
   },
+
+  header: {
+    alignItems: "center",
+    alignSelf: "stretch",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderStyle: "dashed",
+    // borderWidth: 2,
+  },
+
   title: {
     borderWidth: 2,
     fontSize: 48,
