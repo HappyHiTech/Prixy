@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 
 import StatsCard from "@/features/home/components/StatsCard/StatsCard";
 import ProfileButton from "@/components/ProfileButton/ProfileButton";
@@ -14,10 +14,14 @@ const HomeScreen = () => {
         <StatsCard />
         <ProfileButton />
       </View>
-      <View style={styles.body}>
+      <ScrollView
+        style={styles.body}
+        contentContainerStyle={styles.bodyContent}
+        showsVerticalScrollIndicator={false}
+      >
         <SegmentedControlSection />
         <RequestView />
-      </View>
+      </ScrollView>
     </View>
   );
 };

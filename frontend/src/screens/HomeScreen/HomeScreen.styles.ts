@@ -6,16 +6,18 @@ export const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
 
-    paddingHorizontal: 22,
+    // paddingHorizontal: 22,
     paddingTop: 70,
   },
 
   header: {
     alignItems: "center",
+
     alignSelf: "stretch",
     flexDirection: "row",
     justifyContent: "space-between",
-    borderStyle: "dashed",
+    paddingHorizontal: 22,
+
     // borderWidth: 2,
   },
 
@@ -28,8 +30,12 @@ export const styles = StyleSheet.create({
 
   body: {
     alignSelf: "stretch",
-    gap: 8,
     flex: 1,
+  },
+
+  bodyContent: {
+    gap: 8,
+    paddingHorizontal: 22,
     // borderWidth: 2,
   },
 });
