@@ -78,6 +78,18 @@ const typeMisc = [
   "textTransform",
 ];
 
+// Every recognized RN/CSS style property, used to tell a style *rule*
+// object (e.g. `{ flex: 1, borderWidth: 2 }`) apart from the outer
+// `StyleSheet.create({...})` object whose keys are arbitrary rule names.
+const styleProperties = [
+  ...positioning,
+  ...layout,
+  ...boxModel,
+  ...visual,
+  ...typeMisc,
+];
+const styleObjectKeyPattern = `^(${styleProperties.join("|")})$`;
+
 module.exports = defineConfig([
   expoConfig,
   {
@@ -94,6 +106,7 @@ module.exports = defineConfig([
               pattern: "^StyleSheet\\.create$",
               scope: "deep",
             },
+            allNamesMatchPattern: styleObjectKeyPattern,
           },
           // Properties are grouped by category below; within each group,
           // properties sort alphabetically rather than in a fixed order.
