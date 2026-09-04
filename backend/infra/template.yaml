@@ -2,6 +2,27 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: Prixy backend - API Gateway + Lambda functions
 
+Metadata:
+  DbVpcConfig: &dbVpcConfig
+    SecurityGroupIds:
+      - sg-0e9a01494cd64eac2
+    SubnetIds:
+      - subnet-00fcbf804a78fef47
+      - subnet-0d3750fde81200b62
+  DbEnvironment: &dbEnvironment
+    Variables:
+      DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
+      DB_PORT: "5432"
+      DB_NAME: Prixy
+      DB_USER: lambda_app_user
+  DbPolicies: &dbPolicies
+    - Statement:
+        - Effect: Allow
+          Action:
+            - rds-db:connect
+          Resource:
+            - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+
 Globals:
   Function:
     Runtime: nodejs22.x
@@ -34,25 +55,9 @@ Resources:
     Properties:
       CodeUri: ../functions/db-health/
       Handler: index.handler
-      VpcConfig:
-        SecurityGroupIds:
-          - sg-0e9a01494cd64eac2
-        SubnetIds:
-          - subnet-00fcbf804a78fef47
-          - subnet-0d3750fde81200b62
-      Environment:
-        Variables:
-          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
-          DB_PORT: "5432"
-          DB_NAME: Prixy
-          DB_USER: lambda_app_user
-      Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-              Resource:
-                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
       Events:
         DbHealthCheck:
           Type: Api
@@ -69,25 +74,9 @@ Resources:
       CodeUri: ../functions/migrate/
       Handler: index.handler
       Timeout: 60
-      VpcConfig:
-        SecurityGroupIds:
-          - sg-0e9a01494cd64eac2
-        SubnetIds:
-          - subnet-00fcbf804a78fef47
-          - subnet-0d3750fde81200b62
-      Environment:
-        Variables:
-          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
-          DB_PORT: "5432"
-          DB_NAME: Prixy
-          DB_USER: lambda_app_user
-      Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-              Resource:
-                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
 
   # DEV-ONLY: runs arbitrary SQL passed in the invoke payload.
   # Intentionally has no Events block - reachable only via `aws lambda invoke`,
@@ -100,25 +89,9 @@ Resources:
       CodeUri: ../functions/query/
       Handler: index.handler
       Timeout: 30
-      VpcConfig:
-        SecurityGroupIds:
-          - sg-0e9a01494cd64eac2
-        SubnetIds:
-          - subnet-00fcbf804a78fef47
-          - subnet-0d3750fde81200b62
-      Environment:
-        Variables:
-          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
-          DB_PORT: "5432"
-          DB_NAME: Prixy
-          DB_USER: lambda_app_user
-      Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-              Resource:
-                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
 
 Outputs:
   ApiUrl:
@@ -132,4 +105,3 @@ Outputs:
   QueryFunctionName:
     Description: DEV-ONLY - invoke with {"sql":"..."} to read the database
     Value: !Ref QueryFunction
-
