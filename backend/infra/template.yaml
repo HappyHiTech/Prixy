@@ -29,6 +29,8 @@ Resources:
 
   DbHealthFunction:
     Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
     Properties:
       CodeUri: ../functions/db-health/
       Handler: index.handler
@@ -59,7 +61,40 @@ Resources:
             Path: /db-health
             Method: get
 
+  MigrateFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/migrate/
+      Handler: index.handler
+      Timeout: 60
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0e9a01494cd64eac2
+        SubnetIds:
+          - subnet-00fcbf804a78fef47
+          - subnet-0d3750fde81200b62
+      Environment:
+        Variables:
+          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
+          DB_PORT: "5432"
+          DB_NAME: Prixy
+          DB_USER: lambda_app_user
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
     Value: !Sub "https://${PrixyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+
+  MigrateFunctionName:
+    Description: Invoke manually to apply SQL migrations
+    Value: !Ref MigrateFunction
+
