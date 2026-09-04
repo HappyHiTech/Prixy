@@ -38,7 +38,7 @@ Resources:
   HealthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ../functions/health/
+      CodeUri: ../functions/ops/health/
       Handler: index.handler
       Events:
         HealthCheck:
@@ -53,7 +53,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ../functions/db-health/
+      CodeUri: ../functions/ops/db-health/
       Handler: index.handler
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
@@ -71,7 +71,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ../functions/migrate/
+      CodeUri: ../functions/ops/migrate/
       Handler: index.handler
       Timeout: 60
       VpcConfig: *dbVpcConfig
@@ -86,7 +86,7 @@ Resources:
     Metadata:
       BuildMethod: makefile
     Properties:
-      CodeUri: ../functions/query/
+      CodeUri: ../functions/ops/query/
       Handler: index.handler
       Timeout: 30
       VpcConfig: *dbVpcConfig
