@@ -1,4 +1,5 @@
 import { Slot } from "expo-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import {
   DMSans_100Thin,
@@ -12,6 +13,8 @@ import {
   DMSans_900Black,
   useFonts,
 } from "@expo-google-fonts/dm-sans";
+
+const queryClient = new QueryClient();
 
 export default function TabLayout() {
   const [fontsLoaded] = useFonts({
@@ -27,5 +30,9 @@ export default function TabLayout() {
   });
   if (!fontsLoaded) return null;
 
-  return <Slot />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Slot />
+    </QueryClientProvider>
+  );
 }
