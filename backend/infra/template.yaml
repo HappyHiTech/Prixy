@@ -93,6 +93,24 @@ Resources:
       Environment: *dbEnvironment
       Policies: *dbPolicies
 
+  ListPrayersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayers/list/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        ListPrayers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayers
+            Method: get
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API

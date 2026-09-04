@@ -1,4 +1,4 @@
-PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))../..)
+PROJECT_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))../../..)
 
 build-MigrateFunction:
 	cp -r ./* $(ARTIFACTS_DIR)
