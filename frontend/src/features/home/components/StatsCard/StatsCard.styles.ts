@@ -18,6 +18,7 @@ export const styles = StyleSheet.create({
   stat: {
     paddingHorizontal: 22,
     paddingVertical: 11,
+    color: COLORS.secondary,
 
     ...fontFamilly(800),
     fontSize: 14,
