@@ -4,7 +4,7 @@ Description: Prixy backend - API Gateway + Lambda functions
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    Runtime: nodejs22.x
     Timeout: 10
     MemorySize: 128
 
@@ -25,6 +25,38 @@ Resources:
           Properties:
             RestApiId: !Ref PrixyApi
             Path: /health
+            Method: get
+
+  DbHealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/db-health/
+      Handler: index.handler
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0e9a01494cd64eac2
+        SubnetIds:
+          - subnet-00fcbf804a78fef47
+          - subnet-0d3750fde81200b62
+      Environment:
+        Variables:
+          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
+          DB_PORT: "5432"
+          DB_NAME: Prixy
+          DB_USER: lambda_app_user
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+      Events:
+        DbHealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /db-health
             Method: get
 
 Outputs:
