@@ -37,7 +37,8 @@ export const styles = StyleSheet.create({
 
   bodyContent: {
     gap: 8,
-    paddingHorizontal: 22,
     // borderWidth: 2,
+    paddingBottom: 140,
+    paddingHorizontal: 22,
   },
 });
