@@ -89,6 +89,37 @@ Resources:
               Resource:
                 - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
 
+  # DEV-ONLY: runs arbitrary SQL passed in the invoke payload.
+  # Intentionally has no Events block - reachable only via `aws lambda invoke`,
+  # which requires IAM credentials. Do not deploy to a stack holding real data.
+  QueryFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/query/
+      Handler: index.handler
+      Timeout: 30
+      VpcConfig:
+        SecurityGroupIds:
+          - sg-0e9a01494cd64eac2
+        SubnetIds:
+          - subnet-00fcbf804a78fef47
+          - subnet-0d3750fde81200b62
+      Environment:
+        Variables:
+          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
+          DB_PORT: "5432"
+          DB_NAME: Prixy
+          DB_USER: lambda_app_user
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
@@ -97,4 +128,8 @@ Outputs:
   MigrateFunctionName:
     Description: Invoke manually to apply SQL migrations
     Value: !Ref MigrateFunction
+
+  QueryFunctionName:
+    Description: DEV-ONLY - invoke with {"sql":"..."} to read the database
+    Value: !Ref QueryFunction
 
