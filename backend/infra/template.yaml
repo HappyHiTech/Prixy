@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Prixy backend - API Gateway + Lambda functions
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 10
+    MemorySize: 128
+
+Resources:
+  PrixyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/health/
+      Handler: index.handler
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /health
+            Method: get
+
+Outputs:
+  ApiUrl:
+    Description: Base URL for the deployed API
+    Value: !Sub "https://${PrixyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
