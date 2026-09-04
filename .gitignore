@@ -1,2 +1,7 @@
 .vscode
 .DS_Store
+
+# backend / SAM
+backend/.aws-sam/
+backend/infra/.aws-sam/
+backend/**/node_modules/
