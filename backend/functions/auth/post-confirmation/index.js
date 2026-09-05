@@ -17,6 +17,7 @@ exports.handler = async (event) => {
     );
   } catch (err) {
     console.error("post-confirmation user upsert failed", err);
+    throw err;
   }
 
   return event;

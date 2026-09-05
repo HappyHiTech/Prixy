@@ -163,6 +163,7 @@ Resources:
       # RDS IAM token signing + TLS handshake are CPU-bound; at 128MB this
       # measured 2671ms inside the signup path. See CreateAuthChallenge above.
       MemorySize: 512
+      Timeout: 30
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies

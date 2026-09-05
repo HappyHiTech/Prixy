@@ -53,7 +53,7 @@ const VerificationScreen = () => {
     try {
       const user = await sendPromise;
       const tokens = await answerCode(user, code);
-      await signIn(tokens);
+      await signIn(email, tokens);
       reset();
       router.replace('/home');
     } catch (err) {

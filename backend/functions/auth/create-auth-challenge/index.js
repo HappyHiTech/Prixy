@@ -7,11 +7,23 @@ function generateCode() {
   return String(crypto.randomInt(0, 1_000_000)).padStart(6, "0");
 }
 
-exports.handler = async (event) => {
-  let code;
+function parseMetadata(session) {
+  const match = /^CODE-(\d{6})-(\d+)$/.exec(
+    session?.[0]?.challengeMetadata ?? "",
+  );
+  if (!match) return null;
+  return { code: match[1], issuedAt: Number(match[2]) };
+}
 
-  if (!event.request.session || event.request.session.length === 0) {
+exports.handler = async (event) => {
+  const previous = parseMetadata(event.request.session);
+
+  let code;
+  let issuedAt;
+
+  if (!previous) {
     code = generateCode();
+    issuedAt = Date.now();
 
     await ses.send(
       new SendEmailCommand({
@@ -47,14 +59,18 @@ exports.handler = async (event) => {
       }),
     );
   } else {
-    code = event.request.session[0].challengeMetadata.replace("CODE-", "");
+    code = previous.code;
+    issuedAt = previous.issuedAt;
   }
 
-  event.response.privateChallengeParameters = { code };
+  event.response.privateChallengeParameters = {
+    code,
+    issuedAt: String(issuedAt),
+  };
   event.response.publicChallengeParameters = {
     email: event.request.userAttributes.email,
   };
-  event.response.challengeMetadata = `CODE-${code}`;
+  event.response.challengeMetadata = `CODE-${code}-${issuedAt}`;
 
   return event;
 };

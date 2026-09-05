@@ -2,6 +2,7 @@ import {
   CognitoUser,
   CognitoUserPool,
   CognitoUserAttribute,
+  CognitoRefreshToken,
   AuthenticationDetails,
 } from 'amazon-cognito-identity-js';
 
@@ -76,4 +77,29 @@ export function answerCode(
       customChallenge: () => reject(new Error('Incorrect code')),
     });
   });
+}
+
+export function refreshSession(
+  email: string,
+  refreshToken: string,
+): Promise<AuthTokens> {
+  return new Promise((resolve, reject) => {
+    const user = new CognitoUser({ Username: email, Pool: userPool });
+
+    user.refreshSession(
+      new CognitoRefreshToken({ RefreshToken: refreshToken }),
+      (err, session) => {
+        if (err || !session) return reject(err ?? new Error('Session expired'));
+        resolve({
+          idToken: session.getIdToken().getJwtToken(),
+          accessToken: session.getAccessToken().getJwtToken(),
+          refreshToken: session.getRefreshToken().getToken(),
+        });
+      },
+    );
+  });
+}
+
+export function clearCachedUser(): void {
+  userPool.getCurrentUser()?.signOut();
 }
