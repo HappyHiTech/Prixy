@@ -2,19 +2,22 @@ import { Pressable, Text, StyleProp, ViewStyle } from 'react-native';
 
 import { styles } from './OnBoardingButton.styles';
 
-type OnBoardingButtonProp = {
+type OnBoardingButtonProp = React.ComponentProps<typeof Pressable> & {
   buttonText: string;
-  onPress: () => void;
   style?: StyleProp<ViewStyle>;
 };
-
 const OnBoardingButton = ({
   buttonText,
-  onPress,
   style,
+  disabled,
+  ...pressableProps
 }: OnBoardingButtonProp) => {
   return (
-    <Pressable style={[styles.container, style]} onPress={onPress}>
+    <Pressable
+      style={[styles.container, disabled && styles.disabledButton, style]}
+      disabled={disabled}
+      {...pressableProps}
+    >
       <Text style={styles.buttonText}>{buttonText}</Text>
     </Pressable>
   );

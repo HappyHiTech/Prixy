@@ -19,4 +19,9 @@ export const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 18,
   },
+
+  disabledButton: {
+    alignSelf: 'center',
+    backgroundColor: COLORS.secondaryText,
+  },
 });
