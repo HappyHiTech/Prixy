@@ -1,14 +1,18 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from 'react-native';
+import { router } from 'expo-router';
 
-import { styles } from "./WelcomeScreen.styles";
+import OnBoardingButton from '@/components/OnBoardingButton/OnBoardingButton';
+
+import { styles } from './WelcomeScreen.styles';
 
 const WelcomeScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Prixy</Text>
-      <Pressable style={styles.startedButton}>
-        <Text style={styles.startedText}>Get Started</Text>
-      </Pressable>
+      <OnBoardingButton
+        onPress={() => router.push('/login')}
+        buttonText="Get Started"
+      />
     </View>
   );
 };
