@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, fontFamilly } from "@/constants";
+import { COLORS, fontFamily } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
 
   categoryText: {
-    ...fontFamilly(500),
+    ...fontFamily(500),
     color: COLORS.secondaryText,
     fontSize: 12,
   },

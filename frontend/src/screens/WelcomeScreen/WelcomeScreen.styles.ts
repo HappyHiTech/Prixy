@@ -1,14 +1,13 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
-import { COLORS, fontFamilly, dropShadow } from "@/constants";
+import { COLORS, fontFamily, dropShadow } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
     paddingVertical: 90,
-    borderWidth: 5,
   },
 
   title: {
@@ -17,18 +16,18 @@ export const styles = StyleSheet.create({
   },
 
   startedButton: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 76,
 
     width: 308,
     backgroundColor: COLORS.accent,
     borderRadius: 87,
-    ...dropShadow("#000000", 0.25, 4, 0),
+    ...dropShadow('#000000', 0.25, 4, 0),
   },
 
   startedText: {
-    ...fontFamilly(600),
+    ...fontFamily(600),
     color: COLORS.primary,
     fontSize: 18,
   },

@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, dropShadow, fontFamilly } from "@/constants";
+import { COLORS, dropShadow, fontFamily } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     marginTop: 40,
   },
   stateText: {
-    ...fontFamilly(400),
+    ...fontFamily(400),
     marginTop: 40,
     paddingHorizontal: 20,
     color: COLORS.secondaryText,

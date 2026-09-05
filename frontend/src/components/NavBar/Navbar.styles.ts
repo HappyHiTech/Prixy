@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, dropShadow, fontFamilly } from "@/constants";
+import { COLORS, dropShadow, fontFamily } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   },
 
   navButtonText: {
-    ...fontFamilly(500),
+    ...fontFamily(500),
     color: COLORS.secondaryText,
   },
 

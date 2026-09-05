@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, fontFamilly } from "@/constants";
+import { COLORS, fontFamily } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   },
 
   requestText: {
-    ...fontFamilly(400),
+    ...fontFamily(400),
     fontSize: 19,
   },
 });
