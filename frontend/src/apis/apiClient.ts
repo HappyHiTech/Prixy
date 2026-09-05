@@ -1,9 +1,16 @@
+import { getIdToken, useAuthStore } from '@/stores/useAuthStore';
+
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 if (!BASE_URL) {
-  throw new Error("EXPO_PUBLIC_API_BASE_URL is missing from frontend/.env");
+  throw new Error('EXPO_PUBLIC_API_BASE_URL is missing from frontend/.env');
 }
 async function parseResponse<T>(response: Response): Promise<T> {
+  if (response.status === 401 || response.status === 403) {
+    await useAuthStore.getState().signOut();
+    throw new Error('Your session expired. Please sign in again.');
+  }
+
   if (!response.ok) {
     throw new Error(`API error ${response.status}: ${response.statusText}`);
   }
@@ -12,10 +19,17 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return (text.length > 0 ? JSON.parse(text) : undefined) as T;
 }
 
-// TODO: when auth lands, read the token from the auth store here and set an
-// Authorization header — plus a 401 refresh retry, as in Waypoint's apiClient.
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, init);
+  const token = getIdToken();
+
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: token } : {}),
+      ...init?.headers,
+    },
+  });
   return parseResponse<T>(response);
 }
 

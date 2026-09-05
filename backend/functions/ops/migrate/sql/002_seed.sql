@@ -3,7 +3,7 @@
 
 INSERT INTO users (id, display_name, email)
 VALUES ('11111111-1111-1111-1111-111111111111', 'Harvey Tan', 'harveycytan@gmail.com')
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO recipients (id, user_id, name) VALUES
   ('22222222-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111', 'Mom'),

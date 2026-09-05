@@ -1,5 +1,9 @@
-import { Slot } from "expo-router";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import 'react-native-get-random-values';
+
+import { Slot } from 'expo-router';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 import {
   DMSans_100Thin,
@@ -12,7 +16,7 @@ import {
   DMSans_800ExtraBold,
   DMSans_900Black,
   useFonts,
-} from "@expo-google-fonts/dm-sans";
+} from '@expo-google-fonts/dm-sans';
 
 const queryClient = new QueryClient();
 
@@ -28,7 +32,14 @@ export default function TabLayout() {
     DMSans_800ExtraBold,
     DMSans_900Black,
   });
-  if (!fontsLoaded) return null;
+  const bootstrap = useAuthStore((s) => s.bootstrap);
+  const isBootstrapping = useAuthStore((s) => s.isBootstrapping);
+
+  useEffect(() => {
+    bootstrap();
+  }, [bootstrap]);
+
+  if (!fontsLoaded || isBootstrapping) return null;
 
   return (
     <QueryClientProvider client={queryClient}>
