@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     paddingVertical: 90,
+    backgroundColor: COLORS.primary,
   },
 
   title: {

@@ -4,10 +4,12 @@ import { COLORS, fontFamily } from '@/constants';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+
     justifyContent: 'space-between',
     paddingBottom: 90,
     paddingHorizontal: 20,
     paddingTop: 65,
+    backgroundColor: COLORS.primary,
   },
 
   header: {
@@ -25,6 +27,9 @@ export const styles = StyleSheet.create({
   },
 
   input: {
+    fontSize: 16,
+    ...fontFamily(500),
+
     alignSelf: 'center',
     height: 65,
     marginTop: 30,
@@ -32,6 +37,7 @@ export const styles = StyleSheet.create({
     width: 346,
     backgroundColor: COLORS.primaryBg,
     borderRadius: 10,
+    color: COLORS.primaryText,
   },
 
   subtitle: {
