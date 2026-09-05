@@ -26,30 +26,26 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  inputContainer: {
-    alignSelf: 'center',
-    flexDirection: 'row',
-    gap: 15,
-  },
-
   input: {
+    fontSize: 16,
+    ...fontFamily(500),
+
+    alignSelf: 'center',
     height: 65,
     marginTop: 30,
-    width: 43,
+    padding: 22,
+    width: 346,
     backgroundColor: COLORS.primaryBg,
-
     borderRadius: 10,
     color: COLORS.primaryText,
-    fontSize: 20,
-    ...fontFamily(800),
-
-    textAlign: 'center',
   },
 
   subtitle: {
     alignSelf: 'center',
     marginTop: 18,
+
     color: '#979797',
+    textAlign: 'center',
   },
 
   primaryButton: {
