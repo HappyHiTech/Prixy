@@ -1,0 +1,9 @@
+{
+  "name": "auth-create-auth-challenge",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.687.0"
+  }
+}

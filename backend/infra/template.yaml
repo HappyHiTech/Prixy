@@ -34,6 +34,146 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
+      Auth:
+        Authorizers:
+          CognitoAuth:
+            UserPoolArn: !GetAtt UserPool.Arn
+        AddDefaultAuthorizerToCorsPreflight: false
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: prixy-users
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: email
+          AttributeDataType: String
+          Required: true
+          Mutable: true
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+      LambdaConfig:
+        PreSignUp: !GetAtt PreSignUpFunction.Arn
+        DefineAuthChallenge: !GetAtt DefineAuthChallengeFunction.Arn
+        CreateAuthChallenge: !GetAtt CreateAuthChallengeFunction.Arn
+        VerifyAuthChallengeResponse: !GetAtt VerifyAuthChallengeFunction.Arn
+        PostConfirmation: !GetAtt PostConfirmationFunction.Arn
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: prixy-mobile
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_CUSTOM_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      PreventUserExistenceErrors: LEGACY
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      RefreshTokenValidity: 30
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+        RefreshToken: days
+
+  PreSignUpFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/auth/pre-signup/
+      Handler: index.handler
+
+  PreSignUpPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PreSignUpFunction.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
+  DefineAuthChallengeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/auth/define-auth-challenge/
+      Handler: index.handler
+
+  DefineAuthChallengePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt DefineAuthChallengeFunction.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
+  CreateAuthChallengeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/auth/create-auth-challenge/
+      Handler: index.handler
+      # 128MB gives a fraction of a vCPU; the SES HTTPS call and SDK init are
+      # CPU-bound, so more memory buys proportionally more CPU. Billing is
+      # ms x memory, so finishing faster largely offsets the higher rate.
+      MemorySize: 512
+      Environment:
+        Variables:
+          SES_FROM_ADDRESS: harveycytan@gmail.com
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+              Resource: "*"
+
+  CreateAuthChallengePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt CreateAuthChallengeFunction.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
+  VerifyAuthChallengeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../functions/auth/verify-auth-challenge/
+      Handler: index.handler
+
+  VerifyAuthChallengePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt VerifyAuthChallengeFunction.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
+  PostConfirmationFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/auth/post-confirmation/
+      Handler: index.handler
+      # RDS IAM token signing + TLS handshake are CPU-bound; at 128MB this
+      # measured 2671ms inside the signup path. See CreateAuthChallenge above.
+      MemorySize: 512
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+
+  PostConfirmationPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt PostConfirmationFunction.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
 
   HealthFunction:
     Type: AWS::Serverless::Function
@@ -110,11 +250,21 @@ Resources:
             RestApiId: !Ref PrixyApi
             Path: /prayers
             Method: get
+            Auth:
+              Authorizer: CognitoAuth
 
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
     Value: !Sub "https://${PrixyApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+
+  UserPoolId:
+    Description: Cognito user pool id - goes in frontend/.env
+    Value: !Ref UserPool
+
+  UserPoolClientId:
+    Description: Cognito app client id - goes in frontend/.env
+    Value: !Ref UserPoolClient
 
   MigrateFunctionName:
     Description: Invoke manually to apply SQL migrations
