@@ -20,6 +20,7 @@ const LoginScreen = () => {
         <TextInput
           style={styles.input}
           placeholder="Email Address"
+          placeholderTextColor={COLORS.secondaryText}
           selectionColor={COLORS.primaryText}
         />
         <Text style={styles.subtitle}>
@@ -28,7 +29,7 @@ const LoginScreen = () => {
       </View>
 
       <OnBoardingButton
-        onPress={() => {}}
+        onPress={() => router.push('/verify')}
         buttonText="Get verification code"
         style={styles.primaryButton}
       />
