@@ -1,5 +1,7 @@
 const { withClient } = require("./shared/db");
 
+const VALID_STATUS = ["inbox", "active", "answered"];
+
 exports.handler = async (event) => {
   const sub = event.requestContext?.authorizer?.claims?.sub;
 
@@ -8,6 +10,18 @@ exports.handler = async (event) => {
       statusCode: 401,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "Unauthenticated" }),
+    };
+  }
+
+  const status = event.queryStringParameters?.status;
+
+  if (status !== undefined && !VALID_STATUS.includes(status)) {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: `Invalid status. Expected one of: ${VALID_STATUS.join(", ")}`,
+      }),
     };
   }
 
@@ -31,8 +45,9 @@ exports.handler = async (event) => {
            FROM prayer_requests pr
            JOIN users u ON u.id = pr.user_id
            WHERE u.cognito_sub = $1
+           AND ($2::text IS NULL OR pr.status = $2)
            ORDER BY pr.created_at DESC`,
-          [sub],
+          [sub, status ?? null],
         )
         .then((r) => r.rows),
     );
