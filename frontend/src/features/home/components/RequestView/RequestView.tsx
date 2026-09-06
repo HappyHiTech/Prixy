@@ -1,13 +1,21 @@
-import { View, ActivityIndicator, Text } from "react-native";
+import { View, ActivityIndicator, Text } from 'react-native';
 
-import CompactRequestcard from "@/components/CompactRequestCard/CompactRequestCard";
+import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
 
-import { usePrayerRequests } from "@/hooks/TanStack/usePrayerRequests";
+import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequests';
+import { useHomeStore } from '../../stores/useHomeStore';
 
-import { styles } from "./RequestView.styles";
+import { styles } from './RequestView.styles';
 
 const RequestView = () => {
-  const { data: prayReqs, isPending, isError, error } = usePrayerRequests();
+  const activeSegment = useHomeStore((s) => s.activeSegment);
+  const {
+    data: prayReqs,
+    isPending,
+    isError,
+    error,
+  } = usePrayerRequests(activeSegment);
+  console.log(prayReqs);
 
   if (isPending) {
     return (

@@ -1,11 +1,16 @@
-import { Pressable, Text } from "react-native";
+import { Pressable, Text } from 'react-native';
 
-import { useHomeStore } from "../../stores/useHomeStore";
+import { useHomeStore, type HomeSegment } from '../../stores/useHomeStore';
 
-import { styles } from "./SegmentedPill.styles";
+import { styles } from './SegmentedPill.styles';
+
+const TEXTMAP: Record<HomeSegment, string> = {
+  inbox: 'Inbox',
+  active: 'Active deck',
+};
 
 type SegmentedPillProp = {
-  text: string;
+  text: HomeSegment;
 };
 
 const SegmentedPill = ({ text }: SegmentedPillProp) => {
@@ -20,7 +25,7 @@ const SegmentedPill = ({ text }: SegmentedPillProp) => {
       style={[styles.container, isActive ? styles.activeSegment : undefined]}
     >
       <Text style={[styles.text, isActive ? styles.activeText : undefined]}>
-        {text}
+        {TEXTMAP[text]}
       </Text>
     </Pressable>
   );
