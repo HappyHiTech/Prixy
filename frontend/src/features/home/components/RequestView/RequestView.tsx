@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 
 import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
@@ -18,6 +18,13 @@ const RequestView = () => {
     isError,
     error,
   } = usePrayerRequests(activeSegment);
+
+  const setActiveSegment = useHomeStore((s) => s.setActiveSegment);
+  const { data: inboxReqs } = usePrayerRequests('inbox');
+
+  useEffect(() => {
+    if (inboxReqs?.length === 0) setActiveSegment('active');
+  }, [inboxReqs, setActiveSegment]);
 
   const { data: prayees } = usePrayeeQuery();
   const { data: categories } = useCategoriesQuery();
