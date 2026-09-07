@@ -234,6 +234,18 @@ Resources:
       Environment: *dbEnvironment
       Policies: *dbPolicies
 
+  ResetFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/ops/reset/
+      Handler: index.handler
+      Timeout: 30
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+
   ListPrayersFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -274,3 +286,7 @@ Outputs:
   QueryFunctionName:
     Description: DEV-ONLY - invoke with {"sql":"..."} to read the database
     Value: !Ref QueryFunction
+
+  ResetFunctionName:
+    Description: DEV-ONLY - invoke with {"confirm":"DROP EVERYTHING"} to wipe all tables
+    Value: !Ref ResetFunction
