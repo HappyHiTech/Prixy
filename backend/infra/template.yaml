@@ -286,6 +286,26 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  ListCategoriesFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/categories/list/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        ListCategories:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /categories
+            Method: get
+            Auth:
+              Authorizer: CognitoAuth
+
   UpdatePrayerFunction:
     Type: AWS::Serverless::Function
     Metadata:
