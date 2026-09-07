@@ -1,7 +1,5 @@
 import { Pressable, Text } from 'react-native';
 
-import CategoryAvatar from '../CategoryAvatar/CategoryAvatar';
-
 import type { Category } from '@/types/category';
 import { styles } from './CategorySelector.styles';
 
