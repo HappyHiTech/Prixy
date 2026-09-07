@@ -15,7 +15,9 @@ INSERT INTO categories (id, user_id, name, icon, is_default) VALUES
   ('33333333-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111', 'Family',  'home',   true),
   ('33333333-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111111', 'Friends', 'users',  true),
   ('33333333-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111', 'Church',  'church', true),
-  ('33333333-0000-0000-0000-000000000004', '11111111-1111-1111-1111-111111111111', 'Health',  'heart',  true)
+  -- Not part of the signup default set; kept as a custom category because the
+  -- prayer requests below reference it.
+  ('33333333-0000-0000-0000-000000000004', '11111111-1111-1111-1111-111111111111', 'Health',  'heart',  false)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO prayer_requests
