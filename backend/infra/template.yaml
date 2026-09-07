@@ -266,6 +266,26 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  ListPrayeesFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayees/list/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        ListPrayees:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayees
+            Method: get
+            Auth:
+              Authorizer: CognitoAuth
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
