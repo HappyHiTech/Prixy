@@ -3,12 +3,14 @@ import { View, Pressable, Text } from 'react-native';
 
 import { Home, Plus } from 'lucide-react-native';
 import { HandsPrayingIcon } from 'phosphor-react-native';
+import { useActionButtonStore } from '@/stores/useActionButtonStore';
 
 import { styles } from './Navbar.styles';
 
 const NavBar = () => {
   const pathName = usePathname();
   const router = useRouter();
+  const toggleAction = useActionButtonStore((s) => s.toggleAction);
 
   return (
     <View style={styles.container}>
@@ -23,7 +25,7 @@ const NavBar = () => {
         <Text style={styles.navButtonText}>Home</Text>
       </Pressable>
       <View style={styles.navButtonAdd}>
-        <Pressable style={styles.addPrayer}>
+        <Pressable style={styles.addPrayer} onPress={toggleAction}>
           <Plus size={50} color="#FFFFFF" />
         </Pressable>
       </View>
