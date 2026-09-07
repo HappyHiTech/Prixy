@@ -11,6 +11,10 @@ export const styles = StyleSheet.create({
     paddingVertical: 9,
   },
 
+  pressed: {
+    opacity: 0.6,
+  },
+
   text: {
     ...fontFamily(400),
     color: COLORS.primaryText,

@@ -11,3 +11,17 @@ export async function fetchPrayerRequests(
 
   return apiFetch<PrayerRequest[]>(`/prayers?${query.toString()}`);
 }
+
+type UpdatePrayerRequestBody = {
+  prayeeId?: string | null;
+};
+
+export async function updatePrayerRequest(
+  id: string,
+  updates: UpdatePrayerRequestBody,
+): Promise<PrayerRequest> {
+  return apiFetch<PrayerRequest>(`/prayers/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(updates),
+  });
+}

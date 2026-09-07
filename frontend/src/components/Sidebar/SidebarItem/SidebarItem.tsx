@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 import PrayeeAvatar from '@/components/PrayeeAvatar/PrayeeAvatar';
 
@@ -8,14 +8,20 @@ import { styles } from './SidebarItem.styles';
 
 type SidebarItemProp = {
   prayee: Prayee;
+  onPress: () => void;
+  disabled?: boolean;
 };
 
-const SidebarItem = ({ prayee }: SidebarItemProp) => {
+const SidebarItem = ({ prayee, onPress, disabled }: SidebarItemProp) => {
   return (
-    <View style={styles.container}>
+    <Pressable
+      style={({ pressed }) => [styles.container, pressed && styles.pressed]}
+      onPress={onPress}
+      disabled={disabled}
+    >
       <PrayeeAvatar icon={getInitials(prayee.name)} />
       <Text style={styles.text}>{prayee.name}</Text>
-    </View>
+    </Pressable>
   );
 };
 

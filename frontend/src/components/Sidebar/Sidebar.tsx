@@ -19,6 +19,8 @@ type SidebarProp = {
   items?: Prayee[];
   isPending: boolean;
   isError: boolean;
+  isSaving?: boolean;
+  onSelect: (id: string) => void;
   exit: () => void;
 };
 
@@ -28,6 +30,8 @@ const Sidebar = ({
   items = [],
   isError,
   isPending,
+  isSaving,
+  onSelect,
   exit,
 }: SidebarProp) => {
   return (
@@ -46,7 +50,14 @@ const Sidebar = ({
           ) : isPending ? (
             <ActivityIndicator />
           ) : (
-            items.map((item) => <SidebarItem key={item.id} prayee={item} />)
+            items.map((item) => (
+              <SidebarItem
+                key={item.id}
+                prayee={item}
+                onPress={() => onSelect(item.id)}
+                disabled={isSaving}
+              />
+            ))
           )}
         </ScrollView>
       </Pressable>
