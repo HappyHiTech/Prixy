@@ -10,6 +10,9 @@ type HomeStore = {
 
   selectedPrayerId: string | null;
   setSelectedPrayerId: (p: HomeStore['selectedPrayerId']) => void;
+
+  selectedEdit: string | null;
+  setSelectedEdit: (e: HomeStore['selectedEdit']) => void;
 };
 
 export const useHomeStore = create<HomeStore>((set) => ({
@@ -18,4 +21,7 @@ export const useHomeStore = create<HomeStore>((set) => ({
 
   selectedPrayerId: null,
   setSelectedPrayerId: (p) => set({ selectedPrayerId: p }),
+
+  selectedEdit: null,
+  setSelectedEdit: (e) => set({ selectedEdit: e }),
 }));

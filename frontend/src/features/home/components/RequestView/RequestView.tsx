@@ -5,6 +5,7 @@ import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCa
 
 import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequestQuery';
 import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
+import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
 import { useHomeStore } from '../../stores/useHomeStore';
 
 import { styles } from './RequestView.styles';
@@ -19,10 +20,16 @@ const RequestView = () => {
   } = usePrayerRequests(activeSegment);
 
   const { data: prayees } = usePrayeeQuery();
+  const { data: categories } = useCategoriesQuery();
 
   const prayeeNameById = useMemo(
     () => new Map((prayees ?? []).map((p) => [p.id, p.name])),
     [prayees],
+  );
+
+  const categoryById = useMemo(
+    () => new Map((categories ?? []).map((c) => [c.id, c])),
+    [categories],
   );
 
   if (isPending) {
@@ -49,6 +56,9 @@ const RequestView = () => {
           prayReq={item}
           prayeeName={
             item.prayeeId ? prayeeNameById.get(item.prayeeId) : undefined
+          }
+          category={
+            item.categoryId ? categoryById.get(item.categoryId) : undefined
           }
         />
       ))}

@@ -13,10 +13,12 @@ import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 
 import { styles } from './HomeScreen.styles';
+import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
 
 const HomeScreen = () => {
   const signOut = useAuthStore((s) => s.signOut);
   const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
+  const selectedEdit = useHomeStore((s) => s.selectedEdit);
 
   // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
   // sign-out so the auth flow can be re-run from the app.
@@ -40,7 +42,8 @@ const HomeScreen = () => {
         <RequestView />
       </ScrollView>
       <NavBar />
-      {selectedPrayerId ? <PrayeeSidebar /> : ''}
+      {selectedPrayerId && selectedEdit === 'prayee' && <PrayeeSidebar />}
+      {selectedPrayerId && selectedEdit === 'category' && <CategorySidebar />}
     </View>
   );
 };

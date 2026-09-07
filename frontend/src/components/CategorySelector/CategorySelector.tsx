@@ -1,11 +1,21 @@
-import { Pressable, Text } from "react-native";
+import { Pressable, Text } from 'react-native';
 
-import { styles } from "./CategorySelector.styles";
+import CategoryAvatar from '../CategoryAvatar/CategoryAvatar';
 
-const CategorySelector = () => {
+import type { Category } from '@/types/category';
+import { styles } from './CategorySelector.styles';
+
+type CategorySelectorProp = {
+  category?: Category;
+  onPress: () => void;
+};
+
+const CategorySelector = ({ category, onPress }: CategorySelectorProp) => {
   return (
-    <Pressable style={styles.container}>
-      <Text style={styles.categoryText}>Select a category</Text>
+    <Pressable style={styles.container} onPress={onPress}>
+      <Text style={styles.categoryText}>
+        {category?.name ?? 'Select a category'}
+      </Text>
     </Pressable>
   );
 };

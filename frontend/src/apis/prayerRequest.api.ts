@@ -14,6 +14,7 @@ export async function fetchPrayerRequests(
 
 type UpdatePrayerRequestBody = {
   prayeeId?: string | null;
+  categoryId?: string | null;
 };
 
 export async function updatePrayerRequest(

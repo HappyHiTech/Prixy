@@ -11,12 +11,13 @@ import SidebarItem from './SidebarItem/SidebarItem';
 import { Plus } from 'lucide-react-native';
 
 import type { Prayee } from '@/types/prayee';
+import type { Category } from '@/types/category';
 import { styles } from './Sidebar.styles';
 
 type SidebarProp = {
   title: string;
   addLabel: string;
-  items?: Prayee[];
+  items?: (Prayee | Category)[];
   isPending: boolean;
   isError: boolean;
   isSaving?: boolean;
@@ -53,7 +54,7 @@ const Sidebar = ({
             items.map((item) => (
               <SidebarItem
                 key={item.id}
-                prayee={item}
+                data={item}
                 onPress={() => onSelect(item.id)}
                 disabled={isSaving}
               />

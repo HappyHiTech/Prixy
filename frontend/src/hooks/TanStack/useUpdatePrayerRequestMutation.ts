@@ -5,8 +5,7 @@ import type { PrayerRequest } from '@/types/prayerRequest';
 
 type UpdatePrayerRequestVariables = {
   id: string;
-  prayeeId: string | null;
-};
+} & Partial<Pick<PrayerRequest, 'prayeeId' | 'categoryId'>>;
 
 export const useUpdatePrayerRequest = () => {
   const queryClient = useQueryClient();

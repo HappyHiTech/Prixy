@@ -1,31 +1,38 @@
 import Sidebar from '@/components/Sidebar/Sidebar';
 
-import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
+import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+
 import { useHomeStore } from '@/features/home/stores/useHomeStore';
 
-const PrayeeSidebar = () => {
-  const { data: prayees, isPending, isError } = usePrayeeQuery();
+const CategorySidebar = () => {
+  const { data: category, isPending, isError } = useCategoriesQuery();
+
   const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
   const setSelectedprayerId = useHomeStore((s) => s.setSelectedPrayerId);
   const setSelectedEdit = useHomeStore((s) => s.setSelectedEdit);
 
   const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
 
-  const handleSelect = (prayeeId: string) => {
+  const handleSelect = (categoryId: string) => {
     if (!selectedPrayerId) return;
 
     mutate(
-      { id: selectedPrayerId, prayeeId },
-      { onSuccess: () => setSelectedprayerId(null) },
+      { id: selectedPrayerId, categoryId },
+      {
+        onSuccess: () => {
+          setSelectedprayerId(null);
+          setSelectedEdit(null);
+        },
+      },
     );
   };
 
   return (
     <Sidebar
-      title="Praying For"
-      addLabel="Add a name"
-      items={prayees}
+      title="Category"
+      addLabel="Add a Category"
+      items={category}
       isPending={isPending}
       isError={isError}
       isSaving={isSaving}
@@ -38,4 +45,4 @@ const PrayeeSidebar = () => {
   );
 };
 
-export default PrayeeSidebar;
+export default CategorySidebar;
