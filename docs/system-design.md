@@ -106,7 +106,7 @@ into multiple `PrayerRequest`s.
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
-| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select |
+| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule |
 | POST   | `/prayers/:id/answer`      | —                                                                               | `PrayerRequest`                        | sets `status=answered`, `answeredAt=now`                            |
 | POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow" }`                                       | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode                            |
 | GET    | `/prayees`              | —                                                                               | `Prayee[]`                          | populates "Praying For" picker                                      |
@@ -192,10 +192,14 @@ into multiple `PrayerRequest`s.
   (see below)
 - **Auth provider/method**: Cognito vs third-party, and which sign-in
   methods (email/password, social) — still researching
-- **Inbox → Active Deck transition**: what actually triggers a request
-  moving from `inbox` to `active`? (e.g., does assigning a category alone do
-  it, or does it require prayee + category + frequency all set?) — not
-  yet defined by the mockups, needs a decision
+- **Inbox → Active Deck transition**: **resolved** — a request is `active`
+  exactly when both `prayeeId` and `categoryId` are non-null, and returns to
+  `inbox` if either is cleared. `frequencyType` is not part of the rule.
+  Derived server-side in `PATCH /prayers/:id`, never by the client.
+  `answered` requests are exempt and never change status this way.
+  Known gap: the `ON DELETE SET NULL` foreign keys mean deleting a prayee or
+  category nulls the field without re-evaluating status, leaving orphaned
+  `active` rows.
 - **`...` menu on Inbox cards**: contents not yet defined (likely delete /
   edit / move to Active Deck manually)
 - **"One time" vs recurring semantics**: does `one_time` mean the request
