@@ -6,7 +6,7 @@ don't get re-litigated or guessed wrong in every new session.
 ## What this app does
 
 Prixy captures prayer requests (by voice or manual text), organizes them by
-recipient and category, and guides the user through daily prayer sessions
+prayee and category, and guides the user through daily prayer sessions
 against an "Active Deck." New requests land in an Inbox for review before
 entering the Active Deck. See `docs/system-design.md` for full detail.
 
@@ -38,7 +38,7 @@ Because of that:
 - **Frontend:** React Native via Expo
 - **Backend:** AWS Lambda (Node.js) + API Gateway
 - **Database:** AWS RDS / PostgreSQL (chosen over DynamoDB — data model is
-  relational: User → PrayerRequest → Recipient/Category)
+  relational: User → PrayerRequest → Prayee/Category)
 - **File storage:** S3 (voice recordings)
 - **AI pipeline:** AWS Transcribe (speech-to-text) + a single LLM API call
   (Claude/GPT) for transcript cleanup, splitting multi-topic recordings into
@@ -76,7 +76,7 @@ kept as-is rather than flattened to `frontend/app/`). Expo Router makes
 directly to routes. Keep files in `app/` thin: import and render a screen
 component from `features/`, wire up route params, nothing more. All real
 logic goes in `frontend/src/features/<feature>/`, one folder per feature
-(e.g. `prayers/`, `recipients/`, `categories/`, `profile/`), each containing
+(e.g. `prayers/`, `prayee/`, `categories/`, `profile/`), each containing
 its own `components/`, `hooks/`, `store/`, and `api.ts`. Don't put business
 logic, data fetching, or substantial UI directly in an `app/` route file —
 route files should stay small enough to read at a glance.
@@ -87,7 +87,7 @@ imports like the rest of the app, not relative paths.
 
 ## Data Model & API — see docs/system-design.md
 
-Do not invent field names or endpoints. Core entities: `User`, `Recipient`,
+Do not invent field names or endpoints. Core entities: `User`, `Prayee`,
 `Category`, `PrayerRequest`, `Recording`. `PrayerRequest.status` is one of
 `inbox` / `active` / `answered`. Full field lists and the API route table
 live in `docs/system-design.md` — check it before writing backend code that

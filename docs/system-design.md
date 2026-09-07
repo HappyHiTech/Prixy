@@ -3,7 +3,7 @@
 ## 1. Overview
 
 Prixy lets a user capture prayer requests (by voice or manual text), organizes
-them by recipient and category, and guides the user through a daily prayer
+them by prayee and category, and guides the user through a daily prayer
 session ("Prayer Mode") against an "Active Deck" of requests. New requests
 land in an **Inbox** for review/categorization before entering the Active
 Deck. Users can mark requests as answered, which moves them to an answered
@@ -31,7 +31,7 @@ suggestion)
 | totalAnswered  | int         | lifetime stat, likely computed not stored |
 | createdAt      | timestamp   |                                           |
 
-### Recipient
+### Prayee
 
 A lightweight, per-user "who am I praying for" entity — confirmed by the
 "Praying For" picker, which lists previously used names for reuse rather than
@@ -66,7 +66,7 @@ The core entity.
 | ------------- | --------------------------------------- | ---------------------------------------------------------------------- |
 | id            | string (PK)                             |                                                                        |
 | userId        | string (FK)                             |                                                                        |
-| recipientId   | string (FK, nullable)                   | null until assigned                                                    |
+| prayeeId      | string (FK, nullable)                   | null until assigned                                                    |
 | categoryId    | string (FK, nullable)                   | null until assigned (Inbox cards show "Select a category")             |
 | requestText   | string                                  | editable; starts as AI transcript or manual entry                      |
 | rawTranscript | string (nullable)                       | original AI output before user edits, kept for reference               |
@@ -101,16 +101,16 @@ into multiple `PrayerRequest`s.
 | ------ | -------------------------- | ------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------- |
 | POST   | `/recordings`              | —                                                                               | `{ recordingId, uploadUrl }`           | returns a presigned S3 URL for direct upload                        |
 | GET    | `/recordings/:id`          | —                                                                               | `Recording` incl. status               | app can poll this while processing                                  |
-| POST   | `/prayers`                 | `{ requestText, recipientId?, categoryId? }`                                    | `PrayerRequest`                        | manual entry path                                                   |
+| POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId? }`                                    | `PrayerRequest`                        | manual entry path                                                   |
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
-| PATCH  | `/prayers/:id`             | any of `{ requestText, recipientId, categoryId, frequencyType, recurringDays }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select |
+| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select |
 | POST   | `/prayers/:id/answer`      | —                                                                               | `PrayerRequest`                        | sets `status=answered`, `answeredAt=now`                            |
 | POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow" }`                                       | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode                            |
-| GET    | `/recipients`              | —                                                                               | `Recipient[]`                          | populates "Praying For" picker                                      |
-| POST   | `/recipients`              | `{ name }`                                                                      | `Recipient`                            | "Add a name"                                                        |
+| GET    | `/prayees`              | —                                                                               | `Prayee[]`                          | populates "Praying For" picker                                      |
+| POST   | `/prayees`              | `{ name }`                                                                      | `Prayee`                            | "Add a name"                                                        |
 | GET    | `/categories`              | —                                                                               | `Category[]`                           | populates "Category" picker (defaults + custom)                     |
 | POST   | `/categories`              | `{ name, icon }`                                                                | `Category`                             | "Add a Category"                                                    |
 | GET    | `/user/me`                 | —                                                                               | `User` incl. stats                     | Profile Screen                                                      |
@@ -147,7 +147,7 @@ into multiple `PrayerRequest`s.
 - "+" button → Record or Manual → `POST /recordings` or `POST /prayers`
   **Individual Prayer Screen**
 - `GET /prayers/:id`
-- Recipient chip → opens "Praying For" picker (`GET`/`POST /recipients`,
+- Prayee chip → opens "Praying For" picker (`GET`/`POST /prayees`,
   then `PATCH /prayers/:id`)
 - Category chip → opens "Category" picker (`GET`/`POST /categories`, then
   `PATCH /prayers/:id`)
@@ -178,7 +178,7 @@ into multiple `PrayerRequest`s.
   see earlier discussion — revisit if "Prayer Journey" or duplicate-detection
   features get built)
 - Semantic duplicate-request detection
-- Category/recipient merging or AI-driven taxonomy cleanup
+- Category/prayee merging or AI-driven taxonomy cleanup
 
 ---
 
@@ -188,13 +188,13 @@ into multiple `PrayerRequest`s.
   every day, or does an algorithm rotate a subset in? (undecided — noted in
   the `Active Deck` glossary entry as "there will be an algorithm for this")
 - **Database**: Postgres/RDS vs DynamoDB — leaning relational given the
-  Recipient/Category/PrayerRequest relationships, pricing to be confirmed
+  Prayee/Category/PrayerRequest relationships, pricing to be confirmed
   (see below)
 - **Auth provider/method**: Cognito vs third-party, and which sign-in
   methods (email/password, social) — still researching
 - **Inbox → Active Deck transition**: what actually triggers a request
   moving from `inbox` to `active`? (e.g., does assigning a category alone do
-  it, or does it require recipient + category + frequency all set?) — not
+  it, or does it require prayee + category + frequency all set?) — not
   yet defined by the mockups, needs a decision
 - **`...` menu on Inbox cards**: contents not yet defined (likely delete /
   edit / move to Active Deck manually)
