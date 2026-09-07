@@ -32,7 +32,7 @@ exports.handler = async (event) => {
           `SELECT
              pr.id,
              pr.user_id         AS "userId",
-             pr.recipient_id    AS "recipientId",
+             pr.prayee_id       AS "prayeeId",
              pr.category_id     AS "categoryId",
              pr.request_text    AS "requestText",
              pr.status,

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    timestamptz NOT NULL DEFAULT now()
 );
 
-CREATE TABLE IF NOT EXISTS recipients (
+CREATE TABLE IF NOT EXISTS prayees (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name        text NOT NULL,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS prayer_requests (
   id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id         uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  recipient_id    uuid REFERENCES recipients(id) ON DELETE SET NULL,
+  prayee_id       uuid REFERENCES prayees(id) ON DELETE SET NULL,
   category_id     uuid REFERENCES categories(id) ON DELETE SET NULL,
   request_text    text NOT NULL,
   raw_transcript  text,
