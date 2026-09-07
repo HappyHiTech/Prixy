@@ -1,25 +1,28 @@
-import { View, ScrollView } from "react-native";
-import { router } from "expo-router";
+import { View, ScrollView } from 'react-native';
+import { router } from 'expo-router';
 
-import StatsCard from "@/features/home/components/StatsCard/StatsCard";
-import ProfileButton from "@/components/ProfileButton/ProfileButton";
-import SegmentedControlSection from "@/features/home/components/SegmentedControlSection/SegmentedControlSection";
-import RequestView from "@/features/home/components/RequestView/RequestView";
+import StatsCard from '@/features/home/components/StatsCard/StatsCard';
+import ProfileButton from '@/components/ProfileButton/ProfileButton';
+import SegmentedControlSection from '@/features/home/components/SegmentedControlSection/SegmentedControlSection';
+import RequestView from '@/features/home/components/RequestView/RequestView';
+import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 
-import NavBar from "@/components/NavBar/Navbar";
+import NavBar from '@/components/NavBar/Navbar';
 
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useHomeStore } from '@/features/home/stores/useHomeStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
-import { styles } from "./HomeScreen.styles";
+import { styles } from './HomeScreen.styles';
 
 const HomeScreen = () => {
   const signOut = useAuthStore((s) => s.signOut);
+  const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
 
   // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
   // sign-out so the auth flow can be re-run from the app.
   const handleProfilePress = async () => {
     await signOut();
-    router.replace("/");
+    router.replace('/');
   };
 
   return (
@@ -37,6 +40,7 @@ const HomeScreen = () => {
         <RequestView />
       </ScrollView>
       <NavBar />
+      {selectedPrayerId ? <PrayeeSidebar /> : ''}
     </View>
   );
 };

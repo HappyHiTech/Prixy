@@ -8,5 +8,7 @@ export const COLORS = {
   primaryText: '#4A4A4A',
   secondaryText: '#999999',
 
+  tint: 'rgba(0, 0, 0, 0.5)',
+
   borderOne: '#E9E9E9',
 } as const;

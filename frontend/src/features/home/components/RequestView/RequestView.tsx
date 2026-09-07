@@ -1,8 +1,10 @@
+import { useMemo } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 
 import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
 
-import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequests';
+import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequestQuery';
+import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
 import { useHomeStore } from '../../stores/useHomeStore';
 
 import { styles } from './RequestView.styles';
@@ -15,7 +17,13 @@ const RequestView = () => {
     isError,
     error,
   } = usePrayerRequests(activeSegment);
-  console.log(prayReqs);
+
+  const { data: prayees } = usePrayeeQuery();
+
+  const prayeeNameById = useMemo(
+    () => new Map((prayees ?? []).map((p) => [p.id, p.name])),
+    [prayees],
+  );
 
   if (isPending) {
     return (
@@ -36,7 +44,13 @@ const RequestView = () => {
   return (
     <View style={styles.container}>
       {prayReqs.map((item) => (
-        <CompactRequestcard key={item.id} prayReq={item} />
+        <CompactRequestcard
+          key={item.id}
+          prayReq={item}
+          prayeeName={
+            item.prayeeId ? prayeeNameById.get(item.prayeeId) : undefined
+          }
+        />
       ))}
     </View>
   );

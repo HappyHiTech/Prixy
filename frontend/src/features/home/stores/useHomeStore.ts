@@ -7,9 +7,15 @@ export type HomeSegment = Extract<PrayerRequestStatus, 'inbox' | 'active'>;
 type HomeStore = {
   activeSegment: HomeSegment;
   setActiveSegment: (s: HomeStore['activeSegment']) => void;
+
+  selectedPrayerId: string | null;
+  setSelectedPrayerId: (p: HomeStore['selectedPrayerId']) => void;
 };
 
 export const useHomeStore = create<HomeStore>((set) => ({
   activeSegment: 'inbox',
   setActiveSegment: (s) => set({ activeSegment: s }),
+
+  selectedPrayerId: null,
+  setSelectedPrayerId: (p) => set({ selectedPrayerId: p }),
 }));
