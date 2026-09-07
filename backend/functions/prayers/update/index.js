@@ -2,6 +2,7 @@ const { withClient } = require("./shared/db");
 
 const UPDATABLE_FIELDS = {
   prayeeId: "prayee_id",
+  categoryId: "category_id",
 };
 
 exports.handler = async (event) => {
@@ -56,6 +57,18 @@ exports.handler = async (event) => {
     .map((f, i) => `${UPDATABLE_FIELDS[f]} = $${i + 3}`)
     .join(", ");
 
+  // A column referenced in SET resolves to the pre-UPDATE row, so a field
+  // included in this PATCH must be read from its placeholder instead. The
+  // cast is required: a bare placeholder appearing only inside CASE gives
+  // Postgres nothing to infer the type from.
+  const fieldExpr = (field) => {
+    const i = updates.indexOf(field);
+    return i === -1 ? `pr.${UPDATABLE_FIELDS[field]}` : `$${i + 3}::uuid`;
+  };
+
+  const prayeeExpr = fieldExpr("prayeeId");
+  const categoryExpr = fieldExpr("categoryId");
+
   try {
     const result = await withClient(async (client) => {
       const user = await client.query(
@@ -76,9 +89,25 @@ exports.handler = async (event) => {
         if (prayee.rows.length === 0) return { badPrayee: true };
       }
 
+      if (body.categoryId != null) {
+        const category = await client.query(
+          `SELECT 1 FROM categories WHERE id = $1 AND user_id = $2`,
+          [body.categoryId, userId],
+        );
+
+        if (category.rows.length === 0) return { badCategory: true };
+      }
+
       const updated = await client.query(
         `UPDATE prayer_requests pr
-            SET ${setClause}
+            SET ${setClause},
+                status = CASE
+                  WHEN pr.status = 'answered' THEN pr.status
+                  WHEN ${prayeeExpr} IS NOT NULL
+                   AND ${categoryExpr} IS NOT NULL
+                  THEN 'active'
+                  ELSE 'inbox'
+                END
            FROM users u
           WHERE pr.user_id = u.id
             AND u.cognito_sub = $1
@@ -107,6 +136,14 @@ exports.handler = async (event) => {
         statusCode: 400,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: "Unknown prayee" }),
+      };
+    }
+
+    if (result.badCategory) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: "Unknown category" }),
       };
     }
 
