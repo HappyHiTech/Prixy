@@ -326,6 +326,26 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  GetPrayerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayers/get/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        GetPrayer:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayers/{id}
+            Method: get
+            Auth:
+              Authorizer: CognitoAuth
+
   UpdatePrayerFunction:
     Type: AWS::Serverless::Function
     Metadata:

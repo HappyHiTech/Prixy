@@ -1,6 +1,8 @@
 const { Client } = require("pg");
 const { Signer } = require("@aws-sdk/rds-signer");
 
+let cachedClient = null;
+
 async function connect() {
   const signer = new Signer({
     hostname: process.env.DB_HOST,
@@ -24,13 +26,27 @@ async function connect() {
   return client;
 }
 
-async function withClient(fn) {
-  const client = await connect();
-  try {
-    return await fn(client);
-  } finally {
-    await client.end();
+async function getClient() {
+  if (cachedClient) {
+    try {
+      await cachedClient.query("SELECT 1");
+      return cachedClient;
+    } catch {
+      cachedClient = null;
+    }
   }
+
+  cachedClient = await connect();
+  cachedClient.on("error", () => {
+    cachedClient = null;
+  });
+
+  return cachedClient;
+}
+
+async function withClient(fn) {
+  const client = await getClient();
+  return fn(client);
 }
 
 module.exports = { connect, withClient };
