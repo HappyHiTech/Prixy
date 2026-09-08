@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     gap: 15,
     justifyContent: 'center',
     height: 74,
-    width: 160,
+    width: 170,
     backgroundColor: COLORS.primary,
     borderRadius: 15,
     ...dropShadow('#000000', 0.25, 4, 0),
