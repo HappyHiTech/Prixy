@@ -3,6 +3,7 @@ const { withClient } = require("./shared/db");
 const UPDATABLE_FIELDS = {
   prayeeId: "prayee_id",
   categoryId: "category_id",
+  requestText: "request_text",
 };
 
 exports.handler = async (event) => {
@@ -49,6 +50,18 @@ exports.handler = async (event) => {
         ).join(", ")}`,
       }),
     };
+  }
+
+  if ("requestText" in body) {
+    if (typeof body.requestText !== "string" || body.requestText.trim() === "") {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: "requestText must be a non-empty string",
+        }),
+      };
+    }
   }
 
   // $1 = cognito sub, $2 = prayer request id, then one placeholder per field.
