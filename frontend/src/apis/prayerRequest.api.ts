@@ -19,6 +19,7 @@ export async function fetchPrayerRequest(id: string): Promise<PrayerRequest> {
 type UpdatePrayerRequestBody = {
   prayeeId?: string | null;
   categoryId?: string | null;
+  requestText?: string;
 };
 
 export async function createPrayerRequest(): Promise<PrayerRequest> {
