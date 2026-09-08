@@ -60,8 +60,12 @@ const EditPrayerScreen = () => {
         <EditPrayerHeader />
         <EditPrayeeCategory prayee={prayee} category={category} />
         <EditPrayerRequest prayerId={id} requestText={prayer.requestText} />
-        <EditFrequncy />
-        <EditAnswered />
+        <EditFrequncy
+          prayerId={id}
+          frequencyType={prayer.frequencyType}
+          recurringDays={prayer.recurringDays}
+        />
+        <EditAnswered prayerId={id} status={prayer.status} />
       </ScrollView>
       {selectedEdit === 'prayee' && (
         <PrayeeSidebar prayerId={id} onClose={closeSidebar} />

@@ -24,6 +24,15 @@ export const styles = StyleSheet.create({
 
   text: {
     ...fontFamily(800),
+    color: COLORS.accent,
     fontSize: 17,
+  },
+
+  pillAnswered: {
+    backgroundColor: COLORS.accent,
+  },
+
+  textAnswered: {
+    color: COLORS.primary,
   },
 });
