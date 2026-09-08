@@ -1,6 +1,10 @@
 import apiFetch from './apiClient';
 
-import type { PrayerRequest, PrayerRequestStatus } from '@/types/prayerRequest';
+import type {
+  PrayerRequest,
+  PrayerRequestStatus,
+  PrayerRequestFrequencyType,
+} from '@/types/prayerRequest';
 
 export async function fetchPrayerRequests(
   status?: PrayerRequestStatus,
@@ -20,6 +24,9 @@ type UpdatePrayerRequestBody = {
   prayeeId?: string | null;
   categoryId?: string | null;
   requestText?: string;
+  frequencyType?: PrayerRequestFrequencyType;
+  recurringDays?: string[];
+  answered?: boolean;
 };
 
 export async function createPrayerRequest(): Promise<PrayerRequest> {
