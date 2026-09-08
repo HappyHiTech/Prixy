@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import type { PrayerRequestStatus } from '@/types/prayerRequest';
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
 
 export type HomeSegment = Extract<PrayerRequestStatus, 'inbox' | 'active'>;
 
@@ -11,7 +12,7 @@ type HomeStore = {
   selectedPrayerId: string | null;
   setSelectedPrayerId: (p: HomeStore['selectedPrayerId']) => void;
 
-  selectedEdit: string | null;
+  selectedEdit: EditTarget | null;
   setSelectedEdit: (e: HomeStore['selectedEdit']) => void;
 };
 

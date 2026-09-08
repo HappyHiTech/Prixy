@@ -20,8 +20,15 @@ import CategorySidebar from '@/features/category/components/CategorySideBar/Cate
 const HomeScreen = () => {
   const signOut = useAuthStore((s) => s.signOut);
   const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
+  const setSelectedPrayerId = useHomeStore((s) => s.setSelectedPrayerId);
   const selectedEdit = useHomeStore((s) => s.selectedEdit);
+  const setSelectedEdit = useHomeStore((s) => s.setSelectedEdit);
   const isActionOpen = useActionButtonStore((s) => s.isActionOpen);
+
+  const closeSidebar = () => {
+    setSelectedPrayerId(null);
+    setSelectedEdit(null);
+  };
 
   // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
   // sign-out so the auth flow can be re-run from the app.
@@ -45,8 +52,12 @@ const HomeScreen = () => {
         <RequestView />
       </ScrollView>
       <NavBar />
-      {selectedPrayerId && selectedEdit === 'prayee' && <PrayeeSidebar />}
-      {selectedPrayerId && selectedEdit === 'category' && <CategorySidebar />}
+      {selectedPrayerId && selectedEdit === 'prayee' && (
+        <PrayeeSidebar prayerId={selectedPrayerId} onClose={closeSidebar} />
+      )}
+      {selectedPrayerId && selectedEdit === 'category' && (
+        <CategorySidebar prayerId={selectedPrayerId} onClose={closeSidebar} />
+      )}
       {isActionOpen && <ActionButton />}
     </View>
   );
