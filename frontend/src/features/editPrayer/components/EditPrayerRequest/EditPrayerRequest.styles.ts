@@ -21,9 +21,14 @@ export const styles = StyleSheet.create({
   text: {
     ...fontFamily(300),
 
+    color: COLORS.primaryText,
     fontSize: 19,
 
     textAlign: 'center',
+  },
+
+  placeholder: {
+    color: COLORS.secondaryText,
   },
 
   edit: {

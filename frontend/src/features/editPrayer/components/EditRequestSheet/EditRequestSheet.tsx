@@ -140,7 +140,7 @@ const EditRequestSheet = ({
                 numberOfLines={8}
                 multiline
                 autoFocus
-                placeholder="What would you like prayer for?"
+                placeholder="What are you praying for?"
               />
             </Animated.View>
           </Pressable>

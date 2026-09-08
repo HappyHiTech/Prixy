@@ -31,7 +31,9 @@ const EditPrayerRequest = ({
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.text}>{requestText}</Text>
+        <Text style={[styles.text, !requestText && styles.placeholder]}>
+          {requestText || 'What are you praying for?'}
+        </Text>
         <Pressable style={styles.edit} onPress={() => setIsSheetOpen(true)}>
           <PencilIcon size={18} color="#747474" />
         </Pressable>
