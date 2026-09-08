@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     gap: 8,
     paddingHorizontal: 24,
-    paddingVertical: 28,
+    paddingVertical: 15,
   },
 
   header: {
