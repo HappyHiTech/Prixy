@@ -8,4 +8,8 @@ export const styles = StyleSheet.create({
 
     backgroundColor: COLORS.primaryBg,
   },
+
+  body: {
+    flex: 1,
+  },
 });

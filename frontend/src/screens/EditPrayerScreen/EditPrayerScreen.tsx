@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
 
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
@@ -26,7 +26,12 @@ const EditPrayerScreen = () => {
 
   const closeSidebar = () => setSelectedEdit(null);
 
-  const { data: prayer, isPending, isError, error } = usePrayerRequestByIdQuery(id);
+  const {
+    data: prayer,
+    isPending,
+    isError,
+    error,
+  } = usePrayerRequestByIdQuery(id);
   const { data: prayees } = usePrayeeQuery();
   const { data: categories } = useCategoriesQuery();
 
@@ -51,11 +56,13 @@ const EditPrayerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <EditPrayerHeader />
-      <EditPrayeeCategory prayee={prayee} category={category} />
-      <EditPrayerRequest />
-      <EditFrequncy />
-      <EditAnswered />
+      <ScrollView style={styles.body}>
+        <EditPrayerHeader />
+        <EditPrayeeCategory prayee={prayee} category={category} />
+        <EditPrayerRequest prayerId={id} requestText={prayer.requestText} />
+        <EditFrequncy />
+        <EditAnswered />
+      </ScrollView>
       {selectedEdit === 'prayee' && (
         <PrayeeSidebar prayerId={id} onClose={closeSidebar} />
       )}

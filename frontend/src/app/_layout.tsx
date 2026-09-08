@@ -1,6 +1,7 @@
 import 'react-native-get-random-values';
 
 import { Slot } from 'expo-router';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -42,8 +43,10 @@ export default function TabLayout() {
   if (!fontsLoaded || isBootstrapping) return null;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Slot />
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <Slot />
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
