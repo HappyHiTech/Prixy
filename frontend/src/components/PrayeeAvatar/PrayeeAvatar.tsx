@@ -4,17 +4,28 @@ import { EllipsisIcon } from 'lucide-react-native';
 import { styles } from './PrayeeAvatar.styles';
 
 type PrayeeAvatarProp = {
+  size?: number;
   onPress?: () => void;
   icon?: string | null;
 };
 
-const PrayeeAvatar = ({ icon, onPress }: PrayeeAvatarProp) => {
+const PrayeeAvatar = ({ size = 51, icon, onPress }: PrayeeAvatarProp) => {
+  const borderWidth = Math.max(1, Math.round(size * 0.06));
+  const innerSize = size - borderWidth * 2;
+  const iconSize = Math.round(innerSize * 0.6);
+  const fontSize = Math.round(innerSize * 0.45);
+
   return (
-    <Pressable style={styles.container} onPress={onPress}>
+    <Pressable
+      style={[styles.container, { width: size, height: size, borderWidth }]}
+      onPress={onPress}
+    >
       {icon ? (
-        <Text style={styles.icon}>{icon}</Text>
+        <Text style={[styles.icon, { fontSize }]} numberOfLines={1}>
+          {icon}
+        </Text>
       ) : (
-        <EllipsisIcon size={24} color="#000" />
+        <EllipsisIcon size={iconSize} color="#000" />
       )}
     </Pressable>
   );
