@@ -7,9 +7,8 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     gap: 15,
-
-    justifyContent: 'center',
     height: 74,
+    paddingHorizontal: 15,
     width: 170,
 
     backgroundColor: COLORS.primary,
@@ -20,8 +19,9 @@ export const styles = StyleSheet.create({
 
   text: {
     ...fontFamily(400),
-    color: COLORS.secondary,
+    flexShrink: 1,
 
+    color: COLORS.secondary,
     fontSize: 15,
   },
 });

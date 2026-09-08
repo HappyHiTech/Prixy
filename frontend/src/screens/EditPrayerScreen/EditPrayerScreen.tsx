@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { View } from 'react-native';
+import { View, ActivityIndicator, Text } from 'react-native';
 
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
@@ -12,6 +12,10 @@ import EditAnswered from '@/features/editPrayer/components/EditAnswered/EditAnsw
 
 import { useEditPrayerStore } from '@/features/editPrayer/stores/useEditPrayerStore';
 
+import { usePrayerRequestByIdQuery } from '@/hooks/TanStack/usePrayerRequestByIdQuery';
+import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
+import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
+
 import { styles } from './EditPrayerScreen.styles';
 
 const EditPrayerScreen = () => {
@@ -22,10 +26,33 @@ const EditPrayerScreen = () => {
 
   const closeSidebar = () => setSelectedEdit(null);
 
+  const { data: prayer, isPending, isError, error } = usePrayerRequestByIdQuery(id);
+  const { data: prayees } = usePrayeeQuery();
+  const { data: categories } = useCategoriesQuery();
+
+  if (isPending) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <Text>{error.message}</Text>
+      </View>
+    );
+  }
+
+  const prayee = prayees?.find((p) => p.id === prayer.prayeeId);
+  const category = categories?.find((c) => c.id === prayer.categoryId);
+
   return (
     <View style={styles.container}>
       <EditPrayerHeader />
-      <EditPrayeeCategory />
+      <EditPrayeeCategory prayee={prayee} category={category} />
       <EditPrayerRequest />
       <EditFrequncy />
       <EditAnswered />

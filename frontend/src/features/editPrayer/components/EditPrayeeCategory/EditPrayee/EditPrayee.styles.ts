@@ -6,8 +6,8 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     gap: 15,
-    justifyContent: 'center',
     height: 74,
+    paddingHorizontal: 15,
     width: 170,
     backgroundColor: COLORS.primary,
     borderRadius: 15,
@@ -17,6 +17,7 @@ export const styles = StyleSheet.create({
 
   text: {
     ...fontFamily(400),
+    flexShrink: 1,
     color: COLORS.secondary,
     fontSize: 15,
   },

@@ -12,6 +12,10 @@ export async function fetchPrayerRequests(
   return apiFetch<PrayerRequest[]>(`/prayers?${query.toString()}`);
 }
 
+export async function fetchPrayerRequest(id: string): Promise<PrayerRequest> {
+  return apiFetch<PrayerRequest>(`/prayers/${id}`);
+}
+
 type UpdatePrayerRequestBody = {
   prayeeId?: string | null;
   categoryId?: string | null;
