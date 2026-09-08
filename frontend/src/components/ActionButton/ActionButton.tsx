@@ -3,15 +3,13 @@ import { View, Text, Pressable } from 'react-native';
 import { Mic, Pencil } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
+import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/useCreatePrayerRequestMutation';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
 
 import { COLORS } from '@/constants';
 
 import { styles } from './ActionButton.styles';
 
-// Path exported from Figma (Add Prayer → Popup → Popup Background).
-// The viewBox is inset by 4px on each side to leave room for the shadow,
-// so the 319x146 card is drawn at an offset of (4, 4).
 const WIDTH = 327;
 const HEIGHT = 154;
 
@@ -24,6 +22,18 @@ const cardPath =
 const ActionButton = () => {
   const router = useRouter();
   const closeAction = useActionButtonStore((s) => s.closeAction);
+  const { mutate: createPrayer, isPending } = useCreatePrayerRequestMutation();
+
+  const handleManual = () => {
+    if (isPending) return;
+
+    createPrayer(undefined, {
+      onSuccess: (created) => {
+        router.push(`/edit-prayer?id=${created.id}`);
+        closeAction();
+      },
+    });
+  };
 
   return (
     <Pressable style={styles.container} onPress={closeAction}>
@@ -43,10 +53,8 @@ const ActionButton = () => {
           </Pressable>
           <Pressable
             style={styles.option}
-            onPress={() => {
-              router.push('/edit-prayer');
-              closeAction();
-            }}
+            onPress={handleManual}
+            disabled={isPending}
           >
             <Pencil />
             <Text style={styles.text}>Manual</Text>

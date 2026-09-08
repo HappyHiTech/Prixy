@@ -17,6 +17,12 @@ type UpdatePrayerRequestBody = {
   categoryId?: string | null;
 };
 
+export async function createPrayerRequest(): Promise<PrayerRequest> {
+  return apiFetch<PrayerRequest>('/prayers', {
+    method: 'POST',
+  });
+}
+
 export async function updatePrayerRequest(
   id: string,
   updates: UpdatePrayerRequestBody,
