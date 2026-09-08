@@ -4,6 +4,7 @@ import EditPrayerHeader from '@/features/editPrayer/components/EditPrayerHeader/
 import EditPrayeeCategory from '@/features/editPrayer/components/EditPrayeeCategory/EditPrayeeCategory';
 import EditPrayerRequest from '@/features/editPrayer/components/EditPrayerRequest/EditPrayerRequest';
 import EditFrequncy from '@/features/editPrayer/components/EditFrequncy/EditFrequncy';
+import EditAnswered from '@/features/editPrayer/components/EditAnswered/EditAnswered';
 
 import { styles } from './EditPrayerScreen.styles';
 
@@ -14,6 +15,7 @@ const EditPrayerScreen = () => {
       <EditPrayeeCategory />
       <EditPrayerRequest />
       <EditFrequncy />
+      <EditAnswered />
     </View>
   );
 };
