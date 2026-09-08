@@ -106,8 +106,7 @@ into multiple `PrayerRequest`s.
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
-| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule |
-| POST   | `/prayers/:id/answer`      | —                                                                               | `PrayerRequest`                        | sets `status=answered`, `answeredAt=now`                            |
+| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays, answered }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule. `answered: true` sets `status=answered` + `answeredAt=now`; `answered: false` clears `answeredAt` and re-derives status |
 | POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow" }`                                       | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode                            |
 | GET    | `/prayees`              | —                                                                               | `Prayee[]`                          | populates "Praying For" picker                                      |
 | POST   | `/prayees`              | `{ name }`                                                                      | `Prayee`                            | "Add a name"                                                        |
@@ -153,7 +152,9 @@ into multiple `PrayerRequest`s.
   `PATCH /prayers/:id`)
 - Editable request text → `PATCH /prayers/:id`
 - "Set Frequency" (One time / Mon–Sun) → `PATCH /prayers/:id`
-- "Mark As Answered" → `POST /prayers/:id/answer`
+- "Mark As Answered" (toggle) → `PATCH /prayers/:id { answered: boolean }` —
+  `true` sets `status=answered` + `answeredAt=now`; `false` clears `answeredAt`
+  and re-derives status from prayee/category
   **Prayer Mode**
 - Queue: `GET /prayers?status=active`
 - Swipe right (prayed) → `POST /prayers/:id/pray { action: "done" }`
@@ -196,7 +197,9 @@ into multiple `PrayerRequest`s.
   exactly when both `prayeeId` and `categoryId` are non-null, and returns to
   `inbox` if either is cleared. `frequencyType` is not part of the rule.
   Derived server-side in `PATCH /prayers/:id`, never by the client.
-  `answered` requests are exempt and never change status this way.
+  `answered` requests are exempt and never change status this way; the only way
+  out of `answered` is an explicit `{ answered: false }` in the same PATCH,
+  which re-applies the rule above.
   Known gap: the `ON DELETE SET NULL` foreign keys mean deleting a prayee or
   category nulls the field without re-evaluating status, leaving orphaned
   `active` rows.
