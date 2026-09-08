@@ -1,37 +1,65 @@
-import { useState } from 'react';
 import { View, Text, Pressable } from 'react-native';
+
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+
+import type { PrayerRequestFrequencyType } from '@/types/prayerRequest';
 
 import { styles } from './EditFrequncy.styles';
 
 const ONE_TIME = 'One time';
 
-const FREQUENCY = [
-  ONE_TIME,
-  'Mon',
-  'Tues',
-  'Wed',
-  'Thurs',
-  'Fri',
-  'Sat',
-  'Sun',
-] as const;
 
-type Frequency = (typeof FREQUENCY)[number];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 
-const EditFrequncy = () => {
-  const [selected, setSelected] = useState<Frequency[]>([ONE_TIME]);
+const OPTIONS = [ONE_TIME, ...DAYS] as const;
 
-  const toggle = (item: Frequency) => {
-    setSelected((current) => {
-      if (item === ONE_TIME) return [ONE_TIME];
+type Option = (typeof OPTIONS)[number];
 
-      const withoutOneTime = current.filter((value) => value !== ONE_TIME);
-      const isSelected = withoutOneTime.includes(item);
-      const next = isSelected
-        ? withoutOneTime.filter((value) => value !== item)
-        : [...withoutOneTime, item];
+type EditFrequncyProps = {
+  prayerId: string;
+  frequencyType: PrayerRequestFrequencyType;
+  recurringDays: string[];
+};
 
-      return next.length === 0 ? [ONE_TIME] : next;
+const EditFrequncy = ({
+  prayerId,
+  frequencyType,
+  recurringDays,
+}: EditFrequncyProps) => {
+  const { mutate } = useUpdatePrayerRequest();
+
+  const selected: Option[] =
+    frequencyType === 'one_time'
+      ? [ONE_TIME]
+      : (recurringDays.filter((day) =>
+          DAYS.includes(day as (typeof DAYS)[number]),
+        ) as Option[]);
+
+  const toggle = (item: Option) => {
+    if (item === ONE_TIME) {
+      if (frequencyType === 'one_time') return;
+
+      mutate({
+        id: prayerId,
+        frequencyType: 'one_time',
+        recurringDays: [],
+      });
+      return;
+    }
+
+    const current = frequencyType === 'one_time' ? [] : selected;
+    const isSelected = current.includes(item);
+    const next = isSelected
+      ? current.filter((value) => value !== item)
+      : [...current, item];
+
+
+    const nextDays = DAYS.filter((day) => next.includes(day));
+
+    mutate({
+      id: prayerId,
+      frequencyType: nextDays.length === 0 ? 'one_time' : 'recurring',
+      recurringDays: nextDays.length === 0 ? [] : [...nextDays],
     });
   };
 
@@ -39,7 +67,7 @@ const EditFrequncy = () => {
     <View style={styles.container}>
       <Text style={styles.header}>Set Frequncy</Text>
       <View style={styles.card}>
-        {FREQUENCY.map((item, index) => {
+        {OPTIONS.map((item, index) => {
           const isSelected = selected.includes(item);
 
           return (
