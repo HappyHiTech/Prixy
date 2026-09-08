@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
 import { Mic, Pencil } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
@@ -21,6 +22,7 @@ const cardPath =
   '4 30 4H297Z';
 
 const ActionButton = () => {
+  const router = useRouter();
   const closeAction = useActionButtonStore((s) => s.closeAction);
 
   return (
@@ -39,7 +41,13 @@ const ActionButton = () => {
             <Mic />
             <Text style={styles.text}>Record</Text>
           </Pressable>
-          <Pressable style={styles.option} onPress={() => {}}>
+          <Pressable
+            style={styles.option}
+            onPress={() => {
+              router.push('/edit-prayer');
+              closeAction();
+            }}
+          >
             <Pencil />
             <Text style={styles.text}>Manual</Text>
           </Pressable>
