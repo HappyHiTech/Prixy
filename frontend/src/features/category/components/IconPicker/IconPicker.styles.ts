@@ -2,21 +2,21 @@ import { StyleSheet } from 'react-native';
 
 import { COLORS } from '@/constants';
 
+export const COLUMNS = 5;
+export const GAP = 12;
+
 export const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12,
+    gap: GAP,
   },
 
   option: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 52,
-    width: 52,
     backgroundColor: COLORS.primaryBg,
     borderColor: 'transparent',
-    borderRadius: 26,
     borderWidth: 2,
   },
 
