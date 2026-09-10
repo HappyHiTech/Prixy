@@ -1,8 +1,7 @@
-import { useState } from 'react';
-import { View, Pressable, type LayoutChangeEvent } from 'react-native';
+import { View, Pressable } from 'react-native';
 
 import { CATEGORY_ICONS, COLORS } from '@/constants';
-import { styles, COLUMNS, GAP } from './IconPicker.styles';
+import { styles, COLUMNS } from './IconPicker.styles';
 
 type IconPickerProp = {
   value: string;
@@ -10,43 +9,43 @@ type IconPickerProp = {
   disabled?: boolean;
 };
 
+const rows = Array.from(
+  { length: Math.ceil(CATEGORY_ICONS.length / COLUMNS) },
+  (_, i) => CATEGORY_ICONS.slice(i * COLUMNS, (i + 1) * COLUMNS),
+);
+
 const IconPicker = ({ value, onChange, disabled }: IconPickerProp) => {
-  const [width, setWidth] = useState(0);
-
-  const handleLayout = (e: LayoutChangeEvent) => {
-    setWidth(e.nativeEvent.layout.width);
-  };
-
-
-  const size = width > 0 ? (width - GAP * (COLUMNS - 1)) / COLUMNS : 0;
-
   return (
-    <View style={styles.grid} onLayout={handleLayout}>
-      {size > 0 &&
-        CATEGORY_ICONS.map(({ name, label, Icon }) => {
-          const isSelected = name === value;
+    <View style={styles.container}>
+      {rows.map((row, index) => (
+        <View key={index} style={styles.grid}>
+          {row.map(({ name, label, Icon }) => {
+            const isSelected = name === value;
 
-          return (
-            <Pressable
-              key={name}
-              style={[
-                styles.option,
-                { width: size, height: size, borderRadius: size / 2 },
-                isSelected && styles.optionSelected,
-              ]}
-              onPress={() => onChange(name)}
-              disabled={disabled}
-              accessibilityRole="button"
-              accessibilityLabel={label}
-              accessibilityState={{ selected: isSelected }}
-            >
-              <Icon
-                size={Math.round(size * 0.45)}
-                color={isSelected ? COLORS.accent : COLORS.primaryText}
-              />
-            </Pressable>
-          );
-        })}
+            return (
+              <Pressable
+                key={name}
+                style={[styles.option, isSelected && styles.optionSelected]}
+                onPress={() => onChange(name)}
+                disabled={disabled}
+                accessibilityRole="button"
+                accessibilityLabel={label}
+                accessibilityState={{ selected: isSelected }}
+              >
+                <Icon
+                  size={24}
+                  color={isSelected ? COLORS.accent : COLORS.primaryText}
+                />
+              </Pressable>
+            );
+          })}
+
+          {/* Keep a short final row aligned to the grid instead of stretched. */}
+          {Array.from({ length: COLUMNS - row.length }, (_, i) => (
+            <View key={`spacer-${i}`} style={styles.spacer} />
+          ))}
+        </View>
+      ))}
     </View>
   );
 };

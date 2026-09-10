@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, ScrollView } from 'react-native';
+import { View, Text, TextInput } from 'react-native';
 
 import BottomSheet from '@/components/BottomSheet/BottomSheet';
 import CategoryAvatar from '@/components/CategoryAvatar/CategoryAvatar';
@@ -54,7 +54,7 @@ const AddCategorySheet = ({ onClose }: AddCategorySheetProp) => {
       onClose={onClose}
       onSave={handleSave}
     >
-      <ScrollView style={styles.body} keyboardShouldPersistTaps="handled">
+      <View style={styles.body}>
         <View style={styles.preview}>
           <CategoryAvatar icon={icon} size={64} />
         </View>
@@ -81,7 +81,7 @@ const AddCategorySheet = ({ onClose }: AddCategorySheetProp) => {
           <Text style={styles.label}>ICON</Text>
           <IconPicker value={icon} onChange={setIcon} disabled={isPending} />
         </View>
-      </ScrollView>
+      </View>
     </BottomSheet>
   );
 };

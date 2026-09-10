@@ -10,6 +10,8 @@ export const styles = StyleSheet.create({
   },
 
   keyboardView: {
+  
+    flex: 1,
     justifyContent: 'flex-end',
   },
 
