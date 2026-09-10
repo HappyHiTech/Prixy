@@ -36,7 +36,7 @@ const PrayeeSidebar = ({ prayerId, onClose }: PrayeeSidebarProp) => {
         exit={onClose}
       />
 
-      <AddPrayeeSheet visible={isAdding} onClose={() => setIsAdding(false)} />
+      {isAdding && <AddPrayeeSheet onClose={() => setIsAdding(false)} />}
     </>
   );
 };

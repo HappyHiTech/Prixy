@@ -3,6 +3,11 @@ import { StyleSheet } from 'react-native';
 import { COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
+  body: {
+    marginHorizontal: 20,
+    marginTop: 18,
+  },
+
   label: {
     marginBottom: 8,
     color: COLORS.secondaryText,
@@ -12,14 +17,17 @@ export const styles = StyleSheet.create({
   },
 
   input: {
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    ...fontFamily(300),
+
+    padding: 14,
+
     backgroundColor: COLORS.primaryBg,
-    borderColor: COLORS.borderOne,
-    borderRadius: 10,
+
+    borderColor: 'transparent',
+    borderRadius: 12,
     borderWidth: 1,
     color: COLORS.primaryText,
-    fontSize: 16,
+    fontSize: 17,
   },
 
   inputError: {

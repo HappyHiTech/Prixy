@@ -11,11 +11,10 @@ import { COLORS, DEFAULT_CATEGORY_ICON } from '@/constants';
 import { styles } from './AddCategorySheet.styles';
 
 type AddCategorySheetProp = {
-  visible: boolean;
   onClose: () => void;
 };
 
-const AddCategorySheet = ({ visible, onClose }: AddCategorySheetProp) => {
+const AddCategorySheet = ({ onClose }: AddCategorySheetProp) => {
   const [name, setName] = useState('');
   const [icon, setIcon] = useState(DEFAULT_CATEGORY_ICON);
   const [error, setError] = useState<string | null>(null);
@@ -23,13 +22,6 @@ const AddCategorySheet = ({ visible, onClose }: AddCategorySheetProp) => {
   const { mutate, isPending } = useCreateCategoryMutation();
 
   const trimmed = name.trim();
-
-  const close = () => {
-    setName('');
-    setIcon(DEFAULT_CATEGORY_ICON);
-    setError(null);
-    onClose();
-  };
 
   const handleChange = (value: string) => {
     setName(value);
@@ -42,7 +34,7 @@ const AddCategorySheet = ({ visible, onClose }: AddCategorySheetProp) => {
     mutate(
       { name: trimmed, icon },
       {
-        onSuccess: close,
+        onSuccess: onClose,
         onError: (err) => {
           setError(
             err instanceof ApiError
@@ -56,14 +48,13 @@ const AddCategorySheet = ({ visible, onClose }: AddCategorySheetProp) => {
 
   return (
     <BottomSheet
-      visible={visible}
       title="Add a Category"
       canSave={trimmed.length > 0}
       isSaving={isPending}
-      onCancel={close}
+      onClose={onClose}
       onSave={handleSave}
     >
-      <ScrollView keyboardShouldPersistTaps="handled">
+      <ScrollView style={styles.body} keyboardShouldPersistTaps="handled">
         <View style={styles.preview}>
           <CategoryAvatar icon={icon} size={64} />
         </View>

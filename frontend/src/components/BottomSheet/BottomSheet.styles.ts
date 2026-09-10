@@ -4,57 +4,70 @@ import { COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   backdrop: {
-    position: 'absolute',
-    inset: 0,
+    flex: 1,
+    justifyContent: 'flex-end',
     backgroundColor: COLORS.tint,
+  },
+
+  keyboardView: {
     justifyContent: 'flex-end',
   },
 
   sheet: {
-    maxHeight: '85%',
-    paddingBottom: 34,
+    paddingBottom: 30,
     backgroundColor: COLORS.primary,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+  },
+
+  handleArea: {
+    alignItems: 'center',
+    paddingBottom: 6,
+    paddingTop: 10,
+  },
+
+  handle: {
+    height: 5,
+    width: 40,
+    backgroundColor: COLORS.borderOne,
+    borderRadius: 3,
   },
 
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 20,
+    paddingBottom: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.borderOne,
+    borderColor: COLORS.borderOne,
   },
 
   title: {
-    color: COLORS.accent,
-    ...fontFamily(800),
-    fontSize: 17,
-  },
+    ...fontFamily(700),
 
-  action: {
-    minWidth: 60,
     color: COLORS.accent,
+
     fontSize: 16,
   },
 
-  actionCancel: {
-    color: COLORS.secondaryText,
-    textAlign: 'left',
-  },
+  action: {
+    ...fontFamily(500),
 
-  actionSave: {
-    textAlign: 'right',
+    color: COLORS.accent,
+
+    fontSize: 15,
   },
 
   actionDisabled: {
-    opacity: 0.35,
+    color: COLORS.secondaryText,
   },
 
-  body: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
+  actionButton: {
+    minWidth: 60,
+  },
+
+  actionRight: {
+    alignItems: 'flex-end',
   },
 });

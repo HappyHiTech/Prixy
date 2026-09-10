@@ -36,7 +36,7 @@ const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
         exit={onClose}
       />
 
-      <AddCategorySheet visible={isAdding} onClose={() => setIsAdding(false)} />
+      {isAdding && <AddCategorySheet onClose={() => setIsAdding(false)} />}
     </>
   );
 };

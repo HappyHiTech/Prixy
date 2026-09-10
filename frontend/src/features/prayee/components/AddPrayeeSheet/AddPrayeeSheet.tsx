@@ -9,23 +9,16 @@ import { COLORS } from '@/constants';
 import { styles } from './AddPrayeeSheet.styles';
 
 type AddPrayeeSheetProp = {
-  visible: boolean;
   onClose: () => void;
 };
 
-const AddPrayeeSheet = ({ visible, onClose }: AddPrayeeSheetProp) => {
+const AddPrayeeSheet = ({ onClose }: AddPrayeeSheetProp) => {
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const { mutate, isPending } = useCreatePrayeeMutation();
 
   const trimmed = name.trim();
-
-  const close = () => {
-    setName('');
-    setError(null);
-    onClose();
-  };
 
   const handleChange = (value: string) => {
     setName(value);
@@ -38,7 +31,7 @@ const AddPrayeeSheet = ({ visible, onClose }: AddPrayeeSheetProp) => {
     mutate(
       { name: trimmed },
       {
-        onSuccess: close,
+        onSuccess: onClose,
         onError: (err) => {
           setError(
             err instanceof ApiError
@@ -52,14 +45,13 @@ const AddPrayeeSheet = ({ visible, onClose }: AddPrayeeSheetProp) => {
 
   return (
     <BottomSheet
-      visible={visible}
       title="Add a name"
       canSave={trimmed.length > 0}
       isSaving={isPending}
-      onCancel={close}
+      onClose={onClose}
       onSave={handleSave}
     >
-      <View>
+      <View style={styles.body}>
         <Text style={styles.label}>NAME</Text>
 
         <TextInput

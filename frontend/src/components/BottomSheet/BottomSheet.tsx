@@ -1,80 +1,140 @@
 import {
-  Modal,
   View,
   Text,
+  Modal,
   Pressable,
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
+  useWindowDimensions,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  SlideInDown,
+} from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import { COLORS } from '@/constants';
+
 import { styles } from './BottomSheet.styles';
 
-type BottomSheetProp = {
-  visible: boolean;
+const DISMISS_DISTANCE = 120;
+const DURATION = 250;
+
+type BottomSheetProps = {
   title: string;
   saveLabel?: string;
   canSave: boolean;
-  isSaving: boolean;
-  onCancel: () => void;
+  isSaving?: boolean;
+  onClose: () => void;
   onSave: () => void;
   children: React.ReactNode;
 };
 
 const BottomSheet = ({
-  visible,
   title,
   saveLabel = 'Save',
   canSave,
-  isSaving,
-  onCancel,
+  isSaving = false,
+  onClose,
   onSave,
   children,
-}: BottomSheetProp) => {
+}: BottomSheetProps) => {
+  const { height } = useWindowDimensions();
+  const translateY = useSharedValue(0);
+
+  const close = () => {
+    translateY.value = withTiming(height, { duration: DURATION }, (done) => {
+      if (done) scheduleOnRN(onClose);
+    });
+  };
+
+  const pan = Gesture.Pan()
+    .enabled(!isSaving)
+    .onChange((e) => {
+      translateY.value = Math.max(0, translateY.value + e.changeY);
+    })
+    .onEnd(() => {
+      if (translateY.value > DISMISS_DISTANCE) {
+        translateY.value = withTiming(
+          height,
+          { duration: DURATION },
+          (done) => {
+            if (done) scheduleOnRN(onClose);
+          },
+        );
+      } else {
+        translateY.value = withTiming(0, { duration: DURATION });
+      }
+    });
+
+  const sheetStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  const isSaveDisabled = !canSave || isSaving;
+
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={onCancel}
-    >
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <Pressable style={styles.backdrop} onPress={onCancel}>
-          <Pressable style={styles.sheet} onPress={() => {}}>
-            <View style={styles.header}>
-              <Pressable onPress={onCancel} disabled={isSaving}>
-                <Text style={[styles.action, styles.actionCancel]}>Cancel</Text>
-              </Pressable>
-
-              <Text style={styles.title}>{title}</Text>
-
-              {isSaving ? (
-                <View style={styles.action}>
-                  <ActivityIndicator size="small" color={COLORS.accent} />
+    <Modal visible transparent animationType="none" onRequestClose={close}>
+      <Pressable style={styles.backdrop} onPress={isSaving ? undefined : close}>
+        <KeyboardAvoidingView
+          style={styles.keyboardView}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <Pressable onPress={() => {}}>
+            <Animated.View
+              style={[styles.sheet, sheetStyle]}
+              entering={SlideInDown.duration(DURATION)}
+            >
+              <GestureDetector gesture={pan}>
+                <View style={styles.handleArea}>
+                  <View style={styles.handle} />
                 </View>
-              ) : (
-                <Pressable onPress={onSave} disabled={!canSave}>
+              </GestureDetector>
+
+              <View style={styles.header}>
+                <Pressable
+                  style={styles.actionButton}
+                  onPress={close}
+                  disabled={isSaving}
+                >
                   <Text
-                    style={[
-                      styles.action,
-                      styles.actionSave,
-                      !canSave && styles.actionDisabled,
-                    ]}
+                    style={[styles.action, isSaving && styles.actionDisabled]}
                   >
-                    {saveLabel}
+                    Cancel
                   </Text>
                 </Pressable>
-              )}
-            </View>
 
-            <View style={styles.body}>{children}</View>
+                <Text style={styles.title}>{title}</Text>
+
+                <Pressable
+                  style={[styles.actionButton, styles.actionRight]}
+                  onPress={onSave}
+                  disabled={isSaveDisabled}
+                >
+                  {isSaving ? (
+                    <ActivityIndicator size="small" color={COLORS.accent} />
+                  ) : (
+                    <Text
+                      style={[
+                        styles.action,
+                        isSaveDisabled && styles.actionDisabled,
+                      ]}
+                    >
+                      {saveLabel}
+                    </Text>
+                  )}
+                </Pressable>
+              </View>
+
+              {children}
+            </Animated.View>
           </Pressable>
-        </Pressable>
-      </KeyboardAvoidingView>
+        </KeyboardAvoidingView>
+      </Pressable>
     </Modal>
   );
 };
