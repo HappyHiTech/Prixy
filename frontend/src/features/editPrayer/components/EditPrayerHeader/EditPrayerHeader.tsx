@@ -3,15 +3,23 @@ import { Text, View } from 'react-native';
 
 import GoBackButton from '@/components/GoBackButton/GoBackButton';
 
+import type { Prayee } from '@/types/prayee';
+
 import { styles } from './EditPrayerHeader.styles';
 
-const EditPrayerHeader = () => {
+type EditPrayerHeaderProp = {
+  prayee?: Prayee;
+};
+
+const EditPrayerHeader = ({ prayee }: EditPrayerHeaderProp) => {
   const router = useRouter();
+
+  const firstName = prayee?.name.trim().split(/\s+/)[0];
 
   return (
     <View style={styles.container}>
       <GoBackButton onPress={() => router.push('/home')} />
-      <Text style={styles.title}>Prayer For Harvey</Text>
+      {firstName && <Text style={styles.title}>Prayer For {firstName}</Text>}
     </View>
   );
 };

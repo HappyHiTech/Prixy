@@ -58,7 +58,7 @@ const EditPrayerScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView style={styles.body}>
-        <EditPrayerHeader />
+        <EditPrayerHeader prayee={prayee} />
         <EditPrayeeCategory prayee={prayee} category={category} />
         <EditPrayerRequest prayerId={id} requestText={prayer.requestText} />
         <EditFrequncy
