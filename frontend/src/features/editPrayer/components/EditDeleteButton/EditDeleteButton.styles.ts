@@ -6,24 +6,29 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom: 40,
     paddingHorizontal: 24,
   },
 
-  button: {
+  card: {
     alignItems: 'center',
     flexDirection: 'row',
-    gap: 15,
+    gap: 10,
     justifyContent: 'center',
     paddingVertical: 13,
     width: 332,
-    backgroundColor: COLORS.danger,
+    backgroundColor: COLORS.primary,
     borderRadius: 30,
     ...dropShadow('#000000', 0.25, 4, 0),
   },
 
+  cardPressed: {
+    opacity: 0.6,
+  },
+
   text: {
     ...fontFamily(800),
-    color: COLORS.primary,
+    color: COLORS.dangerText,
     fontSize: 17,
   },
 });
