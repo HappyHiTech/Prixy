@@ -1,12 +1,22 @@
 import { View, Text, Pressable, Alert } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { Trash2 } from 'lucide-react-native';
+
+import { useDeletePrayerRequest } from '@/hooks/TanStack/useDeletePrayersRequestMutation';
 
 import { COLORS } from '@/constants';
 
 import { styles } from './EditDeleteButton.styles';
 
-const EditDeleteButton = () => {
+type EditDeleteButtonProps = {
+  prayerId: string;
+};
+
+const EditDeleteButton = ({ prayerId }: EditDeleteButtonProps) => {
+  const router = useRouter();
+  const { mutate, isPending } = useDeletePrayerRequest();
+
   const confirmDelete = () => {
     Alert.alert(
       'Delete this request?',
@@ -16,8 +26,12 @@ const EditDeleteButton = () => {
         {
           text: 'Delete',
           style: 'destructive',
-          // TODO: wire up to a delete mutation once the endpoint exists.
-          onPress: () => {},
+          onPress: () =>
+            mutate(prayerId, {
+              onSuccess: () => router.replace('/home'),
+              onError: (error) =>
+                Alert.alert('Could not delete', error.message),
+            }),
         },
       ],
     );
@@ -27,12 +41,16 @@ const EditDeleteButton = () => {
     <View style={styles.container}>
       <Pressable
         onPress={confirmDelete}
+        disabled={isPending}
         accessibilityRole="button"
         accessibilityLabel="Delete prayer request"
+        accessibilityState={{ disabled: isPending }}
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
         <Trash2 size={20} color={COLORS.dangerText} />
-        <Text style={styles.text}>Delete Request</Text>
+        <Text style={styles.text}>
+          {isPending ? 'Deleting…' : 'Delete Request'}
+        </Text>
       </Pressable>
     </View>
   );

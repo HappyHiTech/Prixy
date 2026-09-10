@@ -67,7 +67,7 @@ const EditPrayerScreen = () => {
           recurringDays={prayer.recurringDays}
         />
         <EditAnswered prayerId={id} status={prayer.status} />
-        <EditDeleteButton />
+        <EditDeleteButton prayerId={id} />
       </ScrollView>
       {selectedEdit === 'prayee' && (
         <PrayeeSidebar prayerId={id} onClose={closeSidebar} />

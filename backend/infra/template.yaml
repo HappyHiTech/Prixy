@@ -366,6 +366,26 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  DeletePrayerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayers/delete/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        DeletePrayer:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayers/{id}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuth
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API

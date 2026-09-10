@@ -6,6 +6,15 @@ import type {
   PrayerRequestFrequencyType,
 } from '@/types/prayerRequest';
 
+type UpdatePrayerRequestBody = {
+  prayeeId?: string | null;
+  categoryId?: string | null;
+  requestText?: string;
+  frequencyType?: PrayerRequestFrequencyType;
+  recurringDays?: string[];
+  answered?: boolean;
+};
+
 export async function fetchPrayerRequests(
   status?: PrayerRequestStatus,
 ): Promise<PrayerRequest[]> {
@@ -20,15 +29,6 @@ export async function fetchPrayerRequest(id: string): Promise<PrayerRequest> {
   return apiFetch<PrayerRequest>(`/prayers/${id}`);
 }
 
-type UpdatePrayerRequestBody = {
-  prayeeId?: string | null;
-  categoryId?: string | null;
-  requestText?: string;
-  frequencyType?: PrayerRequestFrequencyType;
-  recurringDays?: string[];
-  answered?: boolean;
-};
-
 export async function createPrayerRequest(): Promise<PrayerRequest> {
   return apiFetch<PrayerRequest>('/prayers', {
     method: 'POST',
@@ -42,5 +42,11 @@ export async function updatePrayerRequest(
   return apiFetch<PrayerRequest>(`/prayers/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(updates),
+  });
+}
+
+export async function deletePrayerRequest(id: string): Promise<void> {
+  return apiFetch<void>(`/prayers/${id}`, {
+    method: 'DELETE',
   });
 }
