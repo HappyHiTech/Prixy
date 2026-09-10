@@ -306,6 +306,26 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  CreatePrayeeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayees/create/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        CreatePrayee:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayees
+            Method: post
+            Auth:
+              Authorizer: CognitoAuth
+
   ListCategoriesFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -323,6 +343,26 @@ Resources:
             RestApiId: !Ref PrixyApi
             Path: /categories
             Method: get
+            Auth:
+              Authorizer: CognitoAuth
+
+  CreateCategoryFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/categories/create/
+      Handler: index.handler
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        CreateCategory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /categories
+            Method: post
             Auth:
               Authorizer: CognitoAuth
 
