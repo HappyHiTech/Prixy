@@ -26,6 +26,7 @@ const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
       isError={isError}
       isSaving={isSaving}
       onSelect={handleSelect}
+      onAdd={() => {}}
       exit={onClose}
     />
   );

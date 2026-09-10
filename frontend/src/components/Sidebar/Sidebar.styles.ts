@@ -46,6 +46,10 @@ export const styles = StyleSheet.create({
     ...dropShadow('#000000', 0.12, 4, 0),
   },
 
+  addPressed: {
+    opacity: 0.6,
+  },
+
   addText: {
     color: '#9CA3AF',
   },

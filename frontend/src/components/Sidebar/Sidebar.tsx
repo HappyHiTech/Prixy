@@ -22,6 +22,7 @@ type SidebarProp = {
   isError: boolean;
   isSaving?: boolean;
   onSelect: (id: string) => void;
+  onAdd: () => void;
   exit: () => void;
 };
 
@@ -33,6 +34,7 @@ const Sidebar = ({
   isPending,
   isSaving,
   onSelect,
+  onAdd,
   exit,
 }: SidebarProp) => {
   return (
@@ -40,7 +42,10 @@ const Sidebar = ({
       <Pressable style={styles.sideBar} onPress={() => {}}>
         <Text style={styles.header}>{title}</Text>
         <View style={styles.addContainer}>
-          <Pressable style={styles.add}>
+          <Pressable
+            style={({ pressed }) => [styles.add, pressed && styles.addPressed]}
+            onPress={onAdd}
+          >
             <Plus size={24} color="#9CA3AF" />
             <Text style={styles.addText}>{addLabel}</Text>
           </Pressable>
