@@ -11,11 +11,11 @@ export const styles = StyleSheet.create({
   },
 
   sheet: {
+    maxHeight: '85%',
+    paddingBottom: 34,
     backgroundColor: COLORS.primary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    paddingBottom: 34,
-    maxHeight: '85%',
   },
 
   header: {

@@ -4,22 +4,22 @@ import { COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   label: {
+    marginBottom: 8,
     color: COLORS.secondaryText,
     fontSize: 12,
     letterSpacing: 0.5,
-    marginBottom: 8,
     ...fontFamily(600),
   },
 
   input: {
-    borderWidth: 1,
-    borderColor: COLORS.borderOne,
-    borderRadius: 10,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    fontSize: 16,
-    color: COLORS.primaryText,
     backgroundColor: COLORS.primaryBg,
+    borderColor: COLORS.borderOne,
+    borderRadius: 10,
+    borderWidth: 1,
+    color: COLORS.primaryText,
+    fontSize: 16,
   },
 
   inputError: {
