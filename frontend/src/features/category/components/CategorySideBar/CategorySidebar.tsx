@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import Sidebar from '@/components/Sidebar/Sidebar';
+import AddCategorySheet from '../AddCategorySheet/AddCategorySheet';
 
 import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
@@ -9,6 +12,8 @@ type CategorySidebarProp = {
 };
 
 const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
+  const [isAdding, setIsAdding] = useState(false);
+
   const { data: category, isPending, isError } = useCategoriesQuery();
 
   const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
@@ -18,17 +23,21 @@ const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
   };
 
   return (
-    <Sidebar
-      title="Category"
-      addLabel="Add a Category"
-      items={category}
-      isPending={isPending}
-      isError={isError}
-      isSaving={isSaving}
-      onSelect={handleSelect}
-      onAdd={() => {}}
-      exit={onClose}
-    />
+    <>
+      <Sidebar
+        title="Category"
+        addLabel="Add a Category"
+        items={category}
+        isPending={isPending}
+        isError={isError}
+        isSaving={isSaving}
+        onSelect={handleSelect}
+        onAdd={() => setIsAdding(true)}
+        exit={onClose}
+      />
+
+      <AddCategorySheet visible={isAdding} onClose={() => setIsAdding(false)} />
+    </>
   );
 };
 
