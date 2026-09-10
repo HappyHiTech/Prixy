@@ -1,20 +1,8 @@
 import { Pressable } from 'react-native';
-import { Church, Home, Users, Heart, Tag } from 'lucide-react-native';
+import { Tag } from 'lucide-react-native';
 
-import { COLORS } from '@/constants';
+import { COLORS, CATEGORY_ICON_MAP } from '@/constants';
 import { styles } from './CategoryAvatar.styles';
-
-const ICON_MAP = {
-  church: Church,
-  home: Home,
-  users: Users,
-  heart: Heart,
-} as const;
-
-type IconName = keyof typeof ICON_MAP;
-
-const isIconName = (value: string | null): value is IconName =>
-  value !== null && value in ICON_MAP;
 
 type CategoryAvatarProp = {
   size?: number;
@@ -23,7 +11,7 @@ type CategoryAvatarProp = {
 };
 
 const CategoryAvatar = ({ size = 51, icon, onPress }: CategoryAvatarProp) => {
-  const Icon = isIconName(icon ?? null) ? ICON_MAP[icon as IconName] : Tag;
+  const Icon = (icon && CATEGORY_ICON_MAP[icon]) || Tag;
 
   const borderWidth = Math.max(1, Math.round(size * 0.06));
   const innerSize = size - borderWidth * 2;
