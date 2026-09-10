@@ -9,6 +9,11 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryBg,
   },
 
+  container2: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   body: {
     flex: 1,
   },

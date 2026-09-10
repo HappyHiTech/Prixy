@@ -38,7 +38,7 @@ const EditPrayerScreen = () => {
 
   if (isPending) {
     return (
-      <View style={styles.container}>
+      <View style={styles.container2}>
         <ActivityIndicator />
       </View>
     );
@@ -46,7 +46,7 @@ const EditPrayerScreen = () => {
 
   if (isError) {
     return (
-      <View style={styles.container}>
+      <View style={styles.container2}>
         <Text>{error.message}</Text>
       </View>
     );
