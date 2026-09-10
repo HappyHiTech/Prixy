@@ -1,5 +1,8 @@
 const { withClient } = require("./shared/db");
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 exports.handler = async (event) => {
   const sub = event.requestContext?.authorizer?.claims?.sub;
 
@@ -18,6 +21,14 @@ exports.handler = async (event) => {
       statusCode: 400,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: "Missing prayer request id" }),
+    };
+  }
+
+  if (!UUID_PATTERN.test(id)) {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: "Invalid prayer request id" }),
     };
   }
 
@@ -62,10 +73,12 @@ exports.handler = async (event) => {
       body: JSON.stringify(row),
     };
   } catch (err) {
+    console.error("GetPrayer failed", { id, error: err });
+
     return {
       statusCode: 500,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: err.message }),
+      body: JSON.stringify({ message: "Internal server error" }),
     };
   }
 };
