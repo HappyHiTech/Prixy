@@ -4,7 +4,9 @@ import { Slot } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useAuthStore } from '@/stores/useAuthStore';
+import { AppState } from 'react-native';
+import { getIdToken, isExpired, useAuthStore } from '@/stores/useAuthStore';
+import { refreshTokenOnce } from '@/apis/refreshToken';
 
 import {
   DMSans_100Thin,
@@ -39,6 +41,17 @@ export default function TabLayout() {
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+
+      const token = getIdToken();
+      if (token && isExpired(token)) refreshTokenOnce();
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   if (!fontsLoaded || isBootstrapping) return null;
 
