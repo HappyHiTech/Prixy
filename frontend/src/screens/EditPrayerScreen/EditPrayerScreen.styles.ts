@@ -45,8 +45,8 @@ export const styles = StyleSheet.create({
 
   backText: {
     ...fontFamily(600),
+    color: COLORS.primary,
     fontSize: 15,
     letterSpacing: 0.2,
-    color: COLORS.primary,
   },
 });
