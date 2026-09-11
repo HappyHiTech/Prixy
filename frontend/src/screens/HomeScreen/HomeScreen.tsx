@@ -13,6 +13,7 @@ import NavBar from '@/components/NavBar/Navbar';
 import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 import { styles } from './HomeScreen.styles';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
@@ -28,6 +29,16 @@ const HomeScreen = () => {
   const closeSidebar = () => {
     setSelectedPrayerId(null);
     setSelectedEdit(null);
+  };
+
+  const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
+
+  const handleSidebarSelect = (updates: {
+    prayeeId?: string;
+    categoryId?: string;
+  }) => {
+    if (!selectedPrayerId) return;
+    mutate({ id: selectedPrayerId, ...updates }, { onSuccess: closeSidebar });
   };
 
   // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
@@ -53,10 +64,18 @@ const HomeScreen = () => {
       </ScrollView>
       <NavBar />
       {selectedPrayerId && selectedEdit === 'prayee' && (
-        <PrayeeSidebar prayerId={selectedPrayerId} onClose={closeSidebar} />
+        <PrayeeSidebar
+          onSelect={(prayeeId) => handleSidebarSelect({ prayeeId })}
+          isSaving={isSaving}
+          onClose={closeSidebar}
+        />
       )}
       {selectedPrayerId && selectedEdit === 'category' && (
-        <CategorySidebar prayerId={selectedPrayerId} onClose={closeSidebar} />
+        <CategorySidebar
+          onSelect={(categoryId) => handleSidebarSelect({ categoryId })}
+          isSaving={isSaving}
+          onClose={closeSidebar}
+        />
       )}
       {isActionOpen && <ActionButton />}
     </View>

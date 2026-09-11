@@ -4,28 +4,19 @@ import { PencilIcon } from 'lucide-react-native';
 
 import EditRequestSheet from '../EditRequestSheet/EditRequestSheet';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
+import { useEditPrayerDraftStore } from '@/features/editPrayer/stores/useEditPrayerDraftStore';
 
 import { styles } from './EditPrayerRequest.styles';
 
-type EditPrayerRequestProps = {
-  prayerId: string;
-  requestText: string;
-};
-
-const EditPrayerRequest = ({
-  prayerId,
-  requestText,
-}: EditPrayerRequestProps) => {
+const EditPrayerRequest = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 
-  const { mutate, isPending } = useUpdatePrayerRequest();
+  const requestText = useEditPrayerDraftStore((s) => s.requestText);
+  const setRequestText = useEditPrayerDraftStore((s) => s.setRequestText);
 
   const handleSave = (text: string) => {
-    mutate(
-      { id: prayerId, requestText: text },
-      { onSuccess: () => setIsSheetOpen(false) },
-    );
+    setRequestText(text);
+    setIsSheetOpen(false);
   };
 
   return (
@@ -42,7 +33,6 @@ const EditPrayerRequest = ({
       {isSheetOpen && (
         <EditRequestSheet
           initialText={requestText}
-          isSaving={isPending}
           onClose={() => setIsSheetOpen(false)}
           onSave={handleSave}
         />

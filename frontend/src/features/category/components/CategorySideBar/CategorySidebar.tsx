@@ -4,23 +4,21 @@ import Sidebar from '@/components/Sidebar/Sidebar';
 import AddCategorySheet from '../AddCategorySheet/AddCategorySheet';
 
 import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 type CategorySidebarProp = {
-  prayerId: string;
+  onSelect: (categoryId: string) => void;
+  isSaving?: boolean;
   onClose: () => void;
 };
 
-const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
+const CategorySidebar = ({
+  onSelect,
+  isSaving = false,
+  onClose,
+}: CategorySidebarProp) => {
   const [isAdding, setIsAdding] = useState(false);
 
   const { data: category, isPending, isError } = useCategoriesQuery();
-
-  const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
-
-  const handleSelect = (categoryId: string) => {
-    mutate({ id: prayerId, categoryId }, { onSuccess: onClose });
-  };
 
   return (
     <>
@@ -31,7 +29,7 @@ const CategorySidebar = ({ prayerId, onClose }: CategorySidebarProp) => {
         isPending={isPending}
         isError={isError}
         isSaving={isSaving}
-        onSelect={handleSelect}
+        onSelect={onSelect}
         onAdd={() => setIsAdding(true)}
         exit={onClose}
       />

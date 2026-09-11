@@ -2,35 +2,22 @@ import { View, Text, Pressable } from 'react-native';
 
 import { CheckCircle } from 'lucide-react-native';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
+import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
 
 import { COLORS } from '@/constants';
 
-import type { PrayerRequestStatus } from '@/types/prayerRequest';
-
 import { styles } from './EditAnswered.style';
 
-type EditAnsweredProps = {
-  prayerId: string;
-  status: PrayerRequestStatus;
-};
-
-const EditAnswered = ({ prayerId, status }: EditAnsweredProps) => {
-  const { mutate, isPending } = useUpdatePrayerRequest();
-
-  const isAnswered = status === 'answered';
-
-  const toggle = () => {
-    mutate({ id: prayerId, answered: !isAnswered });
-  };
+const EditAnswered = () => {
+  const isAnswered = useEditPrayerDraftStore((s) => s.answered);
+  const setAnswered = useEditPrayerDraftStore((s) => s.setAnswered);
 
   return (
     <View style={styles.container}>
       <Pressable
-        onPress={toggle}
-        disabled={isPending}
+        onPress={() => setAnswered(!isAnswered)}
         accessibilityRole="button"
-        accessibilityState={{ selected: isAnswered, disabled: isPending }}
+        accessibilityState={{ selected: isAnswered }}
         style={[styles.pill, isAnswered && styles.pillAnswered]}
       >
         <CheckCircle

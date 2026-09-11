@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
+import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
 
 import type { PrayerRequestFrequencyType } from '@/types/prayerRequest';
 
@@ -8,25 +8,16 @@ import { styles } from './EditFrequncy.styles';
 
 const ONE_TIME = 'One time';
 
-
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 
 const OPTIONS = [ONE_TIME, ...DAYS] as const;
 
 type Option = (typeof OPTIONS)[number];
 
-type EditFrequncyProps = {
-  prayerId: string;
-  frequencyType: PrayerRequestFrequencyType;
-  recurringDays: string[];
-};
-
-const EditFrequncy = ({
-  prayerId,
-  frequencyType,
-  recurringDays,
-}: EditFrequncyProps) => {
-  const { mutate } = useUpdatePrayerRequest();
+const EditFrequncy = () => {
+  const frequencyType = useEditPrayerDraftStore((s) => s.frequencyType);
+  const recurringDays = useEditPrayerDraftStore((s) => s.recurringDays);
+  const setFrequency = useEditPrayerDraftStore((s) => s.setFrequency);
 
   const selected: Option[] =
     frequencyType === 'one_time'
@@ -39,11 +30,7 @@ const EditFrequncy = ({
     if (item === ONE_TIME) {
       if (frequencyType === 'one_time') return;
 
-      mutate({
-        id: prayerId,
-        frequencyType: 'one_time',
-        recurringDays: [],
-      });
+      setFrequency('one_time', []);
       return;
     }
 
@@ -53,14 +40,12 @@ const EditFrequncy = ({
       ? current.filter((value) => value !== item)
       : [...current, item];
 
-
     const nextDays = DAYS.filter((day) => next.includes(day));
 
-    mutate({
-      id: prayerId,
-      frequencyType: nextDays.length === 0 ? 'one_time' : 'recurring',
-      recurringDays: nextDays.length === 0 ? [] : [...nextDays],
-    });
+    setFrequency(
+      nextDays.length === 0 ? 'one_time' : 'recurring',
+      nextDays.length === 0 ? [] : [...nextDays],
+    );
   };
 
   return (

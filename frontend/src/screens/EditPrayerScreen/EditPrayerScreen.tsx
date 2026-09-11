@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import {
   View,
@@ -19,10 +20,10 @@ import EditDeleteButton from '@/features/editPrayer/components/EditDeleteButton/
 import EditSave from '@/features/editPrayer/components/EditSave/EditSave';
 
 import { useEditPrayerStore } from '@/features/editPrayer/stores/useEditPrayerStore';
+import { useEditPrayerDraftStore } from '@/features/editPrayer/stores/useEditPrayerDraftStore';
 
 import { usePrayerRequestByIdQuery } from '@/hooks/TanStack/prayerRequest/usePrayerRequestByIdQuery';
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
-import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 
 import { styles } from './EditPrayerScreen.styles';
 
@@ -42,7 +43,19 @@ const EditPrayerScreen = () => {
     error,
   } = usePrayerRequestByIdQuery(id);
   const { data: prayees } = usePrayeeQuery();
-  const { data: categories } = useCategoriesQuery();
+
+  const draftPrayerId = useEditPrayerDraftStore((s) => s.prayerId);
+  const draftPrayeeId = useEditPrayerDraftStore((s) => s.prayeeId);
+  const reset = useEditPrayerDraftStore((s) => s.reset);
+  const setPrayeeId = useEditPrayerDraftStore((s) => s.setPrayeeId);
+  const setCategoryId = useEditPrayerDraftStore((s) => s.setCategoryId);
+
+  useEffect(() => {
+    if (!prayer || prayer.id === draftPrayerId) return;
+    reset(prayer);
+  }, [prayer, draftPrayerId, reset]);
+
+  useEffect(() => () => useEditPrayerDraftStore.getState().clear(), []);
 
   if (isPending) {
     return (
@@ -70,30 +83,37 @@ const EditPrayerScreen = () => {
   }
 
   const prayee = prayees?.find((p) => p.id === prayer.prayeeId);
-  const category = categories?.find((c) => c.id === prayer.categoryId);
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.body}>
         <EditPrayerHeader prayee={prayee} />
-        <EditPrayeeCategory prayee={prayee} category={category} />
-        <EditPrayerRequest prayerId={id} requestText={prayer.requestText} />
-        <EditFrequncy
-          prayerId={id}
-          frequencyType={prayer.frequencyType}
-          recurringDays={prayer.recurringDays}
-        />
-        <EditAnswered prayerId={id} status={prayer.status} />
+        <EditPrayeeCategory />
+        <EditPrayerRequest />
+        <EditFrequncy />
+        <EditAnswered />
         <View style={styles.buttons}>
           <EditDeleteButton prayerId={id} />
           <EditSave prayerId={id} />
         </View>
       </ScrollView>
       {selectedEdit === 'prayee' && (
-        <PrayeeSidebar prayerId={id} onClose={closeSidebar} />
+        <PrayeeSidebar
+          onSelect={(prayeeId) => {
+            setPrayeeId(prayeeId);
+            closeSidebar();
+          }}
+          onClose={closeSidebar}
+        />
       )}
       {selectedEdit === 'category' && (
-        <CategorySidebar prayerId={id} onClose={closeSidebar} />
+        <CategorySidebar
+          onSelect={(categoryId) => {
+            setCategoryId(categoryId);
+            closeSidebar();
+          }}
+          onClose={closeSidebar}
+        />
       )}
     </View>
   );

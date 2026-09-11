@@ -4,23 +4,21 @@ import Sidebar from '@/components/Sidebar/Sidebar';
 import AddPrayeeSheet from '../AddPrayeeSheet/AddPrayeeSheet';
 
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 type PrayeeSidebarProp = {
-  prayerId: string;
+  onSelect: (prayeeId: string) => void;
   onClose: () => void;
+  isSaving?: boolean;
 };
 
-const PrayeeSidebar = ({ prayerId, onClose }: PrayeeSidebarProp) => {
+const PrayeeSidebar = ({
+  onSelect,
+  onClose,
+  isSaving = false,
+}: PrayeeSidebarProp) => {
   const [isAdding, setIsAdding] = useState(false);
 
   const { data: prayees, isPending, isError } = usePrayeeQuery();
-
-  const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
-
-  const handleSelect = (prayeeId: string) => {
-    mutate({ id: prayerId, prayeeId }, { onSuccess: onClose });
-  };
 
   return (
     <>
@@ -31,7 +29,7 @@ const PrayeeSidebar = ({ prayerId, onClose }: PrayeeSidebarProp) => {
         isPending={isPending}
         isError={isError}
         isSaving={isSaving}
-        onSelect={handleSelect}
+        onSelect={onSelect}
         onAdd={() => setIsAdding(true)}
         exit={onClose}
       />
