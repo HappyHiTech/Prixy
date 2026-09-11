@@ -15,6 +15,7 @@ type AuthStore = {
   signIn: (email: string, tokens: AuthTokens) => Promise<void>;
   signOut: () => Promise<void>;
   bootstrap: () => Promise<void>;
+  refreshFromStorage: () => Promise<string | null>;
 };
 
 const BASE64_ALPHABET =
@@ -42,7 +43,7 @@ function decodeBase64Url(input: string): string {
   return output;
 }
 
-function isExpired(idToken: string): boolean {
+export function isExpired(idToken: string): boolean {
   try {
     const [, payload] = idToken.split('.');
     const { exp } = JSON.parse(decodeBase64Url(payload)) as { exp?: number };
@@ -71,19 +72,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     set({ idToken: null });
   },
 
-  bootstrap: async () => {
-    const idToken = await SecureStore.getItemAsync(ID_TOKEN_KEY);
-
-    if (!idToken) {
-      set({ idToken: null, isBootstrapping: false });
-      return;
-    }
-
-    if (!isExpired(idToken)) {
-      set({ idToken, isBootstrapping: false });
-      return;
-    }
-
+  refreshFromStorage: async () => {
     const [email, refreshToken] = await Promise.all([
       SecureStore.getItemAsync(EMAIL_KEY),
       SecureStore.getItemAsync(REFRESH_TOKEN_KEY),
@@ -91,18 +80,34 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
     if (!email || !refreshToken) {
       await get().signOut();
-      set({ isBootstrapping: false });
-      return;
+      return null;
     }
 
     try {
       const tokens = await refreshSession(email, refreshToken);
       await get().signIn(email, tokens);
+      return tokens.idToken;
     } catch {
       await get().signOut();
-    } finally {
-      set({ isBootstrapping: false });
+      return null;
     }
+  },
+
+  bootstrap: async () => {
+    const idToken = await SecureStore.getItemAsync(ID_TOKEN_KEY);
+
+    if (idToken && !isExpired(idToken)) {
+      set({ idToken, isBootstrapping: false });
+      return;
+    }
+
+    if (!idToken) {
+      set({ idToken: null, isBootstrapping: false });
+      return;
+    }
+
+    await get().refreshFromStorage();
+    set({ isBootstrapping: false });
   },
 }));
 
