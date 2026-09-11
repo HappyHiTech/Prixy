@@ -3,8 +3,8 @@ import { useState } from 'react';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import AddCategorySheet from '../AddCategorySheet/AddCategorySheet';
 
-import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 type CategorySidebarProp = {
   prayerId: string;

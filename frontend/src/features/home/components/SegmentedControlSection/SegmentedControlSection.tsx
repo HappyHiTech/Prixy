@@ -1,13 +1,13 @@
 import { View } from 'react-native';
 
-import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequestQuery';
+import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerRequestQuery';
 
 import SegmentedPill from '../SegmentedPill/SegmentedPill';
 
 import { styles } from './SegmentedControlSection.styles';
 
 const SegmentedControlSection = () => {
-  const { data: inboxReqs } = usePrayerRequests('inbox');
+  const { data: inboxReqs = [] } = usePrayerRequests('inbox');
 
   return (
     <View style={styles.container}>

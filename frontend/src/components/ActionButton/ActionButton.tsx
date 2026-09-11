@@ -3,7 +3,7 @@ import { View, Text, Pressable } from 'react-native';
 import { Mic, Pencil } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/useCreatePrayerRequestMutation';
+import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/prayerRequest/useCreatePrayerRequestMutation';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
 
 import { COLORS } from '@/constants';

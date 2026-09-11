@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from 'react-native';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 import type { PrayerRequestFrequencyType } from '@/types/prayerRequest';
 

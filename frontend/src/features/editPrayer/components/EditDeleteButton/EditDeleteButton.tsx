@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 
 import { Trash2 } from 'lucide-react-native';
 
-import { useDeletePrayerRequest } from '@/hooks/TanStack/useDeletePrayersRequestMutation';
+import { useDeletePrayerRequest } from '@/hooks/TanStack/prayerRequest/useDeletePrayersRequestMutation';
 
 import { COLORS } from '@/constants';
 

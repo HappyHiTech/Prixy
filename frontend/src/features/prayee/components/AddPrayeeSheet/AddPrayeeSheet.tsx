@@ -4,7 +4,7 @@ import { View, Text, TextInput } from 'react-native';
 import BottomSheet from '@/components/BottomSheet/BottomSheet';
 
 import { ApiError } from '@/apis/apiClient';
-import { useCreatePrayeeMutation } from '@/hooks/TanStack/useCreatePrayeeMutation';
+import { useCreatePrayeeMutation } from '@/hooks/TanStack/prayee/useCreatePrayeeMutation';
 import { COLORS } from '@/constants';
 import { styles } from './AddPrayeeSheet.styles';
 

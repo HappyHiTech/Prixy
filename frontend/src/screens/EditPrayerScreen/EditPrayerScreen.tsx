@@ -13,9 +13,9 @@ import EditDeleteButton from '@/features/editPrayer/components/EditDeleteButton/
 
 import { useEditPrayerStore } from '@/features/editPrayer/stores/useEditPrayerStore';
 
-import { usePrayerRequestByIdQuery } from '@/hooks/TanStack/usePrayerRequestByIdQuery';
-import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
-import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
+import { usePrayerRequestByIdQuery } from '@/hooks/TanStack/prayerRequest/usePrayerRequestByIdQuery';
+import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
+import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 
 import { styles } from './EditPrayerScreen.styles';
 

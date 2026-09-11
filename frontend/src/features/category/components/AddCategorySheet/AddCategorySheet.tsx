@@ -6,7 +6,7 @@ import CategoryAvatar from '@/components/CategoryAvatar/CategoryAvatar';
 import IconPicker from '../IconPicker/IconPicker';
 
 import { ApiError } from '@/apis/apiClient';
-import { useCreateCategoryMutation } from '@/hooks/TanStack/useCreateCategoryMutation';
+import { useCreateCategoryMutation } from '@/hooks/TanStack/category/useCreateCategoryMutation';
 import { COLORS, DEFAULT_CATEGORY_ICON } from '@/constants';
 import { styles } from './AddCategorySheet.styles';
 

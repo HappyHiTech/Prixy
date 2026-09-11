@@ -3,9 +3,9 @@ import { View, ActivityIndicator, Text } from 'react-native';
 
 import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
 
-import { usePrayerRequests } from '@/hooks/TanStack/usePrayerRequestQuery';
-import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
-import { useCategoriesQuery } from '@/hooks/TanStack/useCategoriesQuery';
+import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerRequestQuery';
+import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
+import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 import { useHomeStore } from '../../stores/useHomeStore';
 
 import { styles } from './RequestView.styles';

@@ -4,7 +4,7 @@ import { PencilIcon } from 'lucide-react-native';
 
 import EditRequestSheet from '../EditRequestSheet/EditRequestSheet';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 import { styles } from './EditPrayerRequest.styles';
 

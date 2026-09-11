@@ -3,8 +3,8 @@ import { useState } from 'react';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import AddPrayeeSheet from '../AddPrayeeSheet/AddPrayeeSheet';
 
-import { usePrayeeQuery } from '@/hooks/TanStack/usePrayeesQuery';
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 type PrayeeSidebarProp = {
   prayerId: string;

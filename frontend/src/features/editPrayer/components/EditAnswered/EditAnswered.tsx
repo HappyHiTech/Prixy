@@ -2,7 +2,7 @@ import { View, Text, Pressable } from 'react-native';
 
 import { CheckCircle } from 'lucide-react-native';
 
-import { useUpdatePrayerRequest } from '@/hooks/TanStack/useUpdatePrayerRequestMutation';
+import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 import { COLORS } from '@/constants';
 
