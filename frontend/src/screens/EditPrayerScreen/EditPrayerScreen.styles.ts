@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { COLORS } from '@/constants';
+import { COLORS, dropShadow, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
@@ -11,10 +11,42 @@ export const styles = StyleSheet.create({
 
   container2: {
     alignItems: 'center',
+    flex: 1,
+    gap: 16,
     justifyContent: 'center',
+    paddingHorizontal: 32,
+    backgroundColor: COLORS.primaryBg,
   },
 
   body: {
     flex: 1,
+  },
+
+  errorText: {
+    ...fontFamily(400),
+    color: COLORS.secondaryText,
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
+  },
+
+  backButton: {
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    backgroundColor: COLORS.accent,
+    borderRadius: 999,
+    ...dropShadow(COLORS.accent, 0.25, 6, 3),
+  },
+
+  backButtonPressed: {
+    opacity: 0.85,
+    transform: [{ scale: 0.98 }],
+  },
+
+  backText: {
+    ...fontFamily(600),
+    fontSize: 15,
+    letterSpacing: 0.2,
+    color: COLORS.primary,
   },
 });

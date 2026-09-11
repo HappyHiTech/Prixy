@@ -1,5 +1,11 @@
-import { useLocalSearchParams } from 'expo-router';
-import { View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import {
+  View,
+  ActivityIndicator,
+  Text,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
@@ -26,6 +32,7 @@ const EditPrayerScreen = () => {
   const setSelectedEdit = useEditPrayerStore((s) => s.setSelectedEdit);
 
   const closeSidebar = () => setSelectedEdit(null);
+  const router = useRouter();
 
   const {
     data: prayer,
@@ -47,7 +54,16 @@ const EditPrayerScreen = () => {
   if (isError) {
     return (
       <View style={styles.container2}>
-        <Text>{error.message}</Text>
+        <Text style={styles.errorText}>{error.message}</Text>
+        <Pressable
+          onPress={() => router.push('/home')}
+          style={({ pressed }) => [
+            styles.backButton,
+            pressed && styles.backButtonPressed,
+          ]}
+        >
+          <Text style={styles.backText}>Back</Text>
+        </Pressable>
       </View>
     );
   }
