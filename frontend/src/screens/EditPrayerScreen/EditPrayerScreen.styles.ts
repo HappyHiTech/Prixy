@@ -5,7 +5,6 @@ import { COLORS, dropShadow, fontFamily } from '@/constants';
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: COLORS.primaryBg,
   },
 
@@ -28,6 +27,13 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     textAlign: 'center',
+  },
+
+  buttons: {
+    flexDirection: 'row',
+
+    justifyContent: 'space-between',
+    paddingHorizontal: 34,
   },
 
   backButton: {

@@ -48,9 +48,7 @@ const EditDeleteButton = ({ prayerId }: EditDeleteButtonProps) => {
         style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
       >
         <Trash2 size={20} color={COLORS.dangerText} />
-        <Text style={styles.text}>
-          {isPending ? 'Deleting…' : 'Delete Request'}
-        </Text>
+        <Text style={styles.text}>{isPending ? 'Deleting…' : 'Delete'}</Text>
       </Pressable>
     </View>
   );

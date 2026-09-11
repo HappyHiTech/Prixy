@@ -16,6 +16,7 @@ import EditPrayerRequest from '@/features/editPrayer/components/EditPrayerReques
 import EditFrequncy from '@/features/editPrayer/components/EditFrequncy/EditFrequncy';
 import EditAnswered from '@/features/editPrayer/components/EditAnswered/EditAnswered';
 import EditDeleteButton from '@/features/editPrayer/components/EditDeleteButton/EditDeleteButton';
+import EditSave from '@/features/editPrayer/components/EditSave/EditSave';
 
 import { useEditPrayerStore } from '@/features/editPrayer/stores/useEditPrayerStore';
 
@@ -83,7 +84,10 @@ const EditPrayerScreen = () => {
           recurringDays={prayer.recurringDays}
         />
         <EditAnswered prayerId={id} status={prayer.status} />
-        <EditDeleteButton prayerId={id} />
+        <View style={styles.buttons}>
+          <EditDeleteButton prayerId={id} />
+          <EditSave prayerId={id} />
+        </View>
       </ScrollView>
       {selectedEdit === 'prayee' && (
         <PrayeeSidebar prayerId={id} onClose={closeSidebar} />

@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { dropShadow, fontFamily, COLORS } from '@/constants';
+import { COLORS, dropShadow, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
@@ -22,13 +22,9 @@ export const styles = StyleSheet.create({
     ...dropShadow('#000000', 0.25, 4, 0),
   },
 
-  cardPressed: {
-    opacity: 0.6,
-  },
-
-  text: {
+  saveText: {
     ...fontFamily(800),
-    color: COLORS.dangerText,
+    color: COLORS.primaryText,
     fontSize: 17,
   },
 });

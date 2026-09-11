@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
 
   pill: {
     alignItems: 'center',
+
     flexDirection: 'row',
     gap: 15,
     justifyContent: 'center',
@@ -19,6 +20,7 @@ export const styles = StyleSheet.create({
     width: 332,
     backgroundColor: COLORS.primary,
     borderRadius: 30,
+
     ...dropShadow('#000000', 0.25, 4, 0),
   },
 
