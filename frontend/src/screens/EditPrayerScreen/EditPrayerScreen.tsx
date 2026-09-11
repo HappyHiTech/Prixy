@@ -45,7 +45,6 @@ const EditPrayerScreen = () => {
   const { data: prayees } = usePrayeeQuery();
 
   const draftPrayerId = useEditPrayerDraftStore((s) => s.prayerId);
-  const draftPrayeeId = useEditPrayerDraftStore((s) => s.prayeeId);
   const reset = useEditPrayerDraftStore((s) => s.reset);
   const setPrayeeId = useEditPrayerDraftStore((s) => s.setPrayeeId);
   const setCategoryId = useEditPrayerDraftStore((s) => s.setCategoryId);

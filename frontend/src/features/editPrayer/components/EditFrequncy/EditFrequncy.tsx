@@ -2,8 +2,6 @@ import { View, Text, Pressable } from 'react-native';
 
 import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
 
-import type { PrayerRequestFrequencyType } from '@/types/prayerRequest';
-
 import { styles } from './EditFrequncy.styles';
 
 const ONE_TIME = 'One time';
