@@ -1,4 +1,5 @@
-import { getIdToken, useAuthStore } from '@/stores/useAuthStore';
+import { getIdToken, isExpired } from '@/stores/useAuthStore';
+import { refreshTokenOnce } from '@/apis/refreshToken';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
@@ -16,14 +17,6 @@ export class ApiError extends Error {
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
-  if (response.status === 401 || response.status === 403) {
-    await useAuthStore.getState().signOut();
-    throw new ApiError(
-      response.status,
-      'Your session expired. Please sign in again.',
-    );
-  }
-
   const text = await response.text();
 
   if (!response.ok) {
@@ -42,8 +35,16 @@ async function parseResponse<T>(response: Response): Promise<T> {
   return (text.length > 0 ? JSON.parse(text) : undefined) as T;
 }
 
-async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = getIdToken();
+async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  isRetry = false,
+): Promise<T> {
+  let token = getIdToken();
+
+  if (token && isExpired(token) && !isRetry) {
+    token = await refreshTokenOnce();
+  }
 
   const response = await fetch(`${BASE_URL}${path}`, {
     ...init,
@@ -53,6 +54,14 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
       ...init?.headers,
     },
   });
+
+  if (response.status === 401 && !isRetry) {
+    const fresh = await refreshTokenOnce();
+    if (fresh) return apiFetch<T>(path, init, true);
+
+    throw new ApiError(401, 'Your session expired. Please sign in again.');
+  }
+
   return parseResponse<T>(response);
 }
 
