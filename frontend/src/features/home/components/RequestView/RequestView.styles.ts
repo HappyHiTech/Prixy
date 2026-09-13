@@ -1,11 +1,11 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
-import { COLORS, dropShadow, fontFamily } from "@/constants";
+import { COLORS, dropShadow, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
     minHeight: 600,
-    ...dropShadow("#000", 0.25, 4, 0),
+    ...dropShadow('#000', 0.25, 4, 0),
 
     backgroundColor: COLORS.primary,
     borderRadius: 15,
@@ -19,6 +19,11 @@ export const styles = StyleSheet.create({
     marginTop: 40,
     paddingHorizontal: 20,
     color: COLORS.secondaryText,
-    textAlign: "center",
+    textAlign: 'center',
+  },
+
+  reqWrapper: {
+    borderBottomWidth: 2,
+    borderColor: COLORS.borderOne,
   },
 });

@@ -1,15 +1,14 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
-import { COLORS, fontFamily } from "@/constants";
+import { COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 22,
     paddingHorizontal: 24,
     paddingVertical: 32,
 
-    borderBottomWidth: 2,
     borderColor: COLORS.borderOne,
   },
 

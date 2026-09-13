@@ -2,6 +2,7 @@ import { useMemo, useEffect } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 
 import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
+import NoReq from '@/components/NoReq/NoReq';
 
 import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerRequestQuery';
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
@@ -55,19 +56,34 @@ const RequestView = () => {
     );
   }
 
+  if (prayReqs.length === 0) {
+    return (
+      <View style={styles.container}>
+        <NoReq
+          message={
+            activeSegment === 'inbox'
+              ? 'Your inbox is empty.'
+              : 'No prayers in your active deck yet.'
+          }
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {prayReqs.map((item) => (
-        <CompactRequestcard
-          key={item.id}
-          prayReq={item}
-          prayeeName={
-            item.prayeeId ? prayeeNameById.get(item.prayeeId) : undefined
-          }
-          category={
-            item.categoryId ? categoryById.get(item.categoryId) : undefined
-          }
-        />
+        <View key={item.id} style={styles.reqWrapper}>
+          <CompactRequestcard
+            prayReq={item}
+            prayeeName={
+              item.prayeeId ? prayeeNameById.get(item.prayeeId) : undefined
+            }
+            category={
+              item.categoryId ? categoryById.get(item.categoryId) : undefined
+            }
+          />
+        </View>
       ))}
     </View>
   );
