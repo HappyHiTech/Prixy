@@ -28,7 +28,7 @@ const EditDeleteButton = ({ prayerId }: EditDeleteButtonProps) => {
           style: 'destructive',
           onPress: () =>
             mutate(prayerId, {
-              onSuccess: () => router.replace('/home'),
+              onSuccess: () => router.back(),
               onError: (error) =>
                 Alert.alert('Could not delete', error.message),
             }),

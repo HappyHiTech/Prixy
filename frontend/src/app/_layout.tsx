@@ -65,7 +65,12 @@ export default function TabLayout() {
             animation: 'slide_from_right',
             animationDuration: 250,
           }}
-        />
+        >
+          <Stack.Screen
+            name="pray"
+            options={{ animation: 'slide_from_left' }}
+          />
+        </Stack>
       </QueryClientProvider>
     </GestureHandlerRootView>
   );
