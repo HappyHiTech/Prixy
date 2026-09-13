@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     paddingVertical: 17,
+    paddingHorizontal: 17,
     borderColor: COLORS.borderOne,
     borderTopWidth: 2,
     borderBottomWidth: 2,
