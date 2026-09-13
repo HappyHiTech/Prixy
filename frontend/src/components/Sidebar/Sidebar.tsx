@@ -5,6 +5,14 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  FadeIn,
+  SlideInRight,
+} from 'react-native-reanimated';
+import { scheduleOnRN } from 'react-native-worklets';
 
 import SidebarItem from './SidebarItem/SidebarItem';
 
@@ -13,6 +21,9 @@ import { Plus } from 'lucide-react-native';
 import type { Prayee } from '@/types/prayee';
 import type { Category } from '@/types/category';
 import { styles } from './Sidebar.styles';
+
+const WIDTH = 250;
+const DURATION = 250;
 
 type SidebarProp = {
   title: string;
@@ -37,9 +48,40 @@ const Sidebar = ({
   onAdd,
   exit,
 }: SidebarProp) => {
+  const translateX = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  const close = () => {
+    opacity.value = withTiming(0, { duration: DURATION });
+    translateX.value = withTiming(WIDTH, { duration: DURATION }, (done) => {
+      if (done) scheduleOnRN(exit);
+    });
+  };
+
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const panelStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
+  const handleSelect = (id: string) => {
+    if (isSaving) return;
+    close();
+    onSelect(id);
+  };
+
   return (
-    <Pressable style={styles.container} onPress={exit}>
-      <Pressable style={styles.sideBar} onPress={() => {}}>
+    <Animated.View
+      style={[styles.container, backdropStyle]}
+      entering={FadeIn.duration(DURATION)}
+    >
+      <Pressable style={styles.backdropFill} onPress={close} />
+      <Animated.View
+        style={[styles.sideBar, panelStyle]}
+        entering={SlideInRight.duration(DURATION)}
+      >
         <Text style={styles.header}>{title}</Text>
         <View style={styles.addContainer}>
           <Pressable
@@ -60,14 +102,14 @@ const Sidebar = ({
               <SidebarItem
                 key={item.id}
                 data={item}
-                onPress={() => onSelect(item.id)}
+                onPress={() => handleSelect(item.id)}
                 disabled={isSaving}
               />
             ))
           )}
         </ScrollView>
-      </Pressable>
-    </Pressable>
+      </Animated.View>
+    </Animated.View>
   );
 };
 

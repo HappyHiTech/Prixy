@@ -1,6 +1,6 @@
 import 'react-native-get-random-values';
 
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -58,7 +58,14 @@ export default function TabLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
-        <Slot />
+        {/* Screens draw their own headers, so the native one stays off. */}
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+            animationDuration: 250,
+          }}
+        />
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

@@ -12,6 +12,11 @@ export const styles = StyleSheet.create({
     zIndex: 100,
   },
 
+  backdropFill: {
+    position: 'absolute',
+    inset: 0,
+  },
+
   sideBar: {
     flex: 1,
     width: 250,

@@ -10,7 +10,7 @@ const GalleryHeader = () => {
 
   return (
     <View style={styles.container}>
-      <GoBackButton onPress={() => router.push('/home')} />
+      <GoBackButton onPress={() => router.back()} />
       <Text style={styles.title}>Gallery</Text>
     </View>
   );
