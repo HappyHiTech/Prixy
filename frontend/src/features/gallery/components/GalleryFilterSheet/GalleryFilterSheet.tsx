@@ -84,7 +84,10 @@ const GalleryFilterSheet = ({ type, onClose }: GalleryFilterSheetProps) => {
               style={({ pressed }) => [styles.row, pressed && styles.pressed]}
               onPress={() => setPending(null)}
             >
-              <Text style={styles.rowText}>{`All ${type}s`}</Text>
+              <Text
+                style={[styles.rowText, pending === null && styles.active]}
+                numberOfLines={1}
+              >{`All ${type}s`}</Text>
               {pending === null && <Check size={20} color={COLORS.accent} />}
             </Pressable>
 
@@ -94,7 +97,12 @@ const GalleryFilterSheet = ({ type, onClose }: GalleryFilterSheetProps) => {
                 style={({ pressed }) => [styles.row, pressed && styles.pressed]}
                 onPress={() => setPending(item.id)}
               >
-                <Text style={styles.rowText}>{item.name}</Text>
+                <Text
+                  style={[styles.rowText, pending === item.id && styles.active]}
+                  numberOfLines={1}
+                >
+                  {item.name}
+                </Text>
 
                 <View style={styles.check}>
                   {pending === item.id && (

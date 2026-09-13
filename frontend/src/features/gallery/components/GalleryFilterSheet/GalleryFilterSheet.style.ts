@@ -13,10 +13,18 @@ export const styles = StyleSheet.create({
     gap: 15,
     paddingHorizontal: 20,
     paddingVertical: 12,
+
+    borderBottomWidth: 1,
+    borderColor: COLORS.borderOne,
   },
 
   pressed: {
     opacity: 0.6,
+  },
+
+  active: {
+    ...fontFamily(700),
+    color: COLORS.accent,
   },
 
   rowText: {
