@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import type { PrayerRequestStatus } from '@/types/prayerRequest';
+
 type GalleryStore = {
   prayeeId: string | null;
   setPrayeeId: (i: GalleryStore['prayeeId']) => void;
@@ -7,7 +9,7 @@ type GalleryStore = {
   categoryId: string | null;
   setCategoryId: (i: GalleryStore['categoryId']) => void;
 
-  status: string | null;
+  status: PrayerRequestStatus | null;
   setStatus: (s: GalleryStore['status']) => void;
 };
 

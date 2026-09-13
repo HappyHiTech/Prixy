@@ -16,7 +16,9 @@ export const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderLeftWidth: 1,
   },
-
+  pressed: {
+    opacity: 0.6,
+  },
   text: {
     ...fontFamily(600),
     color: COLORS.secondaryText,
