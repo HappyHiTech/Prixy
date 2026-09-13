@@ -1,16 +1,16 @@
-import { StyleSheet } from "react-native";
-import { COLORS, dropShadow } from "@/constants";
+import { StyleSheet } from 'react-native';
+import { COLORS, dropShadow } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     height: 40,
     width: 40,
     backgroundColor: COLORS.accent,
-    ...dropShadow("#000000", 0.35, 4, 0),
+    ...dropShadow('#000000', 0.35, 4, 0),
 
-    borderRadius: "50%",
+    borderRadius: '50%',
   },
 
   icon: {
