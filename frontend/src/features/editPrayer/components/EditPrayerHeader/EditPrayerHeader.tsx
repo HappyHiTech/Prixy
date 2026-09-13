@@ -25,7 +25,7 @@ const EditPrayerHeader = ({ prayee }: EditPrayerHeaderProp) => {
 
   const handleBack = () => {
     if (!isDirty) {
-      router.push('/home');
+      router.back();
       return;
     }
 
@@ -37,7 +37,7 @@ const EditPrayerHeader = ({ prayee }: EditPrayerHeaderProp) => {
         {
           text: 'Discard',
           style: 'destructive',
-          onPress: () => router.push('/home'),
+          onPress: () => router.back(),
         },
       ],
     );
