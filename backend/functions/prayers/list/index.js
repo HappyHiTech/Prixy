@@ -2,6 +2,9 @@ const { withClient } = require("./shared/db");
 
 const VALID_STATUS = ["inbox", "active", "answered"];
 
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 exports.handler = async (event) => {
   const sub = event.requestContext?.authorizer?.claims?.sub;
 
@@ -25,6 +28,22 @@ exports.handler = async (event) => {
     };
   }
 
+  const prayeeId = event.queryStringParameters?.prayeeId;
+  const categoryId = event.queryStringParameters?.categoryId;
+
+  for (const [name, value] of [
+    ["prayeeId", prayeeId],
+    ["categoryId", categoryId],
+  ]) {
+    if (value !== undefined && !UUID_PATTERN.test(value)) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Invalid ${name}` }),
+      };
+    }
+  }
+
   try {
     const rows = await withClient((client) =>
       client
@@ -46,8 +65,10 @@ exports.handler = async (event) => {
            JOIN users u ON u.id = pr.user_id
            WHERE u.cognito_sub = $1
            AND ($2::text IS NULL OR pr.status = $2)
+           AND ($3::uuid IS NULL OR pr.prayee_id = $3)
+           AND ($4::uuid IS NULL OR pr.category_id = $4)
            ORDER BY pr.created_at DESC`,
-          [sub, status ?? null],
+          [sub, status ?? null, prayeeId ?? null, categoryId ?? null],
         )
         .then((r) => r.rows),
     );

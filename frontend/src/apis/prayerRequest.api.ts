@@ -4,6 +4,7 @@ import type {
   PrayerRequest,
   PrayerRequestStatus,
   PrayerRequestFrequencyType,
+  PrayerRequestFilters,
 } from '@/types/prayerRequest';
 
 type UpdatePrayerRequestBody = {
@@ -17,10 +18,13 @@ type UpdatePrayerRequestBody = {
 
 export async function fetchPrayerRequests(
   status?: PrayerRequestStatus,
+  filters?: PrayerRequestFilters,
 ): Promise<PrayerRequest[]> {
   const query = new URLSearchParams();
 
   if (status) query.set('status', status);
+  if (filters?.prayeeId) query.set('prayeeId', filters.prayeeId);
+  if (filters?.categoryId) query.set('categoryId', filters.categoryId);
 
   return apiFetch<PrayerRequest[]>(`/prayers?${query.toString()}`);
 }

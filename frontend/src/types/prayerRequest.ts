@@ -17,3 +17,8 @@ export type PrayerRequest = {
   answeredAt: string | null;
   createdAt: string;
 };
+
+export type PrayerRequestFilters = {
+  prayeeId?: string | null;
+  categoryId?: string | null;
+};
