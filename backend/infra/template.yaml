@@ -22,6 +22,10 @@ Metadata:
             - rds-db:connect
           Resource:
             - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+  # More memory buys proportionally more CPU, which speeds up the RDS IAM
+  # token signing + TLS handshake that dominates cold-start time for these
+  # functions. Same reasoning as CreateAuthChallenge/PostConfirmation below.
+  DbFunctionMemory: &dbFunctionMemory 512
 
 Globals:
   Function:
@@ -162,7 +166,7 @@ Resources:
       Handler: index.handler
       # RDS IAM token signing + TLS handshake are CPU-bound; at 128MB this
       # measured 2671ms inside the signup path. See CreateAuthChallenge above.
-      MemorySize: 512
+      MemorySize: *dbFunctionMemory
       Timeout: 30
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
@@ -196,6 +200,7 @@ Resources:
     Properties:
       CodeUri: ../functions/ops/db-health/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -215,6 +220,7 @@ Resources:
       CodeUri: ../functions/ops/migrate/
       Handler: index.handler
       Timeout: 60
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -230,6 +236,7 @@ Resources:
       CodeUri: ../functions/ops/query/
       Handler: index.handler
       Timeout: 30
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -242,6 +249,7 @@ Resources:
       CodeUri: ../functions/ops/reset/
       Handler: index.handler
       Timeout: 30
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -253,6 +261,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayers/list/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -273,6 +282,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayers/create/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -293,6 +303,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayees/list/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -313,6 +324,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayees/create/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -333,6 +345,7 @@ Resources:
     Properties:
       CodeUri: ../functions/categories/list/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -353,6 +366,7 @@ Resources:
     Properties:
       CodeUri: ../functions/categories/create/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -373,6 +387,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayers/get/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -393,6 +408,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayers/update/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies
@@ -413,6 +429,7 @@ Resources:
     Properties:
       CodeUri: ../functions/prayers/delete/
       Handler: index.handler
+      MemorySize: *dbFunctionMemory
       VpcConfig: *dbVpcConfig
       Environment: *dbEnvironment
       Policies: *dbPolicies

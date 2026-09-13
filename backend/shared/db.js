@@ -1,9 +1,15 @@
-const { Client } = require("pg");
+const { Pool } = require("pg");
 const { Signer } = require("@aws-sdk/rds-signer");
 
-let cachedClient = null;
+// Reused across invocations within the same warm Lambda execution
+// environment. IAM auth tokens are valid for 15 minutes, so the pool is
+// recreated once the token might have expired rather than per-invocation —
+// this avoids re-signing a token and re-authenticating on every request.
+let cachedPool = null;
+let cachedPoolCreatedAt = 0;
+const TOKEN_TTL_MS = 14 * 60 * 1000;
 
-async function connect() {
+async function createPool() {
   const signer = new Signer({
     hostname: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
@@ -12,7 +18,7 @@ async function connect() {
 
   const token = await signer.getAuthToken();
 
-  const client = new Client({
+  const pool = new Pool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     database: process.env.DB_NAME,
@@ -20,33 +26,43 @@ async function connect() {
     password: token,
     ssl: { rejectUnauthorized: false },
     connectionTimeoutMillis: 5000,
+    max: 3,
+    idleTimeoutMillis: 60000,
   });
 
-  await client.connect();
-  return client;
+  pool.on("error", () => {
+    cachedPool = null;
+  });
+
+  return pool;
 }
 
-async function getClient() {
-  if (cachedClient) {
-    try {
-      await cachedClient.query("SELECT 1");
-      return cachedClient;
-    } catch {
-      cachedClient = null;
-    }
+async function getPool() {
+  const tokenExpired = Date.now() - cachedPoolCreatedAt > TOKEN_TTL_MS;
+
+  if (cachedPool && !tokenExpired) {
+    return cachedPool;
   }
 
-  cachedClient = await connect();
-  cachedClient.on("error", () => {
-    cachedClient = null;
-  });
+  const stalePool = cachedPool;
+  cachedPool = await createPool();
+  cachedPoolCreatedAt = Date.now();
 
-  return cachedClient;
+  if (stalePool) {
+    stalePool.end().catch(() => {});
+  }
+
+  return cachedPool;
 }
 
 async function withClient(fn) {
-  const client = await getClient();
-  return fn(client);
+  const pool = await getPool();
+  const client = await pool.connect();
+  try {
+    return await fn(client);
+  } finally {
+    client.release();
+  }
 }
 
-module.exports = { connect, withClient };
+module.exports = { withClient };
