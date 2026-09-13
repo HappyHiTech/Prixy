@@ -4,7 +4,6 @@ import { COLORS, dropShadow, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 24,
     paddingVertical: 20,
@@ -17,7 +16,6 @@ export const styles = StyleSheet.create({
     gap: 15,
     justifyContent: 'center',
     paddingVertical: 13,
-    width: 332,
     backgroundColor: COLORS.primary,
     borderRadius: 30,
 

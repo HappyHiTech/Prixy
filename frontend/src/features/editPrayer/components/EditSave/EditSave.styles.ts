@@ -15,7 +15,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
 
     paddingVertical: 13,
-    width: 160,
+    width: 175,
 
     backgroundColor: COLORS.primary,
     borderRadius: 30,
