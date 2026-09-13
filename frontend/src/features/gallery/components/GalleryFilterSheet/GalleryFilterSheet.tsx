@@ -20,6 +20,12 @@ import { styles } from './GalleryFilterSheet.style';
 
 export type FilterType = 'Prayee' | 'Category' | 'Status';
 
+const ALL_LABELS: Record<FilterType, string> = {
+  Prayee: 'All Prayees',
+  Category: 'All Categories',
+  Status: 'All Statuses',
+};
+
 const STATUS_OPTIONS: { id: PrayerRequestStatus; name: string }[] = [
   { id: 'inbox', name: 'Inbox' },
   { id: 'active', name: 'Active' },
@@ -87,7 +93,9 @@ const GalleryFilterSheet = ({ type, onClose }: GalleryFilterSheetProps) => {
               <Text
                 style={[styles.rowText, pending === null && styles.active]}
                 numberOfLines={1}
-              >{`All ${type}s`}</Text>
+              >
+                {ALL_LABELS[type]}
+              </Text>
               {pending === null && <Check size={20} color={COLORS.accent} />}
             </Pressable>
 

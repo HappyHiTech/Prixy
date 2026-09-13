@@ -1,9 +1,11 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { ChevronDown } from 'lucide-react-native';
 
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
 import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 import { useGalleryStore } from '../../stores/useGalleryStore';
+
+import { COLORS } from '@/constants';
 
 import type { FilterType } from '../../GalleryFilterSheet/GalleryFilterSheet';
 import { styles } from './FilterBox.styles';
@@ -36,15 +38,21 @@ const FilterBox = ({ type, onPress }: FilterBoxProp) => {
           ? STATUS_LABELS[status]
           : undefined;
 
+  // A filter with no selection falls back to showing its own type name.
+  const isActive = label !== undefined;
+
   return (
     <Pressable
       style={({ pressed }) => [styles.container, pressed && styles.pressed]}
       onPress={onPress}
     >
-      <Text style={styles.text} numberOfLines={1}>
+      <Text
+        style={[styles.text, isActive && styles.textActive]}
+        numberOfLines={1}
+      >
         {label ?? type}
       </Text>
-      <ChevronDown size={16} color="#999999" />
+      <ChevronDown size={16} color={isActive ? COLORS.accent : '#999999'} />
     </Pressable>
   );
 };

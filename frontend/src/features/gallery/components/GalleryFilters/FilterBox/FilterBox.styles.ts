@@ -20,10 +20,21 @@ export const styles = StyleSheet.create({
   pressed: {
     opacity: 0.6,
   },
+  dot: {
+    height: 6,
+    width: 6,
+    backgroundColor: COLORS.accent,
+    borderRadius: 3,
+  },
+
   text: {
     ...fontFamily(600),
     color: COLORS.secondaryText,
     fontSize: 17,
+  },
+
+  textActive: {
+    color: COLORS.accent,
   },
 
   icon: {
