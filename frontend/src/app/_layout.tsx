@@ -1,12 +1,14 @@
 import 'react-native-get-random-values';
 
-import { Stack } from 'expo-router';
+import { Stack, usePathname } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import { getIdToken, isExpired, useAuthStore } from '@/stores/useAuthStore';
 import { refreshTokenOnce } from '@/apis/refreshToken';
+
+import NavBar from '@/components/NavBar/Navbar';
 
 import {
   DMSans_100Thin,
@@ -38,6 +40,9 @@ export default function TabLayout() {
   const bootstrap = useAuthStore((s) => s.bootstrap);
   const isBootstrapping = useAuthStore((s) => s.isBootstrapping);
 
+  const pathname = usePathname();
+  const showNavBar = pathname === '/home' || pathname === '/pray';
+
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
@@ -62,15 +67,16 @@ export default function TabLayout() {
         <Stack
           screenOptions={{
             headerShown: false,
-            animation: 'slide_from_right',
+            animation: 'slide_from_left',
             animationDuration: 250,
           }}
         >
           <Stack.Screen
             name="pray"
-            options={{ animation: 'slide_from_left' }}
+            options={{ animation: 'slide_from_right' }}
           />
         </Stack>
+        {showNavBar && <NavBar />}
       </QueryClientProvider>
     </GestureHandlerRootView>
   );

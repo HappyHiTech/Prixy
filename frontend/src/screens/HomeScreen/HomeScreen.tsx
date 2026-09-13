@@ -9,8 +9,6 @@ import RequestView from '@/features/home/components/RequestView/RequestView';
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import ActionButton from '@/components/ActionButton/ActionButton';
 
-import NavBar from '@/components/NavBar/Navbar';
-
 import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
@@ -67,7 +65,6 @@ const HomeScreen = () => {
         <SegmentedControlSection />
         <RequestView />
       </ScrollView>
-      <NavBar />
       {selectedPrayerId && selectedEdit === 'prayee' && (
         <PrayeeSidebar
           onSelect={(prayeeId) => handleSidebarSelect({ prayeeId })}
