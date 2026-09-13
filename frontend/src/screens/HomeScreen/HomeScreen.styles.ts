@@ -1,9 +1,9 @@
-import { StyleSheet } from "react-native";
-import { COLORS } from "@/constants";
+import { StyleSheet } from 'react-native';
+import { COLORS } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1,
     gap: 20,
 
@@ -13,25 +13,29 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    alignItems: "center",
+    alignItems: 'center',
 
-    alignSelf: "stretch",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 22,
 
     // borderWidth: 2,
   },
 
+  headerRight: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   title: {
     borderWidth: 2,
     fontSize: 48,
-    fontWeight: "600",
+    fontWeight: '600',
     lineHeight: 52,
   },
 
   body: {
-    alignSelf: "stretch",
+    alignSelf: 'stretch',
     flex: 1,
   },
 

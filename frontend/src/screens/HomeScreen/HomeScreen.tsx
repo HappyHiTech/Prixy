@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 
 import StatsCard from '@/features/home/components/StatsCard/StatsCard';
 import ProfileButton from '@/components/ProfileButton/ProfileButton';
+import GalleryButton from '@/components/GalleryButton/GalleryButton';
 import SegmentedControlSection from '@/features/home/components/SegmentedControlSection/SegmentedControlSection';
 import RequestView from '@/features/home/components/RequestView/RequestView';
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
@@ -52,7 +53,11 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <StatsCard />
-        <ProfileButton onPress={handleProfilePress} />
+        <View style={styles.headerRight}>
+          <GalleryButton />
+
+          <ProfileButton onPress={handleProfilePress} />
+        </View>
       </View>
       <ScrollView
         style={styles.body}
