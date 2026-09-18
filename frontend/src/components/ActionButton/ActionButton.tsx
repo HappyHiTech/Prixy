@@ -47,7 +47,12 @@ const ActionButton = () => {
           <Path d={cardPath} fill={COLORS.primary} />
         </Svg>
         <Pressable style={styles.content} onPress={() => {}}>
-          <Pressable style={styles.option} onPress={() => {}}>
+          <Pressable
+            style={styles.option}
+            onPress={() => {
+              router.push('/quick-capture');
+            }}
+          >
             <NotebookPenIcon />
             <Text style={styles.text}>Quick Capture</Text>
           </Pressable>
