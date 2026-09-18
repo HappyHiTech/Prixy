@@ -11,6 +11,10 @@ export const styles = StyleSheet.create({
     borderRadius: 15,
   },
 
+  containerNoRequest: {
+    justifyContent: 'center',
+  },
+
   stateIndicator: {
     marginTop: 40,
   },

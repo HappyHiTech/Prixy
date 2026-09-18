@@ -58,7 +58,7 @@ const RequestView = () => {
 
   if (prayReqs.length === 0) {
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, styles.containerNoRequest]}>
         <NoReq
           message={
             activeSegment === 'inbox'
