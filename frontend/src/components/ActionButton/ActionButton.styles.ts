@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
   },
 
   actionButton: {
-    height: 154,
+    height: 204,
     marginBottom: 120,
     width: 327,
     ...dropShadow('#000000', 0.15, 12, 4),

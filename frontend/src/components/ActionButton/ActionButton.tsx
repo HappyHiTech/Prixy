@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
-import { Mic, Pencil } from 'lucide-react-native';
+import { Mic, Pencil, NotebookPenIcon } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/prayerRequest/useCreatePrayerRequestMutation';
@@ -11,12 +11,12 @@ import { COLORS } from '@/constants';
 import { styles } from './ActionButton.styles';
 
 const WIDTH = 327;
-const HEIGHT = 154;
+const HEIGHT = 204;
 
 const cardPath =
-  'M297 4C311.359 4 323 15.6406 323 30V124C323 138.359 311.359 150 297 ' +
-  '150H228.507C199.011 146.954 200.832 128 163.5 128C126.168 128 126.733 ' +
-  '146.954 98.1904 150H30C15.6406 150 4 138.359 4 124V30C4 15.6406 15.6406 ' +
+  'M297 4C311.359 4 323 15.6406 323 30V174C323 188.359 311.359 200 297 ' +
+  '200H228.507C199.011 196.954 200.832 178 163.5 178C126.168 178 126.733 ' +
+  '196.954 98.1904 200H30C15.6406 200 4 188.359 4 174V30C4 15.6406 15.6406 ' +
   '4 30 4H297Z';
 
 const ActionButton = () => {
@@ -47,6 +47,10 @@ const ActionButton = () => {
           <Path d={cardPath} fill={COLORS.primary} />
         </Svg>
         <Pressable style={styles.content} onPress={() => {}}>
+          <Pressable style={styles.option} onPress={() => {}}>
+            <NotebookPenIcon />
+            <Text style={styles.text}>Quick Capture</Text>
+          </Pressable>
           <Pressable style={styles.option} onPress={() => {}}>
             <Mic />
             <Text style={styles.text}>Record</Text>
