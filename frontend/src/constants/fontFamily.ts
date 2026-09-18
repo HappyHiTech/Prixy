@@ -14,6 +14,7 @@ const FONT_FAMILY_BY_WEIGHT = {
 
 type FontWeight = keyof typeof FONT_FAMILY_BY_WEIGHT;
 
-export const fontFamily = (weight: FontWeight = 600): TextStyle => ({
-  fontFamily: FONT_FAMILY_BY_WEIGHT[weight],
-});
+export const fontFamily = (weight: FontWeight = 600) =>
+  ({
+    fontFamily: FONT_FAMILY_BY_WEIGHT[weight],
+  }) satisfies TextStyle;
