@@ -59,5 +59,14 @@ export const styles = StyleSheet.create({
     color: '#9CA3AF',
   },
 
+  empty: {
+    paddingHorizontal: 12,
+    paddingVertical: 20,
+
+    color: '#9CA3AF',
+    fontSize: 15,
+    textAlign: 'center',
+  },
+
   selections: {},
 });

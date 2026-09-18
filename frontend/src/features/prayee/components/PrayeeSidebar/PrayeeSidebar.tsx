@@ -50,6 +50,7 @@ const PrayeeSidebar = ({
       <Sidebar
         title="Praying For"
         addLabel="Add a name"
+        emptyLabel="No one here yet. Add a name to start praying for someone."
         items={prayees}
         isPending={isPending}
         isError={isError}

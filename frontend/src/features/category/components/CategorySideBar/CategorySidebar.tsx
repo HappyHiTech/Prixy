@@ -50,6 +50,7 @@ const CategorySidebar = ({
       <Sidebar
         title="Category"
         addLabel="Add a Category"
+        emptyLabel="No categories yet. Add one to group your requests."
         items={category}
         isPending={isPending}
         isError={isError}

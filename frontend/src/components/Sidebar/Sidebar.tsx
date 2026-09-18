@@ -28,6 +28,7 @@ const DURATION = 250;
 type SidebarProp = {
   title: string;
   addLabel: string;
+  emptyLabel: string;
   items?: (Prayee | Category)[];
   isPending: boolean;
   isError: boolean;
@@ -41,6 +42,7 @@ type SidebarProp = {
 const Sidebar = ({
   title,
   addLabel,
+  emptyLabel,
   items = [],
   isError,
   isPending,
@@ -99,6 +101,8 @@ const Sidebar = ({
             <Text style={styles.addText}>{"Couldn't load"}</Text>
           ) : isPending ? (
             <ActivityIndicator />
+          ) : items.length === 0 ? (
+            <Text style={styles.empty}>{emptyLabel}</Text>
           ) : (
             items.map((item) => (
               <SidebarItem
