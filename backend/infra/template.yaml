@@ -338,6 +338,27 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  DeletePrayeeFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayees/delete/
+      Handler: index.handler
+      MemorySize: *dbFunctionMemory
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        DeletePrayee:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayees/{id}
+            Method: delete
+            Auth:
+              Authorizer: CognitoAuth
+
   ListCategoriesFunction:
     Type: AWS::Serverless::Function
     Metadata:
@@ -377,6 +398,27 @@ Resources:
             RestApiId: !Ref PrixyApi
             Path: /categories
             Method: post
+            Auth:
+              Authorizer: CognitoAuth
+
+  DeleteCategoryFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/categories/delete/
+      Handler: index.handler
+      MemorySize: *dbFunctionMemory
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        DeleteCategory:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /categories/{id}
+            Method: delete
             Auth:
               Authorizer: CognitoAuth
 

@@ -112,6 +112,8 @@ into multiple `PrayerRequest`s.
 | POST   | `/prayees`              | `{ name }`                                                                      | `Prayee`                            | "Add a name"                                                        |
 | GET    | `/categories`              | —                                                                               | `Category[]`                           | populates "Category" picker (defaults + custom)                     |
 | POST   | `/categories`              | `{ name, icon }`                                                                | `Category`                             | "Add a Category"                                                    |
+| DELETE | `/prayees/:id`             | —                                                                               | `204`                                  | X in "Praying For" sidebar; nulls `prayeeId` on that user's requests and demotes any orphaned `active` row to `inbox` |
+| DELETE | `/categories/:id`          | —                                                                               | `204`                                  | X in "Category" sidebar; same nulling + demotion for `categoryId`. `409` when the category is `isDefault` |
 | GET    | `/user/me`                 | —                                                                               | `User` incl. stats                     | Profile Screen                                                      |
 | PATCH  | `/user/me`                 | `{ displayName }`                                                               | `User`                                 | Profile Screen edit                                                 |
 | GET    | `/stats/today`             | —                                                                               | `{ prayedToday: int, deckCount: int }` | Home Screen header ("Today: 0", "Deck: 5")                          |
@@ -146,10 +148,10 @@ into multiple `PrayerRequest`s.
 - "+" button → Record or Manual → `POST /recordings` or `POST /prayers`
   **Individual Prayer Screen**
 - `GET /prayers/:id`
-- Prayee chip → opens "Praying For" picker (`GET`/`POST /prayees`,
+- Prayee chip → opens "Praying For" picker (`GET`/`POST`/`DELETE /prayees`,
   then `PATCH /prayers/:id`)
-- Category chip → opens "Category" picker (`GET`/`POST /categories`, then
-  `PATCH /prayers/:id`)
+- Category chip → opens "Category" picker (`GET`/`POST`/`DELETE /categories`,
+  then `PATCH /prayers/:id`)
 - Editable request text → `PATCH /prayers/:id`
 - "Set Frequency" (One time / Mon–Sun) → `PATCH /prayers/:id`
 - "Mark As Answered" (toggle) → `PATCH /prayers/:id { answered: boolean }` —
@@ -200,9 +202,11 @@ into multiple `PrayerRequest`s.
   `answered` requests are exempt and never change status this way; the only way
   out of `answered` is an explicit `{ answered: false }` in the same PATCH,
   which re-applies the rule above.
-  Known gap: the `ON DELETE SET NULL` foreign keys mean deleting a prayee or
-  category nulls the field without re-evaluating status, leaving orphaned
-  `active` rows.
+  `DELETE /prayees/:id` and `DELETE /categories/:id` re-apply the rule
+  explicitly after the `ON DELETE SET NULL` cascade, demoting any `active`
+  row left with a null id back to `inbox`. Postgres cascades do not re-run
+  the rule on their own, so any future path that deletes a prayee or category
+  must do the same.
 - **`...` menu on Inbox cards**: contents not yet defined (likely delete /
   edit / move to Active Deck manually)
 - **"One time" vs recurring semantics**: does `one_time` mean the request

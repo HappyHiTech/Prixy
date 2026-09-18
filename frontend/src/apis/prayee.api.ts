@@ -12,3 +12,9 @@ export async function createPrayee(input: { name: string }): Promise<Prayee> {
     body: JSON.stringify(input),
   });
 }
+
+export async function deletePrayee(id: string): Promise<void> {
+  return apiFetch<void>(`/prayees/${id}`, {
+    method: 'DELETE',
+  });
+}

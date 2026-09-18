@@ -33,6 +33,7 @@ type SidebarProp = {
   isError: boolean;
   isSaving?: boolean;
   onSelect: (id: string) => void;
+  onDelete?: (item: Prayee | Category) => void;
   onAdd: () => void;
   exit: () => void;
 };
@@ -44,6 +45,7 @@ const Sidebar = ({
   isError,
   isPending,
   isSaving,
+  onDelete,
   onSelect,
   onAdd,
   exit,
@@ -103,6 +105,7 @@ const Sidebar = ({
                 key={item.id}
                 data={item}
                 onPress={() => handleSelect(item.id)}
+                onDelete={onDelete ? () => onDelete(item) : undefined}
                 disabled={isSaving}
               />
             ))
