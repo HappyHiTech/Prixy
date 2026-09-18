@@ -68,6 +68,7 @@ export default function TabLayout() {
           screenOptions={{
             headerShown: false,
             animation: 'slide_from_left',
+            gestureEnabled: false,
             animationDuration: 250,
           }}
         >
