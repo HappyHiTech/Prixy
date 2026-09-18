@@ -5,7 +5,7 @@ import { COLORS, fontFamily, dropShadow } from '@/constants';
 export const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 24,
-    paddingVertical: 18,
+    paddingVertical: 9,
   },
 
   textBody: {

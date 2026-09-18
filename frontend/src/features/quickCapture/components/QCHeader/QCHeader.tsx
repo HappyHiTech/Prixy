@@ -3,9 +3,9 @@ import { View, Text } from 'react-native';
 
 import GoBackButton from '@/components/GoBackButton/GoBackButton';
 
-import { styles } from './QuickCaptureHeader.styles';
+import { styles } from './QCHeader.styles';
 
-const QuickCaptureHeader = () => {
+const QCHeader = () => {
   const router = useRouter();
 
   return (
@@ -16,4 +16,4 @@ const QuickCaptureHeader = () => {
   );
 };
 
-export default QuickCaptureHeader;
+export default QCHeader;
