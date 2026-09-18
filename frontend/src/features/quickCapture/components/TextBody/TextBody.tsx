@@ -1,11 +1,22 @@
 import { View, TextInput } from 'react-native';
 
+import { useQCStore } from '@/stores/useQCStore';
+
 import { styles } from './TextBody.styles';
 
 const TextBody = () => {
+  const text = useQCStore((s) => s.text);
+  const setText = useQCStore((s) => s.setText);
+
   return (
     <View style={styles.container}>
-      <TextInput style={styles.textBody} multiline />
+      <TextInput
+        style={styles.textBody}
+        multiline
+        placeholder="What are you praying for?"
+        value={text}
+        onChangeText={setText}
+      />
     </View>
   );
 };
