@@ -39,6 +39,15 @@ export async function createPrayerRequest(): Promise<PrayerRequest> {
   });
 }
 
+export async function capturePrayerRequests(
+  text: string,
+): Promise<PrayerRequest[]> {
+  return apiFetch<PrayerRequest[]>('/prayers/capture', {
+    method: 'POST',
+    body: JSON.stringify({ text }),
+  });
+}
+
 export async function updatePrayerRequest(
   id: string,
   updates: UpdatePrayerRequestBody,

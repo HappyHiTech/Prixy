@@ -4,14 +4,19 @@ import { COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
     paddingHorizontal: 24,
   },
 
   button: {
+    alignItems: 'center',
+    minWidth: 64,
     backgroundColor: COLORS.accent,
     borderRadius: 999,
+  },
+
+  buttonDisabled: {
+    opacity: 0.5,
   },
 
   text: {
@@ -20,5 +25,16 @@ export const styles = StyleSheet.create({
     color: COLORS.primary,
     fontSize: 15,
     ...fontFamily(700),
+  },
+
+  spinner: {
+    paddingVertical: 8,
+  },
+
+  error: {
+    marginBottom: 8,
+    color: COLORS.dangerText,
+    fontSize: 13,
+    textAlign: 'right',
   },
 });
