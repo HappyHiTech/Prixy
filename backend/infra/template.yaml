@@ -296,6 +296,72 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  BedrockEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: HTTPS from DB Lambdas to the Bedrock runtime endpoint
+      VpcId: vpc-0f0e0e699233fa1e2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourceSecurityGroupId: sg-0e9a01494cd64eac2
+
+  BedrockRuntimeEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcEndpointType: Interface
+      ServiceName: !Sub com.amazonaws.${AWS::Region}.bedrock-runtime
+      VpcId: vpc-0f0e0e699233fa1e2
+      SubnetIds:
+        - subnet-00fcbf804a78fef47
+      SecurityGroupIds:
+        - !Ref BedrockEndpointSecurityGroup
+      PrivateDnsEnabled: true
+
+  CapturePrayersFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayers/capture/
+      Handler: index.handler
+      MemorySize: *dbFunctionMemory
+      # LLM call + two DB round trips. Must stay under API Gateway's 29s cap.
+      Timeout: 25
+      VpcConfig: *dbVpcConfig
+      Environment:
+        Variables:
+          DB_HOST: prixy-db.cx42cyay04z3.us-west-2.rds.amazonaws.com
+          DB_PORT: "5432"
+          DB_NAME: Prixy
+          DB_USER: lambda_app_user
+          BEDROCK_MODEL_ID: global.anthropic.claude-haiku-4-5-20251001-v1:0
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+              Resource:
+                - "arn:aws:rds-db:us-west-2:824648489396:dbuser:db-6CXJKUEBM5CEHIECSV4AIQVK5A/lambda_app_user"
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/global.anthropic.claude-haiku-4-5-20251001-v1:0"
+                - "arn:aws:bedrock:*::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                - "arn:aws:bedrock:::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+      Events:
+        CapturePrayers:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayers/capture
+            Method: post
+            Auth:
+              Authorizer: CognitoAuth
+
   ListPrayeesFunction:
     Type: AWS::Serverless::Function
     Metadata:
