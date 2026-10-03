@@ -41,7 +41,8 @@ Because of that:
   relational: User → PrayerRequest → Prayee/Category)
 - **File storage:** S3 (voice recordings)
 - **AI pipeline:** AWS Transcribe (speech-to-text) + a single LLM API call
-  (Claude/GPT) for transcript cleanup, splitting multi-topic recordings into
+  (Claude Haiku 4.5 via Amazon Bedrock, reached through a VPC interface
+  endpoint) for transcript cleanup, splitting multi-topic recordings into
   separate requests, and category suggestion
 - **Auth:** not yet decided (Cognito vs. third-party) — do not assume one is
   wired up

@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Capture Spec</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --surface: #ffffff;
+    --surface-2: #f1efea;
+    --text: #1f1d1a;
+    --muted: #6b665e;
+    --border: #e3dfd7;
+    --accent: #5b5bd6;
+    --accent-soft: #ecebfb;
+    --green: #1f8a4c;
+    --green-soft: #e3f4ea;
+    --amber: #a86400;
+    --amber-soft: #fbf0dc;
+    --red: #c0392b;
+    --red-soft: #fbe6e3;
+    --blue: #1d6fb8;
+    --blue-soft: #e2eef9;
+    --code-bg: #f1efea;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 2px 8px rgba(0,0,0,.04);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161514;
+      --surface: #1f1e1c;
+      --surface-2: #2a2826;
+      --text: #ece9e4;
+      --muted: #a29d94;
+      --border: #34312d;
+      --accent: #9b9bf0;
+      --accent-soft: #2a2a45;
+      --green: #5ccf8c;
+      --green-soft: #1c3326;
+      --amber: #e7b15a;
+      --amber-soft: #3a2e1a;
+      --red: #f08377;
+      --red-soft: #3d221f;
+      --blue: #7db8ec;
+      --blue-soft: #1c2c3c;
+      --code-bg: #2a2826;
+      --shadow: none;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .86em; }
+  code { background: var(--code-bg); padding: .1em .4em; border-radius: 5px; }
+  pre { background: var(--code-bg); padding: 14px 16px; border-radius: 10px; overflow-x: auto; line-height: 1.5; margin: 12px 0; }
+  pre code { background: none; padding: 0; }
+  a { color: var(--accent); }
+
+  .layout { max-width: 1180px; margin: 0 auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 32px; }
+  @media (min-width: 980px) { .layout { grid-template-columns: 210px 1fr; } }
+
+  nav.toc { display: none; }
+  @media (min-width: 980px) {
+    nav.toc { display: block; position: sticky; top: 24px; align-self: start; padding-top: 40px; font-size: 14px; }
+    nav.toc a { display: block; padding: 5px 10px; color: var(--muted); text-decoration: none; border-left: 2px solid var(--border); }
+    nav.toc a:hover { color: var(--text); border-left-color: var(--accent); }
+    nav.toc .label { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px 12px; }
+  }
+
+  main { min-width: 0; padding: 40px 0 80px; }
+  header.hero { margin-bottom: 36px; }
+  .eyebrow { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--accent); font-weight: 600; }
+  h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.15; margin: 6px 0 12px; letter-spacing: -.02em; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 720px; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .pill { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
+  .pill.ok { background: var(--green-soft); color: var(--green); border-color: transparent; }
+
+  section { margin: 0 0 48px; scroll-margin-top: 20px; }
+  h2 { font-size: 24px; letter-spacing: -.01em; margin: 0 0 6px; }
+  .sub { color: var(--muted); margin: 0 0 18px; }
+  h3 { font-size: 17px; margin: 24px 0 8px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
+  /* At a glance */
+  .glance { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .glance .card { padding: 16px 18px; }
+  .glance .k { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .glance .v { font-weight: 600; margin-top: 4px; }
+
+  /* Example */
+  .example-in { font-style: italic; background: var(--surface-2); border-left: 3px solid var(--accent); padding: 12px 16px; border-radius: 0 10px 10px 0; margin-bottom: 14px; }
+
+  /* Flow */
+  .flow { display: flex; flex-direction: column; gap: 0; }
+  .step { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: start; }
+  .step .dot { width: 36px; height: 36px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+  .step .body { padding-bottom: 18px; border-left: 2px dashed var(--border); margin-left: -32px; padding-left: 32px; }
+  .step:last-child .body { border-left-color: transparent; }
+  .step .title { font-weight: 600; }
+  .step .where { font-size: 13px; color: var(--muted); }
+  .step .detail { font-size: 15px; margin-top: 2px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; }
+  .tag.fe { background: var(--blue-soft); color: var(--blue); }
+  .tag.api { background: var(--surface-2); color: var(--muted); }
+  .tag.be { background: var(--accent-soft); color: var(--accent); }
+  .tag.ai { background: var(--amber-soft); color: var(--amber); }
+  .tag.db { background: var(--green-soft); color: var(--green); }
+
+  .converge { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; margin-top: 8px; }
+  .converge .lanes { display: flex; flex-direction: column; gap: 8px; }
+  .lane { background: var(--surface-2); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+  .lane.future { opacity: .75; border: 1px dashed var(--border); background: transparent; }
+  .arrow { color: var(--muted); font-size: 22px; }
+  .shared { background: var(--accent-soft); color: var(--accent); border-radius: 10px; padding: 12px 14px; font-weight: 600; font-size: 14px; text-align: center; }
+  @media (max-width: 620px) { .converge { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); justify-self: center; } }
+
+  /* Decisions */
+  .decision { display: flex; flex-direction: column; gap: 6px; }
+  .decision .id { font-size: 12px; font-weight: 700; color: var(--accent); }
+  .decision .what { font-weight: 600; line-height: 1.4; }
+  .decision .why { font-size: 14px; color: var(--muted); }
+
+  /* Tables */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); background: var(--surface-2); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+
+  .status { font-family: ui-monospace, Menlo, monospace; font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
+  .s2 { background: var(--green-soft); color: var(--green); }
+  .s4 { background: var(--amber-soft); color: var(--amber); }
+  .s5 { background: var(--red-soft); color: var(--red); }
+  .badge-active { background: var(--green-soft); color: var(--green); }
+  .badge-inbox { background: var(--blue-soft); color: var(--blue); }
+
+  /* Callouts */
+  .callout { border-radius: var(--radius); padding: 14px 18px; margin: 16px 0; font-size: 15px; }
+  .callout strong:first-child { display: block; margin-bottom: 2px; }
+  .callout.why { background: var(--accent-soft); }
+  .callout.warn { background: var(--amber-soft); }
+  .callout.sec { background: var(--green-soft); }
+
+  /* File tree */
+  .tree { font-family: ui-monospace, Menlo, monospace; font-size: 14px; line-height: 1.75; }
+  .tree .new { color: var(--green); font-weight: 600; }
+  .tree .note { color: var(--muted); font-family: inherit; }
+
+  /* Rules list */
+  ol.rules { padding-left: 20px; margin: 8px 0; }
+  ol.rules li { margin: 6px 0; }
+
+  /* Checklist */
+  ul.check { list-style: none; padding: 0; margin: 0; }
+  ul.check li { padding: 10px 0 10px 34px; position: relative; border-bottom: 1px solid var(--border); }
+  ul.check li:last-child { border-bottom: none; }
+  ul.check li::before { content: ""; position: absolute; left: 4px; top: 13px; width: 16px; height: 16px; border: 2px solid var(--border); border-radius: 4px; }
+
+  details { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin: 12px 0; }
+  details summary { cursor: pointer; padding: 14px 18px; font-weight: 600; list-style: none; }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::before { content: "▸"; display: inline-block; margin-right: 8px; color: var(--muted); transition: transform .15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  details .inner { padding: 0 18px 16px; }
+
+  .two { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 760px) { .two { grid-template-columns: 1fr 1fr; } }
+
+  footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); padding-top: 20px; }
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="Contents">
+  <p class="label">Contents</p>
+  <a href="#glance">At a glance</a>
+  <a href="#flow">How it flows</a>
+  <a href="#decisions">Decisions</a>
+  <a href="#api">API contract</a>
+  <a href="#backend">Backend</a>
+  <a href="#infra">Infrastructure</a>
+  <a href="#frontend">Frontend</a>
+  <a href="#errors">Errors</a>
+  <a href="#testing">Testing</a>
+  <a href="#verify">Verify first</a>
+  <a href="#scope">Out of scope</a>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">Prixy · Technical spec</div>
+  <h1>Quick Capture with AI parsing</h1>
+  <p class="lede">The user types a messy note and taps Save. Claude splits it into separate prayer requests, tidies the wording, and links each one to an existing prayee and category when the match is clear.</p>
+  <div class="meta">
+    <span class="pill ok">Design approved</span>
+    <span class="pill">Branch: feat/quick-capture</span>
+    <span class="pill">2026-10-03</span>
+    <span class="pill">Source of truth: quick-capture-spec.md</span>
+  </div>
+</header>
+
+<!-- AT A GLANCE -->
+<section id="glance">
+  <h2>At a glance</h2>
+  <p class="sub">The whole feature in five facts.</p>
+  <div class="glance">
+    <div class="card"><div class="k">Endpoint</div><div class="v"><code>POST /prayers/capture</code></div></div>
+    <div class="card"><div class="k">Model</div><div class="v">Claude Haiku 4.5 via Bedrock</div></div>
+    <div class="card"><div class="k">Network path</div><div class="v">VPC interface endpoint (~$7/mo)</div></div>
+    <div class="card"><div class="k">Style</div><div class="v">Synchronous, all-or-nothing</div></div>
+    <div class="card"><div class="k">Schema changes</div><div class="v">None</div></div>
+  </div>
+
+  <h3>Example</h3>
+  <div class="example-in">"um pray for my mom's surgery on friday, and also jake who's looking for a job"</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>requestText</th><th>Prayee</th><th>Category</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Mom's surgery on Friday</td><td><em>none — no "Mom" prayee</em></td><td>Family</td><td><span class="status badge-inbox">inbox</span></td></tr>
+        <tr><td>Jake looking for a job</td><td>Jake</td><td>Friends</td><td><span class="status badge-active">active</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout why"><strong>Why one went to the Inbox</strong>Your existing rule: a request is <code>active</code> only when both prayee and category are set. Claude leaves a field empty unless it's sure, so anything uncertain lands in the Inbox for you to review.</div>
+</section>
+
+<!-- FLOW -->
+<section id="flow">
+  <h2>How it flows</h2>
+  <p class="sub">From tapping Save to seeing the new cards on Home.</p>
+  <div class="card">
+    <div class="flow">
+      <div class="step"><div class="dot">1</div><div class="body">
+        <div class="title">User taps Save <span class="tag fe">Frontend</span></div>
+        <div class="detail">The button shows a spinner and is disabled, so a double tap can't create duplicates.</div>
+      </div></div>
+      <div class="step"><div class="dot">2</div><div class="body">
+        <div class="title"><code>POST /prayers/capture { text }</code> <span class="tag api">API Gateway</span></div>
+        <div class="detail">The Cognito authorizer verifies the token and passes the user's <code>sub</code>.</div>
+      </div></div>
+      <div class="step"><div class="dot">3</div><div class="body">
+        <div class="title">Load the user's prayees + categories <span class="tag db">RDS</span></div>
+        <div class="detail">Look up <code>user_id</code>, fetch both lists as <code>id: name</code>, then <strong>release the DB connection</strong>. Don't hold a connection open while waiting on the AI.</div>
+      </div></div>
+      <div class="step"><div class="dot">4</div><div class="body">
+        <div class="title">Ask Claude to split + match <span class="tag ai">Bedrock</span></div>
+        <div class="detail">Goes through the private VPC endpoint. Structured outputs force a fixed JSON shape: <code>{ requests: [{ requestText, prayeeId, categoryId }] }</code>.</div>
+      </div></div>
+      <div class="step"><div class="dot">5</div><div class="body">
+        <div class="title">Validate in code <span class="tag be">Lambda</span></div>
+        <div class="detail">Any id that isn't in the user's own lists becomes <code>null</code>. Empty items are dropped. A capture creates at most 20 requests.</div>
+      </div></div>
+      <div class="step"><div class="dot">6</div><div class="body">
+        <div class="title">Insert all rows in one transaction <span class="tag db">RDS</span></div>
+        <div class="detail">The status rule is applied per row. If any insert fails, nothing is saved.</div>
+      </div></div>
+      <div class="step"><div class="dot">7</div><div class="body">
+        <div class="title">Back to Home <span class="tag fe">Frontend</span></div>
+        <div class="detail">Reset the text, <code>router.back()</code>. TanStack invalidates <code>['prayerRequests']</code>, so the lists refetch on their own.</div>
+      </div></div>
+    </div>
+  </div>
+
+  <h3>Voice will reuse the same pipeline</h3>
+  <p class="sub" style="margin-bottom:10px">Quick capture is just voice capture without the transcription step, so the AI part is written once and shared.</p>
+  <div class="converge">
+    <div class="lanes">
+      <div class="lane">Text: user types</div>
+      <div class="lane future">Voice (later): audio → S3 → Transcribe</div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="shared">shared/capture/<br>parseRequests → insertRequests</div>
+  </div>
+</section>
+
+<!-- DECISIONS -->
+<section id="decisions">
+  <h2>Decisions</h2>
+  <p class="sub">What was decided and why, so it doesn't get re-argued later.</p>
+  <div class="grid">
+    <div class="card decision"><span class="id">D1 · Scope</span><span class="what">Split, clean, and match to existing prayees + categories</span><span class="why">Never creates new ones. That avoids duplicates like "Mom" vs "my mom".</span></div>
+    <div class="card decision"><span class="id">D2 · Sync</span><span class="what">One request, one response</span><span class="why">An LLM call takes seconds. Voice is async only because Transcribe is slow.</span></div>
+    <div class="card decision"><span class="id">D3 · Network</span><span class="what">Bedrock through a VPC interface endpoint</span><span class="why">The Lambda is in the VPC (for RDS) with no internet route. IAM auth, so there's no API key to store. Much cheaper than a NAT gateway.</span></div>
+    <div class="card decision"><span class="id">D4 · Endpoint</span><span class="what"><code>bedrock-runtime</code>, not Mantle</span><span class="why">It supports structured outputs and has a known VPC endpoint service.</span></div>
+    <div class="card decision"><span class="id">D5 · Model</span><span class="what">Claude Haiku 4.5, no thinking</span><span class="why">Sonnet 5.5 was the first pick, but this account has 0 quota for the Sonnets. Haiku is fast and cheap (~$0.0016/capture). Swapping later is one env var plus re-adding thinking/effort.</span></div>
+    <div class="card decision"><span class="id">D6 · Status</span><span class="what">The existing Inbox → Active rule applies unchanged</span><span class="why">One rule everywhere. Cautious matching sends uncertain requests to the Inbox.</span></div>
+    <div class="card decision"><span class="id">D7 · Failure</span><span class="what">Fail cleanly, save nothing</span><span class="why">The text stays on screen, so the user just retries. No silent fallback that hides a broken AI step.</span></div>
+    <div class="card decision"><span class="id">D8 · raw_transcript</span><span class="what">Holds the AI's cleaned text</span><span class="why">Same meaning as on the voice path: "what the AI wrote, before user edits".</span></div>
+    <div class="card decision"><span class="id">D9 · Privacy</span><span class="what">Raw typed input is not stored</span><span class="why">Nothing reads it, and prayer content is personal.</span></div>
+    <div class="card decision"><span class="id">D10 · Reuse</span><span class="what">Shared <code>parseRequests</code> + <code>insertRequests</code></span><span class="why">The voice pipeline plugs into the same code later.</span></div>
+    <div class="card decision"><span class="id">D11 · UX</span><span class="what">Straight back to Home after saving</span><span class="why">Fastest. A toast is a cheap follow-up if needed.</span></div>
+  </div>
+</section>
+
+<!-- API -->
+<section id="api">
+  <h2>API contract</h2>
+  <p class="sub"><code>POST /prayers/capture</code> · Cognito auth · body <code>{ "text": "..." }</code></p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Status</th><th>When</th><th>Body</th></tr></thead>
+      <tbody>
+        <tr><td><span class="status s2">201</span></td><td>At least one request created</td><td><code>PrayerRequest[]</code></td></tr>
+        <tr><td><span class="status s4">400</span></td><td>Text missing, empty, or over 5,000 characters</td><td><code>{ message }</code></td></tr>
+        <tr><td><span class="status s4">401</span></td><td>No Cognito <code>sub</code></td><td><code>{ message }</code></td></tr>
+        <tr><td><span class="status s4">404</span></td><td>No user row for this <code>sub</code></td><td><code>{ message }</code></td></tr>
+        <tr><td><span class="status s4">422</span></td><td>The AI found no prayer request (e.g. "asdf")</td><td><code>{ message }</code></td></tr>
+        <tr><td><span class="status s5">502</span></td><td>Bedrock failed: throttled, timed out, no model access, or bad output</td><td><code>{ message }</code></td></tr>
+        <tr><td><span class="status s5">500</span></td><td>Anything else (DB errors)</td><td><code>{ message }</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout why"><strong>Messages are user-facing</strong>The frontend's <code>ApiError</code> already shows the server's <code>message</code>, so write them for the user to read.</div>
+</section>
+
+<!-- BACKEND -->
+<section id="backend">
+  <h2>Backend</h2>
+  <p class="sub">One new Lambda, plus two shared modules the voice pipeline will reuse.</p>
+
+  <div class="card tree">
+backend/<br>
+├── shared/<br>
+│&nbsp;&nbsp;&nbsp;├── db.js <span class="note">(existing)</span><br>
+│&nbsp;&nbsp;&nbsp;└── <span class="new">capture/</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="new">parseRequests.js</span> <span class="note">— callModel + validateSplits</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="new">parseRequests.test.js</span> <span class="note">— node:test</span><br>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="new">insertRequests.js</span> <span class="note">— one transaction</span><br>
+└── functions/prayers/<span class="new">capture/</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="new">index.js</span> <span class="note">— handler</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="new">package.json</span> <span class="note">— pg, rds-signer, @anthropic-ai/bedrock-sdk</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="new">Makefile</span> <span class="note">— same pattern as prayers/create</span>
+  </div>
+
+  <h3>The handler, step by step</h3>
+  <ol class="rules">
+    <li>No <code>sub</code> → <span class="status s4">401</span></li>
+    <li>Parse and validate <code>text</code> → <span class="status s4">400</span> if bad</li>
+    <li>DB: find the user (<span class="status s4">404</span> if none), load prayees + categories, release the connection</li>
+    <li><code>parseRequests()</code>: if it throws → <span class="status s5">502</span>; if it returns <code>[]</code> → <span class="status s4">422</span></li>
+    <li>DB: <code>insertRequests(client, userId, splits, 'manual')</code></li>
+    <li><span class="status s2">201</span> with the array</li>
+  </ol>
+
+  <h3>Calling Claude</h3>
+  <div class="two">
+    <div class="card">
+      <strong>Request settings</strong>
+      <div class="table-wrap" style="margin-top:10px">
+        <table>
+          <tbody>
+            <tr><td><code>model</code></td><td><code>process.env.BEDROCK_MODEL_ID</code></td></tr>
+            <tr><td><code>max_tokens</code></td><td>2048</td></tr>
+            <tr><td><code>output_config</code></td><td>JSON schema only</td></tr>
+            <tr><td>SDK timeout</td><td>10s, 1 retry (20s worst case &lt; 25s Lambda)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn" style="margin-bottom:0"><strong>Haiku 4.5 notes</strong>No <code>effort</code> (Haiku rejects it) and no <code>thinking</code> (leaving it out turns thinking off). Model ID: <code>global.anthropic.claude-haiku-4-5-20251001-v1:0</code>. The bare ID fails because Haiku only supports inference profiles.</div>
+    </div>
+    <div class="card">
+      <strong>Prompt rules</strong>
+      <ol class="rules">
+        <li>One request per distinct person or need</li>
+        <li>Clean up the wording in the user's voice. <strong>Never add details.</strong></li>
+        <li><code>prayeeId</code> only on a clear match, otherwise <code>null</code></li>
+        <li><code>categoryId</code> only if one clearly fits, otherwise <code>null</code></li>
+        <li>Only use ids from the lists given</li>
+        <li>No prayer request in the text → <code>{ "requests": [] }</code></li>
+      </ol>
+    </div>
+  </div>
+
+  <details>
+    <summary>Output JSON schema</summary>
+    <div class="inner">
+<pre><code>{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requests"],
+  "properties": {
+    "requests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requestText", "prayeeId", "categoryId"],
+        "properties": {
+          "requestText": { "type": "string" },
+          "prayeeId":    { "type": ["string", "null"] },
+          "categoryId":  { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}</code></pre>
+      <p style="margin:0">Check <code>stop_reason</code> before parsing. Anything other than <code>end_turn</code> (for example <code>max_tokens</code> or <code>refusal</code>) is an error → 502.</p>
+    </div>
+  </details>
+
+  <h3><code>validateSplits</code>: the safety net</h3>
+  <ol class="rules">
+    <li><code>raw.requests</code> isn't an array → <strong>throw</strong> (becomes a 502)</li>
+    <li>Trim <code>requestText</code>; drop the item if it's empty</li>
+    <li>Ids not in the user's lists → <code>null</code></li>
+    <li>Keep at most 20 items</li>
+  </ol>
+  <div class="callout sec"><strong>This is the security boundary</strong>Whatever the prompt says, the model can never attach a request to an id it invented or to another user's record. It's a pure function, so it's the part with unit tests.</div>
+
+  <h3>What gets inserted</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Column</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>request_text</code></td><td>AI's cleaned text</td></tr>
+        <tr><td><code>raw_transcript</code></td><td>Same AI text, never edited afterward</td></tr>
+        <tr><td><code>prayee_id</code> / <code>category_id</code></td><td>Validated id or <code>null</code></td></tr>
+        <tr><td><code>source_type</code></td><td><code>'manual'</code> (later <code>'voice'</code>)</td></tr>
+        <tr><td><code>status</code></td><td><span class="status badge-active">active</span> if both ids set, else <span class="status badge-inbox">inbox</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="sub" style="margin-top:10px"><code>RETURNING</code> uses the same columns and aliases as <code>prayers/create</code>, so the response shape matches. No migration needed.</p>
+</section>
+
+<!-- INFRA -->
+<section id="infra">
+  <h2>Infrastructure</h2>
+  <p class="sub">Changes to <code>backend/infra/template.yaml</code>.</p>
+
+  <div class="callout why"><strong>The core AWS idea</strong>Your Lambda lives in a private network (VPC) with no road to the internet. A <em>VPC interface endpoint</em> adds a private road to one AWS service, Bedrock. With <code>PrivateDnsEnabled</code>, the normal Bedrock hostname points down that road automatically, so the SDK code doesn't change.</div>
+
+  <div class="grid">
+    <div class="card">
+      <strong>BedrockRuntimeEndpoint</strong>
+      <p class="sub" style="margin:4px 0 8px">AWS::EC2::VPCEndpoint</p>
+      <ul style="padding-left:18px;margin:0;font-size:14px">
+        <li>Type <code>Interface</code></li>
+        <li><code>com.amazonaws.${AWS::Region}.bedrock-runtime</code></li>
+        <li><strong>One</strong> subnet (one AZ ≈ $7/mo)</li>
+        <li><code>PrivateDnsEnabled: true</code></li>
+      </ul>
+    </div>
+    <div class="card">
+      <strong>BedrockEndpointSecurityGroup</strong>
+      <p class="sub" style="margin:4px 0 8px">AWS::EC2::SecurityGroup</p>
+      <ul style="padding-left:18px;margin:0;font-size:14px">
+        <li>Inbound TCP 443 from the Lambda SG <code>sg-0e9a…eac2</code></li>
+        <li>The Lambda SG must allow outbound 443</li>
+      </ul>
+    </div>
+    <div class="card">
+      <strong>CapturePrayersFunction</strong>
+      <p class="sub" style="margin:4px 0 8px">AWS::Serverless::Function</p>
+      <ul style="padding-left:18px;margin:0;font-size:14px">
+        <li><code>Timeout: 25</code> (under API Gateway's 29s)</li>
+        <li>Same VPC config + DB env as the others</li>
+        <li><code>+ BEDROCK_MODEL_ID</code> env var</li>
+        <li><code>+ bedrock:InvokeModel</code> on this model only</li>
+        <li><code>POST /prayers/capture</code>, CognitoAuth</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout warn"><strong>YAML anchor gotcha</strong>The <code>*dbEnvironment</code> and <code>*dbPolicies</code> anchors can't be extended with an extra entry. Write <code>Environment</code> and <code>Policies</code> out in full for this function.</div>
+</section>
+
+<!-- FRONTEND -->
+<section id="frontend">
+  <h2>Frontend</h2>
+  <p class="sub">Three small changes. The screen, text body, and header stay the same.</p>
+  <div class="grid">
+    <div class="card"><strong>API function</strong><p class="sub" style="margin:4px 0 0"><code>capturePrayerRequests(text)</code> in <code>apis/prayerRequest.api.ts</code></p></div>
+    <div class="card"><strong>Mutation hook</strong><p class="sub" style="margin:4px 0 0"><code>useCapturePrayersMutation</code>. Invalidates <code>['prayerRequests']</code> on success.</p></div>
+    <div class="card"><strong>Save button</strong><p class="sub" style="margin:4px 0 0">Wire up <code>QCSaveButton</code> with the states below.</p></div>
+  </div>
+  <h3>Save button states</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>State</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>Empty / whitespace text</td><td>Disabled</td></tr>
+        <tr><td>Waiting (<code>isPending</code>)</td><td>Disabled + spinner. Blocks double-submit duplicates.</td></tr>
+        <tr><td>Success</td><td><code>reset()</code> the store → <code>router.back()</code></td></tr>
+        <tr><td>Error</td><td>Text stays. Show <code>error.message</code> above the button, cleared on the next try.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ERRORS -->
+<section id="errors">
+  <h2>When things go wrong</h2>
+  <p class="sub">Every failure either saves nothing or quietly makes a safe choice.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Failure</th><th>User sees</th><th>Saved?</th></tr></thead>
+      <tbody>
+        <tr><td>Empty or too-long text</td><td><span class="status s4">400</span></td><td>Nothing</td></tr>
+        <tr><td>Bedrock down, throttled, no access, endpoint misconfigured</td><td><span class="status s5">502</span> "Try again"</td><td>Nothing</td></tr>
+        <tr><td>Model output truncated, refused, or malformed</td><td><span class="status s5">502</span></td><td>Nothing</td></tr>
+        <tr><td>No prayer request found</td><td><span class="status s4">422</span></td><td>Nothing</td></tr>
+        <tr><td>Model invents an id</td><td>Nothing visible. The id becomes <code>null</code> → Inbox</td><td>Rows saved</td></tr>
+        <tr><td>DB error mid-insert</td><td><span class="status s5">500</span></td><td>Nothing (rolled back)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout warn"><strong>Logging rule</strong>Log error types, messages, and Bedrock request ids. <strong>Never</strong> log the user's text or the model's output, because both contain personal prayer content.</div>
+</section>
+
+<!-- TESTING -->
+<section id="testing">
+  <h2>Testing</h2>
+  <div class="two">
+    <div class="card">
+      <strong>Unit: <code>validateSplits</code></strong>
+      <p class="sub" style="margin:4px 0 10px">Node's built-in <code>node:test</code>, so zero new dependencies. Run with <code>node --test backend/shared/capture/</code></p>
+      <ul class="check">
+        <li>Known ids → unchanged (text trimmed)</li>
+        <li>Unknown prayee id → <code>null</code></li>
+        <li>Prayee id passed as a category → <code>null</code></li>
+        <li>Empty text → item dropped</li>
+        <li>25 items → 20 returned</li>
+        <li>Missing <code>requests</code> → throws</li>
+      </ul>
+    </div>
+    <div class="card">
+      <strong>Manual: after <code>sam deploy</code></strong>
+      <p class="sub" style="margin:4px 0 10px">End to end against the real stack.</p>
+      <ul class="check">
+        <li>curl with a multi-person sentence → 201</li>
+        <li>DB: statuses, <code>raw_transcript</code>, <code>source_type</code> correct</li>
+        <li>Fast response = endpoint works. <strong>~25s hang = VPC networking problem</strong></li>
+        <li>Invalid model id → 502, nothing saved</li>
+        <li>"asdf" → 422</li>
+        <li>App: spinner → Home shows new cards; airplane mode keeps the text</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFY -->
+<section id="verify">
+  <h2>Verify before building</h2>
+  <p class="sub">Open at design time. Status after Bedrock setup.</p>
+  <div class="card">
+    <ul class="check">
+      <li>✅ <strong>Model access:</strong> the Sonnets have 0 quota on this account, so the model switched to Haiku 4.5. Use-case form submitted, account upgraded to the paid plan.</li>
+      <li>✅ <strong>Model ID:</strong> <code>global.anthropic.claude-haiku-4-5-20251001-v1:0</code> (inference profile only). It decides the IAM ARNs.</li>
+      <li>⏳ <strong>Structured outputs</strong> for Haiku on <code>bedrock-runtime</code>: confirmed when <code>smoke.js</code> prints <code>end_turn</code>. Fallback: one tool with <code>strict: true</code> using the same schema.</li>
+      <li>✅ <strong>SDK import:</strong> <code>const { AnthropicBedrock } = require("@anthropic-ai/bedrock-sdk")</code></li>
+      <li>✅ <strong>VPC id:</strong> <code>vpc-0f0e0e699233fa1e2</code> (default VPC, DNS on, no existing endpoints)</li>
+      <li>✅ <strong>Lambda SG egress:</strong> all outbound allowed, no change needed</li>
+    </ul>
+  </div>
+  <div class="callout why"><strong>Docs come first</strong>Before any code: add the endpoint to <code>system-design.md</code> §3, note the shared pipeline in §4, and record D6 + D9 in §7.</div>
+</section>
+
+<!-- SCOPE -->
+<section id="scope">
+  <h2>Out of scope</h2>
+  <div class="grid">
+    <div class="card">Toast or results screen after saving</div>
+    <div class="card">Creating new prayees or categories from a capture</div>
+    <div class="card">Storing raw input / a <code>Capture</code> table</div>
+    <div class="card">The voice pipeline (it will reuse <code>shared/capture/</code>)</div>
+    <div class="card">Moving <code>useQCStore</code> into the feature folder</div>
+  </div>
+</section>
+
+<footer>The Markdown file <code>docs/quick-capture-spec.md</code> is the source of truth. This page is a visual summary of it.</footer>
+</main>
+</div>
+</body>
+</html>

@@ -102,6 +102,7 @@ into multiple `PrayerRequest`s.
 | POST   | `/recordings`              | —                                                                               | `{ recordingId, uploadUrl }`           | returns a presigned S3 URL for direct upload                        |
 | GET    | `/recordings/:id`          | —                                                                               | `Recording` incl. status               | app can poll this while processing                                  |
 | POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId? }`                                    | `PrayerRequest`                        | manual entry path                                                   |
+| POST   | `/prayers/capture`         | `{ text }`                                                                      | `PrayerRequest[]`                      | quick capture: LLM splits text, matches prayee/category — see `docs/quick-capture-spec.md` |
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
@@ -134,6 +135,13 @@ into multiple `PrayerRequest`s.
    links them via `Recording.resultingPrayerRequestIds`, sets
    `Recording.status = completed`
 6. App polls or is notified the recording is done, refreshes the Inbox tab
+
+**Text quick capture** enters this pipeline at step 4: the typed text takes the
+place of the transcript. Steps 4–5 live in shared modules
+(`backend/shared/capture/parseRequests.js` and `insertRequests.js`) used by both
+`POST /prayers/capture` and, later, Lambda #2. The LLM is Claude Haiku 4.5 on
+Amazon Bedrock, reached from the VPC through a `bedrock-runtime` interface
+endpoint (no NAT gateway, no stored API key).
 
 ---
 
@@ -207,6 +215,12 @@ into multiple `PrayerRequest`s.
   row left with a null id back to `inbox`. Postgres cascades do not re-run
   the rule on their own, so any future path that deletes a prayee or category
   must do the same.
+- **AI-matched requests**: **resolved** — requests created by quick capture
+  follow the same rule. The LLM sets `prayeeId`/`categoryId` only on a clear
+  match, so a fully matched request goes straight to `active` and anything
+  uncertain lands in `inbox`.
+- **Raw capture input**: **resolved** — the user's typed text is not stored.
+  `rawTranscript` holds the AI's cleaned text per request.
 - **`...` menu on Inbox cards**: contents not yet defined (likely delete /
   edit / move to Active Deck manually)
 - **"One time" vs recurring semantics**: does `one_time` mean the request
