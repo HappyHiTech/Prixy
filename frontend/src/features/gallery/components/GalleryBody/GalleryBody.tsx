@@ -8,10 +8,15 @@ import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerReque
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
 import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 import { useGalleryStore } from '../stores/useGalleryStore';
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
 
 import { styles } from './GalleryBody.styles';
 
-const GalleryBody = () => {
+type GalleryBodyProps = {
+  onEditField: (prayerId: string, field: EditTarget) => void;
+};
+
+const GalleryBody = ({ onEditField }: GalleryBodyProps) => {
   const prayeeId = useGalleryStore((s) => s.prayeeId);
   const categoryId = useGalleryStore((s) => s.categoryId);
   const status = useGalleryStore((s) => s.status);
@@ -77,6 +82,7 @@ const GalleryBody = () => {
               category={
                 item.categoryId ? categoryById.get(item.categoryId) : undefined
               }
+              onEditField={onEditField}
             />
           </View>
         ))}

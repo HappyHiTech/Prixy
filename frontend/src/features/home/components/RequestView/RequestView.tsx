@@ -8,10 +8,15 @@ import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerReque
 import { usePrayeeQuery } from '@/hooks/TanStack/prayee/usePrayeesQuery';
 import { useCategoriesQuery } from '@/hooks/TanStack/category/useCategoriesQuery';
 import { useHomeStore } from '../../stores/useHomeStore';
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
 
 import { styles } from './RequestView.styles';
 
-const RequestView = () => {
+type RequestViewProps = {
+  onEditField: (prayerId: string, field: EditTarget) => void;
+};
+
+const RequestView = ({ onEditField }: RequestViewProps) => {
   const activeSegment = useHomeStore((s) => s.activeSegment);
   const {
     data: prayReqs,
@@ -82,6 +87,7 @@ const RequestView = () => {
             category={
               item.categoryId ? categoryById.get(item.categoryId) : undefined
             }
+            onEditField={onEditField}
           />
         </View>
       ))}

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View } from 'react-native';
 
 import GalleryHeader from '@/features/gallery/components/GalleryHeader/GalleryHeader';
@@ -6,21 +7,18 @@ import GalleryBody from '@/features/gallery/components/GalleryBody/GalleryBody';
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
 
-import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
+
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
 
 import { styles } from './GalleryScreen.styles';
 
-const GalleryScreen = () => {
-  const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
-  const setSelectedPrayerId = useHomeStore((s) => s.setSelectedPrayerId);
-  const selectedEdit = useHomeStore((s) => s.selectedEdit);
-  const setSelectedEdit = useHomeStore((s) => s.setSelectedEdit);
+type SidebarSelection = { prayerId: string; field: EditTarget } | null;
 
-  const closeSidebar = () => {
-    setSelectedPrayerId(null);
-    setSelectedEdit(null);
-  };
+const GalleryScreen = () => {
+  const [selection, setSelection] = useState<SidebarSelection>(null);
+
+  const closeSidebar = () => setSelection(null);
 
   const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
 
@@ -28,24 +26,26 @@ const GalleryScreen = () => {
     prayeeId?: string;
     categoryId?: string;
   }) => {
-    if (!selectedPrayerId) return;
-    mutate({ id: selectedPrayerId, ...updates }, { onSuccess: closeSidebar });
+    if (!selection) return;
+    mutate({ id: selection.prayerId, ...updates }, { onSuccess: closeSidebar });
   };
 
   return (
     <View style={styles.container}>
       <GalleryHeader />
       <GalleryFilters />
-      <GalleryBody />
+      <GalleryBody
+        onEditField={(prayerId, field) => setSelection({ prayerId, field })}
+      />
 
-      {selectedPrayerId && selectedEdit === 'prayee' && (
+      {selection?.field === 'prayee' && (
         <PrayeeSidebar
           onSelect={(prayeeId) => handleSidebarSelect({ prayeeId })}
           isSaving={isSaving}
           onClose={closeSidebar}
         />
       )}
-      {selectedPrayerId && selectedEdit === 'category' && (
+      {selection?.field === 'category' && (
         <CategorySidebar
           onSelect={(categoryId) => handleSidebarSelect({ categoryId })}
           isSaving={isSaving}

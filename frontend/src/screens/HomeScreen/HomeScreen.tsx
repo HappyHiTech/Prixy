@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 
@@ -9,26 +10,25 @@ import RequestView from '@/features/home/components/RequestView/RequestView';
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
 import ActionButton from '@/components/ActionButton/ActionButton';
 
-import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
+
 import { styles } from './HomeScreen.styles';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
 
+
+type SidebarSelection = { prayerId: string; field: EditTarget } | null;
+
 const HomeScreen = () => {
   const signOut = useAuthStore((s) => s.signOut);
-  const selectedPrayerId = useHomeStore((s) => s.selectedPrayerId);
-  const setSelectedPrayerId = useHomeStore((s) => s.setSelectedPrayerId);
-  const selectedEdit = useHomeStore((s) => s.selectedEdit);
-  const setSelectedEdit = useHomeStore((s) => s.setSelectedEdit);
   const isActionOpen = useActionButtonStore((s) => s.isActionOpen);
 
-  const closeSidebar = () => {
-    setSelectedPrayerId(null);
-    setSelectedEdit(null);
-  };
+  const [selection, setSelection] = useState<SidebarSelection>(null);
+
+  const closeSidebar = () => setSelection(null);
 
   const { mutate, isPending: isSaving } = useUpdatePrayerRequest();
 
@@ -36,8 +36,8 @@ const HomeScreen = () => {
     prayeeId?: string;
     categoryId?: string;
   }) => {
-    if (!selectedPrayerId) return;
-    mutate({ id: selectedPrayerId, ...updates }, { onSuccess: closeSidebar });
+    if (!selection) return;
+    mutate({ id: selection.prayerId, ...updates }, { onSuccess: closeSidebar });
   };
 
   // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
@@ -63,16 +63,18 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <SegmentedControlSection />
-        <RequestView />
+        <RequestView
+          onEditField={(prayerId, field) => setSelection({ prayerId, field })}
+        />
       </ScrollView>
-      {selectedPrayerId && selectedEdit === 'prayee' && (
+      {selection?.field === 'prayee' && (
         <PrayeeSidebar
           onSelect={(prayeeId) => handleSidebarSelect({ prayeeId })}
           isSaving={isSaving}
           onClose={closeSidebar}
         />
       )}
-      {selectedPrayerId && selectedEdit === 'category' && (
+      {selection?.field === 'category' && (
         <CategorySidebar
           onSelect={(categoryId) => handleSidebarSelect({ categoryId })}
           isSaving={isSaving}

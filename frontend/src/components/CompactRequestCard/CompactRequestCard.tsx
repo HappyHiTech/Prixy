@@ -4,10 +4,10 @@ import { View, Pressable, Text } from 'react-native';
 import PrayeeAvatar from '../PrayeeAvatar/PrayeeAvatar';
 import CategorySelector from '../CategorySelector/CategorySelector';
 
-import { useHomeStore } from '@/features/home/stores/useHomeStore';
 import { getInitials } from '@/utils';
 
 import type { PrayerRequest } from '@/types/prayerRequest';
+import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
 import { Category } from '@/types/category';
 
 import { styles } from './CompactRequestCard.styles';
@@ -16,16 +16,15 @@ type CompactRequestCardProp = {
   prayReq: PrayerRequest;
   prayeeName?: string;
   category?: Category;
+  onEditField: (prayerId: string, field: EditTarget) => void;
 };
 
 const CompactRequestcard = ({
   prayReq,
   prayeeName,
   category,
+  onEditField,
 }: CompactRequestCardProp) => {
-  const setSelectedPrayerId = useHomeStore((s) => s.setSelectedPrayerId);
-  const setSelectedEdit = useHomeStore((s) => s.setSelectedEdit);
-
   const router = useRouter();
 
   return (
@@ -42,10 +41,7 @@ const CompactRequestcard = ({
         <View onStartShouldSetResponder={() => true}>
           <PrayeeAvatar
             icon={prayeeName ? getInitials(prayeeName) : undefined}
-            onPress={() => {
-              setSelectedPrayerId(prayReq.id);
-              setSelectedEdit('prayee');
-            }}
+            onPress={() => onEditField(prayReq.id, 'prayee')}
           />
         </View>
       </View>
@@ -54,10 +50,7 @@ const CompactRequestcard = ({
         <View onStartShouldSetResponder={() => true}>
           <CategorySelector
             category={category}
-            onPress={() => {
-              setSelectedPrayerId(prayReq.id);
-              setSelectedEdit('category');
-            }}
+            onPress={() => onEditField(prayReq.id, 'category')}
           />
         </View>
       </View>
