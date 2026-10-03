@@ -69,7 +69,7 @@ const EditPrayerScreen = () => {
       <View style={styles.container2}>
         <Text style={styles.errorText}>{error.message}</Text>
         <Pressable
-          onPress={() => router.push('/home')}
+          onPress={() => router.back()}
           style={({ pressed }) => [
             styles.backButton,
             pressed && styles.backButtonPressed,

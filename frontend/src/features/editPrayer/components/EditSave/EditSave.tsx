@@ -24,7 +24,7 @@ const EditSave = ({ prayerId }: EditSaveProp) => {
     const draft = useEditPrayerDraftStore.getState();
 
     if (!isDirty) {
-      router.push('/home');
+      router.back();
       return;
     }
 
@@ -41,7 +41,7 @@ const EditSave = ({ prayerId }: EditSaveProp) => {
       {
         onSuccess: (updated) => {
           useEditPrayerDraftStore.getState().reset(updated);
-          router.push('/home');
+          router.back();
         },
         onError: (error) => Alert.alert('Could not save', error.message),
       },

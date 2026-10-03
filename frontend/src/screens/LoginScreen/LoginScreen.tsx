@@ -47,7 +47,7 @@ const LoginScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View>
-          <GoBackButton onPress={() => router.push('/')} />
+          <GoBackButton onPress={() => router.back()} />
           <View style={styles.header}>
             <Text style={styles.headerText}>
               Enter your email to sign in or get started

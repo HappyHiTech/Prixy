@@ -19,7 +19,7 @@ const NavBar = () => {
           styles.navButton,
           pathName === '/home' && styles.navButtonActive,
         ]}
-        onPress={() => pathName !== '/home' && router.push('/home')}
+        onPress={() => pathName !== '/home' && router.navigate('/home')}
       >
         <Home size={24} color="#000000" />
         <Text style={styles.navButtonText}>Home</Text>
@@ -34,7 +34,7 @@ const NavBar = () => {
           styles.navButton,
           pathName === '/pray' && styles.navButtonActive,
         ]}
-        onPress={() => pathName !== '/pray' && router.push('/pray')}
+        onPress={() => pathName !== '/pray' && router.navigate('/pray')}
       >
         <HandsPrayingIcon size={24} color="#000000" weight="regular" />
         <Text style={styles.navButtonText}>Pray</Text>

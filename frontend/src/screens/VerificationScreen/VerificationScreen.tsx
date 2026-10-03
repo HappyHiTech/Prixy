@@ -55,6 +55,7 @@ const VerificationScreen = () => {
       const tokens = await answerCode(user, code);
       await signIn(email, tokens);
       reset();
+      router.dismissAll();
       router.replace('/home');
     } catch (err) {
       setCode('');
@@ -71,7 +72,7 @@ const VerificationScreen = () => {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View>
-          <GoBackButton onPress={() => router.push('/login')} />
+          <GoBackButton onPress={() => router.back()} />
           <View style={styles.header}>
             <Text style={styles.headerText}>
               We sent you a Verification Code
