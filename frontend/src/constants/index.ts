@@ -1,4 +1,4 @@
-export { COLORS } from './colors';
+export { COLORS, DARK_COLORS } from './colors';
 export { dropShadow } from './dropShadows';
 export { fontFamily } from './fontFamily';
 export {

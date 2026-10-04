@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { View, Pressable, Text, type LayoutChangeEvent } from 'react-native';
 import type { BottomTabBarProps } from 'expo-router/js-tabs';
 import Animated, {
+  interpolateColor,
   useSharedValue,
   useAnimatedStyle,
   withSpring,
@@ -11,11 +12,13 @@ import { Home, Plus } from 'lucide-react-native';
 import { HandsPrayingIcon } from 'phosphor-react-native';
 
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
-import { SPRING } from '@/constants';
+import { COLORS, DARK_COLORS, SPRING } from '@/constants';
 
 import { styles, INDICATOR_WIDTH } from './Navbar.styles';
 
 type TabName = 'home' | 'pray';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const NavBar = ({ state, navigation }: BottomTabBarProps) => {
   const isActionOpen = useActionButtonStore((s) => s.isActionOpen);
@@ -61,18 +64,47 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     transform: [{ scale: 1 + tabProgress.value * 0.12 }],
   }));
 
+  // Pray mode is dark, so the bar fades with it instead of staying white.
+  const barStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      tabProgress.value,
+      [0, 1],
+      [COLORS.primary, DARK_COLORS.navBg],
+    ),
+  }));
+
+  const addRingStyle = useAnimatedStyle(() => ({
+    borderColor: interpolateColor(
+      tabProgress.value,
+      [0, 1],
+      [COLORS.primary, DARK_COLORS.navBg],
+    ),
+  }));
+
+  const indicatorColorStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      tabProgress.value,
+      [0, 1],
+      [COLORS.accent, DARK_COLORS.text],
+    ),
+  }));
+
+  const iconColor = currentRoute === 'pray' ? DARK_COLORS.text : '#000000';
+
   const plusStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${plusRotation.value * 135}deg` }],
   }));
 
   return (
-    <View
-      style={styles.container}
+    <Animated.View
+      style={[styles.container, barStyle]}
       onLayout={(e: LayoutChangeEvent) => {
         barWidth.value = e.nativeEvent.layout.width;
       }}
     >
-      <Animated.View style={[styles.indicator, indicatorStyle]} />
+      <Animated.View
+        style={[styles.indicator, indicatorStyle, indicatorColorStyle]}
+      />
 
       <Pressable
         style={styles.navButton}
@@ -81,14 +113,14 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
         accessibilityState={{ selected: currentRoute === 'home' }}
       >
         <Animated.View style={homeIconStyle}>
-          <Home size={24} color="#000000" />
+          <Home size={24} color={iconColor} />
         </Animated.View>
         <Text style={styles.navButtonText}>Home</Text>
       </Pressable>
 
       <View style={styles.navButtonAdd}>
-        <Pressable
-          style={styles.addPrayer}
+        <AnimatedPressable
+          style={[styles.addPrayer, addRingStyle]}
           onPress={toggleAction}
           accessibilityRole="button"
           accessibilityLabel={
@@ -98,7 +130,7 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
           <Animated.View style={plusStyle}>
             <Plus size={50} color="#FFFFFF" />
           </Animated.View>
-        </Pressable>
+        </AnimatedPressable>
       </View>
 
       <Pressable
@@ -108,11 +140,11 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
         accessibilityState={{ selected: currentRoute === 'pray' }}
       >
         <Animated.View style={prayIconStyle}>
-          <HandsPrayingIcon size={24} color="#000000" weight="regular" />
+          <HandsPrayingIcon size={24} color={iconColor} weight="regular" />
         </Animated.View>
         <Text style={styles.navButtonText}>Pray</Text>
       </Pressable>
-    </View>
+    </Animated.View>
   );
 };
 

@@ -14,3 +14,21 @@ export const COLORS = {
 
   borderOne: '#E9E9E9',
 } as const;
+
+// Pray mode is deliberately dark so a session feels set apart from the
+// light "manage" screens. Neutral greys only — color is reserved for the
+// swipe outcome (prayed / again) so it stands out when it appears.
+export const DARK_COLORS = {
+  bg: '#1C1C1E',
+  card: '#2A2A2D',
+  border: 'rgba(255, 255, 255, 0.08)',
+  subtle: 'rgba(255, 255, 255, 0.08)',
+
+  text: '#F2F2F2',
+  mutedText: '#9A9A9F',
+
+  prayed: '#8CC9A8',
+  again: '#D9B47A',
+
+  navBg: '#1C1C1E',
+} as const;

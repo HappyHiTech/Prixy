@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { COLORS, dropShadow, fontFamily } from "@/constants";
+import { COLORS, DARK_COLORS, dropShadow, fontFamily } from "@/constants";
 
 export const styles = StyleSheet.create({
   container: {
@@ -27,5 +27,18 @@ export const styles = StyleSheet.create({
   first: {
     borderRightWidth: 1,
     borderColor: COLORS.borderOne,
+  },
+
+  containerDark: {
+    backgroundColor: DARK_COLORS.card,
+    shadowOpacity: 0,
+  },
+
+  statDark: {
+    color: DARK_COLORS.text,
+  },
+
+  firstDark: {
+    borderColor: DARK_COLORS.border,
   },
 });
