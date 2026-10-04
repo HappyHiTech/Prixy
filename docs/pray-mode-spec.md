@@ -30,11 +30,11 @@ local date.
 | D3 | **Once a recurring request has been prayed, it returns only on its days.** A Mon/Thu request is due Mondays and Thursdays. Missed days after the first prayer do not catch up. (Before its first prayer it is in the deck regardless, per D1a.) | A missed Monday shouldn't pile up into Tuesday's deck. |
 | D4 | **"Repeat tomorrow" sets a new `repeat_on date` column** to the user's local tomorrow. The request stays due from that day until it is prayed again (`repeat_on <= today`). Any swipe clears or resets it. | `date` rather than `timestamptz` because "tomorrow" is a calendar day in the user's timezone, not an instant. Carry-over matches D1(a): nothing the user asked to see again silently disappears. |
 | D5 | **"Today" is the phone's IANA timezone, resolved in Postgres.** The client sends `tz` (for example `America/Los_Angeles`). SQL computes `(now() AT TIME ZONE $tz)::date`. | Lambda runs in UTC. Sending the zone name (not a date) means the server uses its own clock and the one parameter gives the local date, the weekday, and "prayed today". |
-| D6 | **Dedicated `GET /deck` endpoint** that returns cards already joined with prayee and category, plus `prayedToday`. | The deck rule lives in one place, on the server. Overloading `GET /prayers` would mix a plain list (ordered by `created_at`) with a joined, shuffled selection. Filtering on the phone would duplicate the rule in every client. |
+| D6 | **Dedicated `GET /deck` endpoint** that returns cards already joined with prayee and category, plus `prayedToday`. | The deck rule lives in one place, on the server. Overloading `GET /prayers` would mix a plain list (ordered by `created_at`) with a joined, prayee-ordered selection. Filtering on the phone would duplicate the rule in every client. |
 | D7 | **`GET /deck` replaces the planned `GET /stats/today`.** Home's "Today: N / Deck: N" reads the same query. | One fewer endpoint, and the two numbers can never disagree with the deck. |
 | D8 | **"Today: N" = requests whose `last_prayed_at` is on today's local date.** No prayer-event log table. | Each request can be swiped at most once per day (D1), so the timestamp is enough. A lifetime "Total Prayed For" stat would need an event log; that belongs to the Profile feature. |
-| D9 | **Order: random, with each prayee's requests kept together.** One random key per prayee, then a random order within the group. | Praying through one person's requests back-to-back reads naturally; shuffling keeps the deck from feeling identical every day. |
-| D10 | **The deck is not refetched during a session.** A swipe removes the card from the cached deck immediately (optimistic update) and sends the POST. | The server reshuffles on every fetch. Refetching after each swipe would reorder the cards under the user's thumb. |
+| D9 | **Order: alphabetical by prayee name (case-insensitive), each prayee's requests kept together, oldest first within the group.** `p.id` and `due.id` break ties so the order is fully deterministic. | Praying through one person's requests back-to-back reads naturally, and a stable order means the user always knows where someone falls in the deck. (Originally random per prayee; changed to alphabetical.) |
+| D10 | **The deck is not refetched during a session.** A swipe removes the card from the cached deck immediately (optimistic update) and sends the POST. | Refetching after each swipe would drop and shift cards under the user's thumb, and the optimistic removal already gives the right result without a round trip. |
 | D11 | **Praying a request that isn't `active` returns `409`.** | Inbox and answered requests never appear in the deck, so a pray call for one is a stale client or a bug. |
 | D12 | **The Active Deck is one list.** Home's Active Deck tab and Pray Mode show the same requests, and the header's "Deck: N" counts them. `status = 'active'` only means the request has a prayee and a category; it does not mean the request is in the deck. | The user's mental model is a single deck. Two lists with the same name drift apart and confuse. |
 
@@ -47,7 +47,7 @@ PrayScreen (tab focus)
   │
   ▼
 GET /deck?tz=America/Los_Angeles ──► GetDeckFunction ──► RDS
-  ◄── { prayedToday, cards[] }         (deck rule + joins + grouped shuffle)
+  ◄── { prayedToday, cards[] }         (deck rule + joins + alphabetical by prayee)
   │
   │  user swipes a card
   ▼
@@ -204,10 +204,6 @@ due AS (
           AND to_char(today.d, 'Dy') = ANY (pr.recurring_days))
       OR pr.repeat_on <= today.d
     )
-),
-prayee_order AS (
-  SELECT prayee_id, random() AS k
-  FROM (SELECT DISTINCT prayee_id FROM due) g
 )
 SELECT
   due.id,
@@ -220,10 +216,9 @@ SELECT
   c.name             AS "categoryName",
   c.icon             AS "categoryIcon"
 FROM due
-JOIN prayee_order po ON po.prayee_id = due.prayee_id
-JOIN prayees p       ON p.id = due.prayee_id
-JOIN categories c    ON c.id = due.category_id
-ORDER BY po.k, random();
+JOIN prayees p    ON p.id = due.prayee_id
+JOIN categories c ON c.id = due.category_id
+ORDER BY lower(p.name), p.id, due.created_at, due.id;
 ```
 
 Notes:
@@ -342,7 +337,7 @@ Other mutations that change what is due must invalidate `['deck']` in their
 `onSettled`: create, capture, update (category/prayee/frequency/answered), and
 delete prayer request, plus delete prayee and delete category (both can demote
 requests to `inbox`). The user is on another screen when these run, so a
-reshuffle there is harmless.
+refetch there is harmless.
 
 ### 7.5 `PrayScreen`
 

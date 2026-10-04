@@ -199,8 +199,8 @@ endpoint (no NAT gateway, no stored API key).
 - **Active Deck selection**: **resolved** — one list, computed server-side for
   the user's local date and shown on both Home's Active Deck tab and in
   Prayer Mode: `active` requests not yet prayed today that were never prayed,
-  or are recurring on today's weekday, or have `repeatOn <= today`. Random
-  order in Prayer Mode, grouped by prayee. See `docs/pray-mode-spec.md`.
+  or are recurring on today's weekday, or have `repeatOn <= today`. Ordered
+  alphabetically by prayee name, grouped by prayee. See `docs/pray-mode-spec.md`.
 - **Database**: Postgres/RDS vs DynamoDB — leaning relational given the
   Prayee/Category/PrayerRequest relationships, pricing to be confirmed
   (see below)

@@ -25,10 +25,6 @@ const DECK_SQL = `
             AND to_char(today.d, 'Dy') = ANY (pr.recurring_days))
         OR pr.repeat_on <= today.d
       )
-  ),
-  prayee_order AS (
-    SELECT prayee_id, random() AS k
-    FROM (SELECT DISTINCT prayee_id FROM due) g
   )
   SELECT
     due.id,
@@ -41,10 +37,9 @@ const DECK_SQL = `
     c.name             AS "categoryName",
     c.icon             AS "categoryIcon"
   FROM due
-  JOIN prayee_order po ON po.prayee_id = due.prayee_id
-  JOIN prayees p       ON p.id = due.prayee_id
-  JOIN categories c    ON c.id = due.category_id
-  ORDER BY po.k, random()`;
+  JOIN prayees p    ON p.id = due.prayee_id
+  JOIN categories c ON c.id = due.category_id
+  ORDER BY lower(p.name), p.id, due.created_at, due.id`;
 
 const PRAYED_TODAY_SQL = `
   SELECT count(*)::int AS "prayedToday"
