@@ -75,6 +75,7 @@ The core entity.
 | frequencyType | enum: `one_time` \| `recurring`         | from the "Set Frequency" picker                                        |
 | recurringDays | array of enum (Mon–Sun)                 | populated only if `frequencyType = recurring`                          |
 | lastPrayedAt  | timestamp (nullable)                    | used to compute today's prayed count and to re-surface recurring items |
+| repeatOn      | date (nullable)                         | set by "repeat tomorrow" in Prayer Mode; due from this date until prayed again |
 | answeredAt    | timestamp (nullable)                    | set when marked answered                                               |
 | createdAt     | timestamp                               |                                                                        |
 
@@ -106,9 +107,10 @@ into multiple `PrayerRequest`s.
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
+| GET    | `/deck?tz=<IANA zone>`     | —                                                                               | `{ prayedToday, cards[] }`             | today's deck for Prayer Mode + Home header stats; cards are joined with prayee/category — see `docs/pray-mode-spec.md` |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
 | PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays, answered }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule. `answered: true` sets `status=answered` + `answeredAt=now`; `answered: false` clears `answeredAt` and re-derives status |
-| POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow" }`                                       | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode                            |
+| POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow", tz }`                                   | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode. Both set `lastPrayedAt=now`; `done` clears `repeatOn`, `repeat_tomorrow` sets it to the user's local tomorrow. `409` unless `active` — see `docs/pray-mode-spec.md` |
 | GET    | `/prayees`              | —                                                                               | `Prayee[]`                          | populates "Praying For" picker                                      |
 | POST   | `/prayees`              | `{ name }`                                                                      | `Prayee`                            | "Add a name"                                                        |
 | GET    | `/categories`              | —                                                                               | `Category[]`                           | populates "Category" picker (defaults + custom)                     |
@@ -117,7 +119,6 @@ into multiple `PrayerRequest`s.
 | DELETE | `/categories/:id`          | —                                                                               | `204`                                  | X in "Category" sidebar; same nulling + demotion for `categoryId`. `409` when the category is `isDefault` |
 | GET    | `/user/me`                 | —                                                                               | `User` incl. stats                     | Profile Screen                                                      |
 | PATCH  | `/user/me`                 | `{ displayName }`                                                               | `User`                                 | Profile Screen edit                                                 |
-| GET    | `/stats/today`             | —                                                                               | `{ prayedToday: int, deckCount: int }` | Home Screen header ("Today: 0", "Deck: 5")                          |
 
 ---
 
@@ -149,7 +150,7 @@ endpoint (no NAT gateway, no stored API key).
 
 **Home Screen (Inbox / Active Deck tabs)**
 
-- Header stats: `GET /stats/today`
+- Header stats: `GET /deck` (`prayedToday` → "Today", `cards.length` → "Deck")
 - Inbox tab: `GET /prayers?status=inbox` — each card shows `requestText` +
   a category selector (`PATCH /prayers/:id`)
 - Active Deck tab: `GET /prayers?status=active`
@@ -166,7 +167,7 @@ endpoint (no NAT gateway, no stored API key).
   `true` sets `status=answered` + `answeredAt=now`; `false` clears `answeredAt`
   and re-derives status from prayee/category
   **Prayer Mode**
-- Queue: `GET /prayers?status=active`
+- Queue: `GET /deck` (today's due requests, not every active request)
 - Swipe right (prayed) → `POST /prayers/:id/pray { action: "done" }`
 - Swipe left (prayed + repeat tomorrow) →
   `POST /prayers/:id/pray { action: "repeat_tomorrow" }`
@@ -195,9 +196,11 @@ endpoint (no NAT gateway, no stored API key).
 
 ## 7. Open Questions
 
-- **Active Deck selection**: does everything with `status=active` show up
-  every day, or does an algorithm rotate a subset in? (undecided — noted in
-  the `Active Deck` glossary entry as "there will be an algorithm for this")
+- **Active Deck selection**: **resolved** — a daily deck, computed server-side
+  for the user's local date: `active` requests not yet prayed today that are
+  one-time and never prayed, recurring on today's weekday, or have
+  `repeatOn <= today`. Random order, grouped by prayee. See
+  `docs/pray-mode-spec.md`.
 - **Database**: Postgres/RDS vs DynamoDB — leaning relational given the
   Prayee/Category/PrayerRequest relationships, pricing to be confirmed
   (see below)
@@ -223,7 +226,7 @@ endpoint (no NAT gateway, no stored API key).
   `rawTranscript` holds the AI's cleaned text per request.
 - **`...` menu on Inbox cards**: contents not yet defined (likely delete /
   edit / move to Active Deck manually)
-- **"One time" vs recurring semantics**: does `one_time` mean the request
-  enters the Active Deck once and never recurs, while `recurring` + selected
-  days means it re-enters on those weekdays going forward? Assumed yes above,
-  worth confirming against intended UX
+- **"One time" vs recurring semantics**: **resolved** — `one_time` appears in
+  the deck until prayed once, then never again (it stays `active` until
+  answered). `recurring` appears on its `recurringDays` only; missed days
+  don't catch up.
