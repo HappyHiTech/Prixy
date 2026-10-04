@@ -1,78 +1,82 @@
 import { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { setStatusBarStyle } from 'expo-status-bar';
 
+import { DARK_COLORS } from '@/constants';
 import StatsCard from '@/features/home/components/StatsCard/StatsCard';
 import SwipeDeck from '@/features/pray/components/SwipeDeck/SwipeDeck';
 import DeckComplete from '@/features/pray/components/DeckComplete/DeckComplete';
 import type { SwipeDecision } from '@/features/pray/components/DeckCard/DeckCard';
-import { MOCK_PRAYERS, type MockPrayer } from '@/features/pray/mockPrayers';
+import { useDeckQuery } from '@/hooks/TanStack/deck/useDeckQuery';
+import { usePrayMutation } from '@/hooks/TanStack/deck/usePrayMutation';
+import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './PrayScreen.styles';
 
 const PrayScreen = () => {
-  // MOCKUP STATE: the real version would PATCH lastPrayedAt (and schedule
-  // the "again" ones for tomorrow) instead of only tracking it locally.
-  const [queue, setQueue] = useState<MockPrayer[]>(MOCK_PRAYERS);
-  const [prayedCount, setPrayedCount] = useState(0);
+  const { data: deck, isError, refetch } = useDeckQuery();
+  const { mutate: pray } = usePrayMutation();
+
   const [againCount, setAgainCount] = useState(0);
 
-  // Tabs keep both screens mounted, so a <StatusBar /> element would fight
-  // Home's. Flipping the style on focus/blur keeps it tied to what's visible.
   useFocusEffect(
     useCallback(() => {
       setStatusBarStyle('light');
+      refetch();
       return () => setStatusBarStyle('dark');
-    }, []),
+    }, [refetch]),
   );
 
-  const handleSwiped = (prayer: MockPrayer, decision: SwipeDecision) => {
-    setQueue((q) => q.filter((p) => p.id !== prayer.id));
-    setPrayedCount((n) => n + 1);
+  const handleSwiped = (prayer: DeckPrayer, decision: SwipeDecision) => {
+    pray({
+      id: prayer.id,
+      action: decision === 'prayed' ? 'done' : 'repeat_tomorrow',
+    });
 
     if (decision === 'again') setAgainCount((n) => n + 1);
   };
 
-  const handleRestart = () => {
-    setQueue(MOCK_PRAYERS);
-    setPrayedCount(0);
-    setAgainCount(0);
-  };
+  const prayedToday = deck?.prayedToday ?? 0;
+  const total = prayedToday + (deck?.cards.length ?? 0);
+  const progress = total === 0 ? 0 : prayedToday / total;
 
-  const total = MOCK_PRAYERS.length;
-  const isDone = queue.length === 0;
+  const renderBody = () => {
+    if (!deck) {
+      return isError ? (
+        <View style={styles.message}>
+          <Text style={styles.messageText}>
+            {"Couldn't load today's deck."}
+          </Text>
+          <Pressable style={styles.retryButton} onPress={() => refetch()}>
+            <Text style={styles.retryText}>Try again</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <ActivityIndicator color={DARK_COLORS.mutedText} />
+      );
+    }
+
+    if (deck.cards.length === 0) {
+      return (
+        <DeckComplete prayedCount={deck.prayedToday} againCount={againCount} />
+      );
+    }
+
+    return <SwipeDeck prayers={deck.cards} onSwiped={handleSwiped} />;
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <StatsCard
-          variant="dark"
-          todayCount={prayedCount}
-          deckCount={queue.length}
-        />
+        <StatsCard variant="dark" />
       </View>
 
       <View style={styles.progressTrack}>
-        <View
-          style={[
-            styles.progressFill,
-            { width: `${(prayedCount / total) * 100}%` },
-          ]}
-        />
+        <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
       </View>
 
-      <View style={styles.body}>
-        {isDone ? (
-          <DeckComplete
-            prayedCount={prayedCount}
-            againCount={againCount}
-            onRestart={handleRestart}
-          />
-        ) : (
-          <SwipeDeck prayers={queue} onSwiped={handleSwiped} />
-        )}
-      </View>
+      <View style={styles.body}>{renderBody()}</View>
     </View>
   );
 };

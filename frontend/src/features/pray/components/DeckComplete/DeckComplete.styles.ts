@@ -36,20 +36,4 @@ export const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
-
-  button: {
-    marginTop: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-
-    borderColor: DARK_COLORS.border,
-    borderRadius: 999,
-    borderWidth: 1,
-  },
-
-  buttonText: {
-    color: DARK_COLORS.text,
-    ...fontFamily(600),
-    fontSize: 14,
-  },
 });

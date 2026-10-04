@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 
 import DeckCard, { type SwipeDecision } from '../DeckCard/DeckCard';
-import type { MockPrayer } from '../../mockPrayers';
+import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './SwipeDeck.styles';
 
@@ -10,8 +10,8 @@ import { styles } from './SwipeDeck.styles';
 const VISIBLE_CARDS = 3;
 
 type SwipeDeckProps = {
-  prayers: MockPrayer[];
-  onSwiped: (prayer: MockPrayer, decision: SwipeDecision) => void;
+  prayers: DeckPrayer[];
+  onSwiped: (prayer: DeckPrayer, decision: SwipeDecision) => void;
 };
 
 const SwipeDeck = ({ prayers, onSwiped }: SwipeDeckProps) => {

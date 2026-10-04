@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 
-import { DARK_COLORS } from '@/constants';
+import { DARK_COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
   // paddingTop + header mirror HomeScreen so the stats pill doesn't jump
@@ -47,5 +47,31 @@ export const styles = StyleSheet.create({
     paddingBottom: 140,
     paddingHorizontal: 22,
     paddingTop: 8,
+  },
+
+  message: {
+    alignItems: 'center',
+    gap: 16,
+  },
+
+  messageText: {
+    color: DARK_COLORS.mutedText,
+    ...fontFamily(500),
+    fontSize: 15,
+  },
+
+  retryButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+
+    borderColor: DARK_COLORS.border,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+
+  retryText: {
+    color: DARK_COLORS.text,
+    ...fontFamily(600),
+    fontSize: 14,
   },
 });

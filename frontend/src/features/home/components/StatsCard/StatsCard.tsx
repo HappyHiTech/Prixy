@@ -1,22 +1,15 @@
 import { View, Text } from 'react-native';
 
-import { usePrayerRequests } from '@/hooks/TanStack/prayerRequest/usePrayerRequestQuery';
+import { useDeckQuery } from '@/hooks/TanStack/deck/useDeckQuery';
 
 import { styles } from './StatsCard.styles';
 
 type StatsCardProps = {
   variant?: 'light' | 'dark';
-  // MOCKUP: pray mode passes its local counts until it reads real data.
-  todayCount?: number;
-  deckCount?: number;
 };
 
-const StatsCard = ({
-  variant = 'light',
-  todayCount,
-  deckCount,
-}: StatsCardProps) => {
-  const { data: activeReps } = usePrayerRequests('active');
+const StatsCard = ({ variant = 'light' }: StatsCardProps) => {
+  const { data: deck } = useDeckQuery();
 
   const isDark = variant === 'dark';
 
@@ -30,10 +23,10 @@ const StatsCard = ({
           isDark && styles.firstDark,
         ]}
       >
-        Today: {todayCount ?? 0}
+        Today: {deck?.prayedToday ?? 0}
       </Text>
       <Text style={[styles.stat, isDark && styles.statDark]}>
-        Deck: {deckCount ?? activeReps?.length ?? 0}
+        Deck: {deck?.cards.length ?? 0}
       </Text>
     </View>
   );

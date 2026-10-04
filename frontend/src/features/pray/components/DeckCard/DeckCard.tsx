@@ -14,9 +14,8 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { Check, CircleDot, Repeat, Tag } from 'lucide-react-native';
 
 import { CATEGORY_ICON_MAP, DARK_COLORS, SPRING } from '@/constants';
-import { getInitials } from '@/utils';
-
-import type { MockPrayer } from '../../mockPrayers';
+import { daysSince, getInitials } from '@/utils';
+import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './DeckCard.styles';
 
@@ -24,10 +23,10 @@ import { styles } from './DeckCard.styles';
 export type SwipeDecision = 'prayed' | 'again';
 
 type DeckCardProps = {
-  prayer: MockPrayer;
+  prayer: DeckPrayer;
   // 0 = top of the deck. Cards behind sit slightly lower and smaller.
   index: number;
-  onSwiped: (prayer: MockPrayer, decision: SwipeDecision) => void;
+  onSwiped: (prayer: DeckPrayer, decision: SwipeDecision) => void;
 };
 
 const MAX_ROTATION = 12;
@@ -137,12 +136,14 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
     ),
   }));
 
-  const CategoryIcon = CATEGORY_ICON_MAP[prayer.categoryIcon] ?? Tag;
+  const CategoryIcon =
+    (prayer.categoryIcon && CATEGORY_ICON_MAP[prayer.categoryIcon]) || Tag;
   // "Once" reads more naturally on a card than the raw 'one_time' value.
   const isRecurring = prayer.frequencyType === 'recurring';
   const FrequencyIcon = isRecurring ? Repeat : CircleDot;
   const frequencyLabel = isRecurring ? 'Recurring' : 'Once';
-  const addedLabel = prayer.daysAgo === 0 ? 'Today' : `${prayer.daysAgo}d`;
+  const daysAgo = daysSince(prayer.createdAt);
+  const addedLabel = daysAgo === 0 ? 'Today' : `${daysAgo}d`;
 
   return (
     <GestureDetector gesture={pan}>
