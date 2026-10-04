@@ -1,7 +1,5 @@
 import { View, Text, Pressable } from 'react-native';
 
-import { daysSince } from '@/utils';
-
 import {
   selectIsOnceDormant,
   useEditPrayerDraftStore,
@@ -34,15 +32,13 @@ const EditFrequncy = () => {
     else onceState = prayAgain ? 'rearmed' : 'dormant';
   }
 
-  let onceSubtext: string | null = null;
-  if (lastPrayedAt && onceState === 'dormant') {
-    onceSubtext = `Prayed ${new Date(lastPrayedAt).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-    })}`;
-  } else if (lastPrayedAt && onceState === 'rearmed') {
-    onceSubtext = `In deck ${daysSince(lastPrayedAt) === 0 ? 'tomorrow' : 'today'}`;
-  }
+  const onceSubtext =
+    lastPrayedAt && onceState === 'dormant'
+      ? `Prayed ${new Date(lastPrayedAt).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+        })}`
+      : null;
 
   const selected: Option[] =
     frequencyType === 'one_time'
@@ -124,7 +120,7 @@ const EditFrequncy = () => {
                   minimumFontScale={0.8}
                   style={[
                     styles.optionSubtext,
-                    isSelected && styles.optionSubtextSelected,
+                    isDormantOnce && styles.optionTextDormant,
                   ]}
                 >
                   {subtext}
