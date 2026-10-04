@@ -36,6 +36,16 @@ export const MOCK_PRAYERS: MockPrayer[] = [
     daysAgo: 4,
   },
   {
+    // Deliberately long: checks the name truncates and the stamp covers it.
+    id: 'p-long-name',
+    prayeeName: 'Pastor Jonathan Whitfield-Abernathy',
+    categoryName: 'Church',
+    categoryIcon: 'church',
+    requestText: 'Rest and renewal during his sabbatical this month.',
+    frequencyType: 'one_time',
+    daysAgo: 5,
+  },
+  {
     id: 'p2',
     prayeeName: 'Daniel Park',
     categoryName: 'Work',
@@ -67,7 +77,8 @@ export const MOCK_PRAYERS: MockPrayer[] = [
   {
     id: 'p5',
     prayeeName: 'The Okafor family',
-    categoryName: 'Missions',
+    // Deliberately long: checks the category line truncates cleanly.
+    categoryName: 'Missionaries & Global Outreach',
     categoryIcon: 'globe',
     requestText:
       'Safe travels and open doors as they settle into their new placement in Lagos.',

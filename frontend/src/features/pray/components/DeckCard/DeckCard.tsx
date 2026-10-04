@@ -142,8 +142,7 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
   const isRecurring = prayer.frequencyType === 'recurring';
   const FrequencyIcon = isRecurring ? Repeat : CircleDot;
   const frequencyLabel = isRecurring ? 'Recurring' : 'Once';
-  const addedLabel =
-    prayer.daysAgo === 0 ? 'Added today' : `Added ${prayer.daysAgo}d ago`;
+  const addedLabel = prayer.daysAgo === 0 ? 'Today' : `${prayer.daysAgo}d`;
 
   return (
     <GestureDetector gesture={pan}>
@@ -166,37 +165,42 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
           </View>
         </View>
 
-        <View style={styles.chip}>
-          <CategoryIcon size={13} color={DARK_COLORS.mutedText} />
-          <Text style={styles.chipText}>{prayer.categoryName}</Text>
-        </View>
-
         <Text
           style={[styles.requestText, requestTextStyle(prayer.requestText)]}
         >
           {prayer.requestText}
         </Text>
 
+        {/* Category gets its own line so a long name can't push the other
+            details off the card; anything past one line is truncated. */}
         <View style={styles.footer}>
           <View style={styles.footerItem}>
-            <FrequencyIcon size={13} color={DARK_COLORS.mutedText} />
-            <Text style={styles.footerText}>{frequencyLabel}</Text>
+            <CategoryIcon size={13} color={DARK_COLORS.mutedText} />
+            <Text
+              style={[styles.footerText, styles.categoryText]}
+              numberOfLines={1}
+            >
+              {prayer.categoryName}
+            </Text>
           </View>
-          <Text style={styles.footerText}>{addedLabel}</Text>
+
+          <View style={styles.footerRow}>
+            <View style={styles.footerItem}>
+              <FrequencyIcon size={13} color={DARK_COLORS.mutedText} />
+              <Text style={styles.footerText}>{frequencyLabel}</Text>
+            </View>
+            <Text style={styles.footerText}>{addedLabel}</Text>
+          </View>
         </View>
 
-        <Animated.View
-          style={[styles.stamp, styles.stampPrayed, prayedStampStyle]}
-        >
+        <Animated.View style={[styles.stamp, prayedStampStyle]}>
           <Check size={14} color={DARK_COLORS.prayed} strokeWidth={2.5} />
           <Text style={[styles.stampText, { color: DARK_COLORS.prayed }]}>
             Prayed
           </Text>
         </Animated.View>
 
-        <Animated.View
-          style={[styles.stamp, styles.stampAgain, againStampStyle]}
-        >
+        <Animated.View style={[styles.stamp, againStampStyle]}>
           <Repeat size={14} color={DARK_COLORS.again} strokeWidth={2.5} />
           <Text style={[styles.stampText, { color: DARK_COLORS.again }]}>
             Tomorrow

@@ -73,12 +73,18 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     ),
   }));
 
+  // Capturing a new request mid-session would pull the user out of prayer,
+  // so the + shrinks away on the Pray tab (and can't be tapped).
+  const isAddHidden = currentRoute === 'pray';
+
   const addRingStyle = useAnimatedStyle(() => ({
     borderColor: interpolateColor(
       tabProgress.value,
       [0, 1],
       [COLORS.primary, DARK_COLORS.navBg],
     ),
+    opacity: 1 - tabProgress.value,
+    transform: [{ scale: 1 - tabProgress.value * 0.4 }],
   }));
 
   const indicatorColorStyle = useAnimatedStyle(() => ({
@@ -122,6 +128,12 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
         <AnimatedPressable
           style={[styles.addPrayer, addRingStyle]}
           onPress={toggleAction}
+          disabled={isAddHidden}
+          pointerEvents={isAddHidden ? 'none' : 'auto'}
+          accessibilityElementsHidden={isAddHidden}
+          importantForAccessibility={
+            isAddHidden ? 'no-hide-descendants' : 'auto'
+          }
           accessibilityRole="button"
           accessibilityLabel={
             isActionOpen ? 'Close quick actions' : 'Add prayer'

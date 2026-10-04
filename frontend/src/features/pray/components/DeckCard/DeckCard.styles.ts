@@ -55,19 +55,6 @@ export const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  chip: {
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    gap: 6,
-  },
-
-  chipText: {
-    color: DARK_COLORS.mutedText,
-    ...fontFamily(500),
-    fontSize: 13,
-  },
-
   // overflow: hidden is a safety net so text past the smallest tier gets
   // clipped inside the card instead of spilling over the footer.
   requestText: {
@@ -93,6 +80,10 @@ export const styles = StyleSheet.create({
   },
 
   footer: {
+    gap: 6,
+  },
+
+  footerRow: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -110,22 +101,27 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  // The "stamp" fades in on the side the card is being dragged away from,
-  // so the user reads the outcome before letting go.
+  // flexShrink lets the text give up width (and truncate) instead of
+  // overflowing the row it sits in next to the icon.
+  categoryText: {
+    flexShrink: 1,
+  },
+
+  // Both stamps share the top-right corner (only one is ever visible) and
+  // fade in while dragging so the user reads the outcome before letting go.
+  // The card-colored background masks a long prayee name underneath.
   stamp: {
     position: 'absolute',
-    top: 24,
+    right: 16,
+    top: 30,
     alignItems: 'center',
     flexDirection: 'row',
     gap: 6,
-  },
+    paddingHorizontal: 8,
+    paddingVertical: 4,
 
-  stampPrayed: {
-    left: 24,
-  },
-
-  stampAgain: {
-    right: 24,
+    backgroundColor: DARK_COLORS.card,
+    borderRadius: 8,
   },
 
   stampText: {
