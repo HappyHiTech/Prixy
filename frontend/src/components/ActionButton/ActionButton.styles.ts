@@ -13,10 +13,16 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  backdrop: {
+    position: 'absolute',
+    inset: 0,
+  },
+
   actionButton: {
     height: 204,
     marginBottom: 120,
     width: 327,
+    transformOrigin: 'bottom',
     ...dropShadow('#000000', 0.15, 12, 4),
   },
 

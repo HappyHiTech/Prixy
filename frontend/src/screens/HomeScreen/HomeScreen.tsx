@@ -8,10 +8,9 @@ import GalleryButton from '@/components/GalleryButton/GalleryButton';
 import SegmentedControlSection from '@/features/home/components/SegmentedControlSection/SegmentedControlSection';
 import RequestView from '@/features/home/components/RequestView/RequestView';
 import PrayeeSidebar from '@/features/prayee/components/PrayeeSidebar/PrayeeSidebar';
-import ActionButton from '@/components/ActionButton/ActionButton';
 
 import { useAuthStore } from '@/stores/useAuthStore';
-import { useActionButtonStore } from '@/stores/useActionButtonStore';
+
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 
 import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore';
@@ -19,12 +18,10 @@ import type { EditTarget } from '@/features/editPrayer/stores/useEditPrayerStore
 import { styles } from './HomeScreen.styles';
 import CategorySidebar from '@/features/category/components/CategorySideBar/CategorySidebar';
 
-
 type SidebarSelection = { prayerId: string; field: EditTarget } | null;
 
 const HomeScreen = () => {
   const signOut = useAuthStore((s) => s.signOut);
-  const isActionOpen = useActionButtonStore((s) => s.isActionOpen);
 
   const [selection, setSelection] = useState<SidebarSelection>(null);
 
@@ -81,7 +78,6 @@ const HomeScreen = () => {
           onClose={closeSidebar}
         />
       )}
-      {isActionOpen && <ActionButton />}
     </View>
   );
 };
