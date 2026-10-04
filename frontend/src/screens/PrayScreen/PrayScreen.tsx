@@ -10,6 +10,7 @@ import DeckComplete from '@/features/pray/components/DeckComplete/DeckComplete';
 import type { SwipeDecision } from '@/features/pray/components/DeckCard/DeckCard';
 import { useDeckQuery } from '@/hooks/TanStack/deck/useDeckQuery';
 import { usePrayMutation } from '@/hooks/TanStack/deck/usePrayMutation';
+import { useRefetchDeckOnForeground } from '@/hooks/TanStack/deck/useRefetchDeckOnForeground';
 import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './PrayScreen.styles';
@@ -17,6 +18,7 @@ import { styles } from './PrayScreen.styles';
 const PrayScreen = () => {
   const { data: deck, isError, refetch } = useDeckQuery();
   const { mutate: pray } = usePrayMutation();
+  useRefetchDeckOnForeground();
 
   const [againCount, setAgainCount] = useState(0);
 

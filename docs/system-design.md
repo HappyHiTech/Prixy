@@ -105,7 +105,7 @@ into multiple `PrayerRequest`s.
 | POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId?, frequencyType?, recurringDays? }`      | `PrayerRequest`                        | manual entry path; created on Save, not on opening the screen. `status` derived like PATCH (`active` if prayee + category set, else `inbox`) |
 | POST   | `/prayers/capture`         | `{ text }`                                                                      | `PrayerRequest[]`                      | quick capture: LLM splits text, matches prayee/category — see `docs/quick-capture-spec.md` |
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
-| GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
+| GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab                   |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/deck?tz=<IANA zone>`     | —                                                                               | `{ prayedToday, cards[] }`             | today's deck for Prayer Mode + Home header stats; cards are joined with prayee/category — see `docs/pray-mode-spec.md` |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
@@ -168,9 +168,9 @@ endpoint (no NAT gateway, no stored API key).
   and re-derives status from prayee/category
   **Prayer Mode**
 - Queue: `GET /deck` (today's due requests, not every active request)
-- Swipe right (prayed) → `POST /prayers/:id/pray { action: "done" }`
+- Swipe right (prayed) → `POST /prayers/:id/pray { action: "done", tz }`
 - Swipe left (prayed + repeat tomorrow) →
-  `POST /prayers/:id/pray { action: "repeat_tomorrow" }`
+  `POST /prayers/:id/pray { action: "repeat_tomorrow", tz }`
   **Profile Screen**
 - `GET /user/me`, `PATCH /user/me`
 - Lifetime stats ("Total Requests Prayed For", "Total Prayers Answered")

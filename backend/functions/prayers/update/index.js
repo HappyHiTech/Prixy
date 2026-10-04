@@ -246,6 +246,7 @@ exports.handler = async (event) => {
           pr.frequency_type  AS "frequencyType",
           pr.recurring_days  AS "recurringDays",
           pr.last_prayed_at  AS "lastPrayedAt",
+          pr.repeat_on::text AS "repeatOn",
           pr.answered_at     AS "answeredAt",
           pr.created_at      AS "createdAt"`,
         values,

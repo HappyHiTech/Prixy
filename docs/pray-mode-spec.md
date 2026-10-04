@@ -329,6 +329,7 @@ Both use the existing `apiFetch` from `apiClient.ts`.
 ### 7.4 Hooks: `src/hooks/TanStack/deck/` (new)
 
 - `useDeckQuery()`: key `['deck']`.
+- `useRefetchDeckOnForeground()`: subscribes to `AppState` and refetches `['deck']` when the app transitions into `active`.
 - `usePrayMutation()`:
   - `onMutate`: cancel `['deck']`, snapshot it, remove the card from `cards`,
     and add 1 to `prayedToday`.
@@ -348,6 +349,8 @@ reshuffle there is harmless.
   `MOCK_PRAYERS` import.
 - Refetches `['deck']` in the existing `useFocusEffect`, so a new day (or edits
   made on other tabs) show up when the user returns to the tab.
+  The deck is also refetched when the app returns to the foreground (via
+  `useRefetchDeckOnForeground`), so a morning resume does not show yesterday's deck.
 - Keeps a session-local `againCount` for the `DeckComplete` message.
 - Maps the swipe decision to the API action: `'prayed'` → `'done'`,
   `'again'` → `'repeat_tomorrow'`.
