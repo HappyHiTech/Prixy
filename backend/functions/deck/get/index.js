@@ -17,7 +17,7 @@ const DECK_SQL = `
       AND (pr.last_prayed_at IS NULL
            OR (pr.last_prayed_at AT TIME ZONE $2)::date < today.d)
       AND (
-        (pr.frequency_type = 'one_time' AND pr.last_prayed_at IS NULL)
+        pr.last_prayed_at IS NULL
         OR (pr.frequency_type = 'recurring'
             AND to_char(today.d, 'Dy') = ANY (pr.recurring_days))
         OR pr.repeat_on <= today.d
