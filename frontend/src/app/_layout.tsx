@@ -68,6 +68,19 @@ export default function TabLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+         
+          <Stack.Screen
+            name="gallery"
+            options={{ animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="edit-prayer"
+            options={{ animation: 'slide_from_right' }}
+          />
+          <Stack.Screen
+            name="quick-capture"
+            options={{ animation: 'slide_from_right' }}
+          />
         </Stack>
       </QueryClientProvider>
     </GestureHandlerRootView>
