@@ -11,4 +11,8 @@ const isValidTimeZone = (tz) => {
   }
 };
 
-module.exports = { isValidTimeZone };
+// 22023 covers any invalid parameter, so the message narrows it to the tz.
+const isUnknownTimeZoneError = (err) =>
+  err?.code === "22023" && /time zone/i.test(err.message ?? "");
+
+module.exports = { isValidTimeZone, isUnknownTimeZoneError };

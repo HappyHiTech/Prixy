@@ -1,5 +1,11 @@
-import { useEffect } from 'react';
-import { View, Text, useWindowDimensions } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+  type LayoutChangeEvent,
+} from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   interpolate,
@@ -45,6 +51,14 @@ const FLY_OUT_DURATION = 220;
 
 const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
   const { width } = useWindowDimensions();
+
+  const textStyle = requestTextStyle(prayer.requestText);
+  const lineHeight = StyleSheet.flatten(textStyle).lineHeight ?? 24;
+  const [textAreaHeight, setTextAreaHeight] = useState(0);
+  const maxLines =
+    textAreaHeight > 0
+      ? Math.max(1, Math.floor(textAreaHeight / lineHeight))
+      : undefined;
   const swipeThreshold = width * 0.28;
 
   const translateX = useSharedValue(0);
@@ -166,11 +180,20 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
           </View>
         </View>
 
-        <Text
-          style={[styles.requestText, requestTextStyle(prayer.requestText)]}
+        <View
+          style={styles.requestTextArea}
+          onLayout={(e: LayoutChangeEvent) =>
+            setTextAreaHeight(e.nativeEvent.layout.height)
+          }
         >
-          {prayer.requestText}
-        </Text>
+          <Text
+            style={[styles.requestText, textStyle]}
+            numberOfLines={maxLines}
+            ellipsizeMode="tail"
+          >
+            {prayer.requestText}
+          </Text>
+        </View>
 
         {/* Category gets its own line so a long name can't push the other
             details off the card; anything past one line is truncated. */}

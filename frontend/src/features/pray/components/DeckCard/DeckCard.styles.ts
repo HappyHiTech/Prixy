@@ -55,11 +55,12 @@ export const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  // overflow: hidden is a safety net so text past the smallest tier gets
-  // clipped inside the card instead of spilling over the footer.
-  requestText: {
+  requestTextArea: {
     flex: 1,
     overflow: 'hidden',
+  },
+
+  requestText: {
     color: DARK_COLORS.text,
     ...fontFamily(400),
   },

@@ -1,5 +1,8 @@
 const { withClient } = require("./shared/db");
-const { isValidTimeZone } = require("./shared/timeZone");
+const {
+  isValidTimeZone,
+  isUnknownTimeZoneError,
+} = require("./shared/timeZone");
 
 const DECK_SQL = `
   WITH me AS (
@@ -92,6 +95,14 @@ exports.handler = async (event) => {
       body: JSON.stringify(deck),
     };
   } catch (err) {
+    if (isUnknownTimeZoneError(err)) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Unknown time zone: ${tz}` }),
+      };
+    }
+
     console.error("GetDeck failed", { tz, error: err });
 
     return {

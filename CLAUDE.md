@@ -115,5 +115,23 @@ emerge in the code rather than prescribing them upfront.)
 
 ## Setup
 
-(To be filled in once local dev / deploy tooling is chosen — e.g. how to run
-the Expo app, how to deploy a Lambda function.)
+### Deploying the backend
+
+From `backend/infra/` (stack and region come from `samconfig.toml`):
+
+```bash
+sam build && sam deploy
+sam remote invoke MigrateFunction --stack-name prixy-backend-dev
+```
+
+**Run the migration immediately after every deploy.** Handlers can select
+columns that only a new migration adds (e.g. `repeat_on`), so until it runs
+those endpoints return 500. The migrate Lambda re-runs every file in
+`functions/ops/migrate/sql/` each time, so migrations must be idempotent
+(`IF NOT EXISTS` etc.).
+
+The migrate handler catches its own errors and returns
+`{"status":"error","message":...}` rather than failing the invoke, so check
+the returned JSON says `"status":"ok"`, not just the command's exit code.
+
+(Local dev / running the Expo app still to be filled in.)

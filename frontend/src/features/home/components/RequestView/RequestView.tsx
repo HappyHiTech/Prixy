@@ -70,7 +70,11 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
     );
   }
 
-  const loadError = isError ? error : isActiveTab ? deckQuery.error : null;
+  const loadError = isError
+    ? error
+    : isActiveTab && !deckQuery.data
+      ? deckQuery.error
+      : null;
 
   if (loadError) {
     return (

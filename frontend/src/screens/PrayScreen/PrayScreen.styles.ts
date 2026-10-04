@@ -39,12 +39,12 @@ export const styles = StyleSheet.create({
     borderRadius: 2,
   },
 
-  // Bottom padding clears the nav bar (85) plus the raised + button.
+  // Bottom padding clears the nav bar (85); the + button is hidden here.
   body: {
     alignSelf: 'stretch',
     flex: 1,
     justifyContent: 'center',
-    paddingBottom: 140,
+    paddingBottom: 109,
     paddingHorizontal: 22,
     paddingTop: 8,
   },

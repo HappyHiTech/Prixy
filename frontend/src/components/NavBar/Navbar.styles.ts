@@ -42,6 +42,10 @@ export const styles = StyleSheet.create({
     borderBottomRightRadius: 3,
   },
 
+  iconOverlay: {
+    ...StyleSheet.absoluteFill,
+  },
+
   navButtonText: {
     ...fontFamily(500),
     color: COLORS.secondaryText,

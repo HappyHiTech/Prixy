@@ -20,6 +20,8 @@ type TabName = 'home' | 'pray';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+const LIGHT_ICON_COLOR = '#000000';
+
 const NavBar = ({ state, navigation }: BottomTabBarProps) => {
   const isActionOpen = useActionButtonStore((s) => s.isActionOpen);
   const toggleAction = useActionButtonStore((s) => s.toggleAction);
@@ -95,7 +97,14 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     ),
   }));
 
-  const iconColor = currentRoute === 'pray' ? DARK_COLORS.text : '#000000';
+  // SVG icons can't take an animated color, so light/dark copies cross-fade.
+  const lightIconStyle = useAnimatedStyle(() => ({
+    opacity: 1 - tabProgress.value,
+  }));
+
+  const darkIconStyle = useAnimatedStyle(() => ({
+    opacity: tabProgress.value,
+  }));
 
   const plusStyle = useAnimatedStyle(() => ({
     transform: [{ rotate: `${plusRotation.value * 135}deg` }],
@@ -119,7 +128,12 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
         accessibilityState={{ selected: currentRoute === 'home' }}
       >
         <Animated.View style={homeIconStyle}>
-          <Home size={24} color={iconColor} />
+          <Animated.View style={lightIconStyle}>
+            <Home size={24} color={LIGHT_ICON_COLOR} />
+          </Animated.View>
+          <Animated.View style={[styles.iconOverlay, darkIconStyle]}>
+            <Home size={24} color={DARK_COLORS.text} />
+          </Animated.View>
         </Animated.View>
         <Text style={styles.navButtonText}>Home</Text>
       </Pressable>
@@ -129,7 +143,6 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
           style={[styles.addPrayer, addRingStyle]}
           onPress={toggleAction}
           disabled={isAddHidden}
-          pointerEvents={isAddHidden ? 'none' : 'auto'}
           accessibilityElementsHidden={isAddHidden}
           importantForAccessibility={
             isAddHidden ? 'no-hide-descendants' : 'auto'
@@ -152,7 +165,20 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
         accessibilityState={{ selected: currentRoute === 'pray' }}
       >
         <Animated.View style={prayIconStyle}>
-          <HandsPrayingIcon size={24} color={iconColor} weight="regular" />
+          <Animated.View style={lightIconStyle}>
+            <HandsPrayingIcon
+              size={24}
+              color={LIGHT_ICON_COLOR}
+              weight="regular"
+            />
+          </Animated.View>
+          <Animated.View style={[styles.iconOverlay, darkIconStyle]}>
+            <HandsPrayingIcon
+              size={24}
+              color={DARK_COLORS.text}
+              weight="regular"
+            />
+          </Animated.View>
         </Animated.View>
         <Text style={styles.navButtonText}>Pray</Text>
       </Pressable>

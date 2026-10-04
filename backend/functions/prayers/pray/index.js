@@ -1,5 +1,6 @@
 const { withClient } = require("./shared/db");
 const { parsePrayRequest } = require("./shared/pray/parsePrayRequest");
+const { isUnknownTimeZoneError } = require("./shared/timeZone");
 
 const PRAY_SQL = `
   UPDATE prayer_requests pr
@@ -97,6 +98,14 @@ exports.handler = async (event) => {
       }),
     };
   } catch (err) {
+    if (isUnknownTimeZoneError(err)) {
+      return {
+        statusCode: 400,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: `Unknown time zone: ${tz}` }),
+      };
+    }
+
     console.error("PrayPrayer failed", { id, action, error: err });
 
     return {

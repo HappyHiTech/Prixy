@@ -1,47 +1,77 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { setStatusBarStyle } from 'expo-status-bar';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
-import { DARK_COLORS } from '@/constants';
+import { DARK_COLORS, DURATION, EASE } from '@/constants';
 import StatsCard from '@/features/home/components/StatsCard/StatsCard';
 import SwipeDeck from '@/features/pray/components/SwipeDeck/SwipeDeck';
 import DeckComplete from '@/features/pray/components/DeckComplete/DeckComplete';
 import type { SwipeDecision } from '@/features/pray/components/DeckCard/DeckCard';
 import { useDeckQuery } from '@/hooks/TanStack/deck/useDeckQuery';
 import { usePrayMutation } from '@/hooks/TanStack/deck/usePrayMutation';
-import { useRefetchDeckOnForeground } from '@/hooks/TanStack/deck/useRefetchDeckOnForeground';
 import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './PrayScreen.styles';
 
+const todayKey = () => new Date().toDateString();
+
 const PrayScreen = () => {
   const { data: deck, isError, refetch } = useDeckQuery();
-  const { mutate: pray } = usePrayMutation();
-  useRefetchDeckOnForeground();
+  const { mutateAsync: pray } = usePrayMutation();
 
-  const [againCount, setAgainCount] = useState(0);
+  const [again, setAgain] = useState({ day: todayKey(), count: 0 });
+  const againCount = again.day === todayKey() ? again.count : 0;
+
+  const hasFocused = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
       setStatusBarStyle('light');
-      refetch();
+      if (hasFocused.current) refetch();
+      hasFocused.current = true;
       return () => setStatusBarStyle('dark');
     }, [refetch]),
   );
 
   const handleSwiped = (prayer: DeckPrayer, decision: SwipeDecision) => {
+    // Not mutate's per-call onSuccess: it only fires for the latest call.
     pray({
       id: prayer.id,
       action: decision === 'prayed' ? 'done' : 'repeat_tomorrow',
-    });
-
-    if (decision === 'again') setAgainCount((n) => n + 1);
+    })
+      .then(() => {
+        if (decision !== 'again') return;
+        const day = todayKey();
+        setAgain((prev) => ({
+          day,
+          count: prev.day === day ? prev.count + 1 : 1,
+        }));
+      })
+      // usePrayMutation's onError handles failures.
+      .catch(() => {});
   };
 
   const prayedToday = deck?.prayedToday ?? 0;
   const total = prayedToday + (deck?.cards.length ?? 0);
   const progress = total === 0 ? 0 : prayedToday / total;
+
+  const animatedProgress = useSharedValue(progress);
+
+  useEffect(() => {
+    animatedProgress.set(
+      withTiming(progress, { duration: DURATION.fast, easing: EASE.inOut }),
+    );
+  }, [progress, animatedProgress]);
+
+  const progressFillStyle = useAnimatedStyle(() => ({
+    width: `${animatedProgress.value * 100}%`,
+  }));
 
   const renderBody = () => {
     if (!deck) {
@@ -75,7 +105,7 @@ const PrayScreen = () => {
       </View>
 
       <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
+        <Animated.View style={[styles.progressFill, progressFillStyle]} />
       </View>
 
       <View style={styles.body}>{renderBody()}</View>
