@@ -48,7 +48,7 @@ const EditFrequncy = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Set Frequncy</Text>
+      <Text style={styles.header}>Set Frequency</Text>
       <View style={styles.card}>
         {OPTIONS.map((item, index) => {
           const isSelected = selected.includes(item);
