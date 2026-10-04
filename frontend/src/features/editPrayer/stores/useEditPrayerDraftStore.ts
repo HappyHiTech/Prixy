@@ -12,11 +12,15 @@ type EditPrayerSnapshot = {
   frequencyType: PrayerRequestFrequencyType;
   recurringDays: string[];
   answered: boolean;
+  prayAgain: boolean;
 };
 
 type EditPrayerDraft = EditPrayerSnapshot & {
   prayerId: string;
   snapshot: EditPrayerSnapshot;
+  // Read-only facts from the server (not part of the editable snapshot).
+  isDormant: boolean;
+  lastPrayedAt: string | null;
 
   setPrayeeId: (v: string) => void;
   setCategoryId: (v: string) => void;
@@ -26,6 +30,7 @@ type EditPrayerDraft = EditPrayerSnapshot & {
     recurringDays: string[],
   ) => void;
   setAnswered: (v: boolean) => void;
+  togglePrayAgain: () => void;
 
   reset: (prayer: PrayerRequest) => void;
   clear: () => void;
@@ -38,19 +43,23 @@ const EMPTY: EditPrayerSnapshot = {
   frequencyType: 'one_time',
   recurringDays: [],
   answered: false,
+  prayAgain: false,
 };
 
 export const useEditPrayerDraftStore = create<EditPrayerDraft>((set) => ({
   ...EMPTY,
   prayerId: '',
   snapshot: EMPTY,
+  isDormant: false,
+  lastPrayedAt: null,
 
   setPrayeeId: (v) => set({ prayeeId: v }),
   setCategoryId: (v) => set({ categoryId: v }),
   setRequestText: (v) => set({ requestText: v }),
   setFrequency: (frequencyType, recurringDays) =>
-    set({ frequencyType, recurringDays }),
+    set({ frequencyType, recurringDays, prayAgain: false }),
   setAnswered: (v) => set({ answered: v }),
+  togglePrayAgain: () => set((s) => ({ prayAgain: !s.prayAgain })),
 
   reset: (prayer) => {
     const saved: EditPrayerSnapshot = {
@@ -60,12 +69,30 @@ export const useEditPrayerDraftStore = create<EditPrayerDraft>((set) => ({
       frequencyType: prayer.frequencyType,
       recurringDays: prayer.recurringDays,
       answered: prayer.status === 'answered',
+      prayAgain: false,
     };
 
-    set({ ...saved, prayerId: prayer.id, snapshot: saved });
+    set({
+      ...saved,
+      prayerId: prayer.id,
+      snapshot: saved,
+      isDormant:
+        prayer.status === 'active' &&
+        prayer.frequencyType === 'one_time' &&
+        prayer.lastPrayedAt !== null &&
+        prayer.repeatOn === null,
+      lastPrayedAt: prayer.lastPrayedAt,
+    });
   },
 
-  clear: () => set({ ...EMPTY, prayerId: '', snapshot: EMPTY }),
+  clear: () =>
+    set({
+      ...EMPTY,
+      prayerId: '',
+      snapshot: EMPTY,
+      isDormant: false,
+      lastPrayedAt: null,
+    }),
 }));
 
 export const selectIsPrayerDraftDirty = (s: EditPrayerDraft) =>
@@ -74,4 +101,5 @@ export const selectIsPrayerDraftDirty = (s: EditPrayerDraft) =>
   s.requestText !== s.snapshot.requestText ||
   s.frequencyType !== s.snapshot.frequencyType ||
   s.answered !== s.snapshot.answered ||
+  s.prayAgain !== s.snapshot.prayAgain ||
   s.recurringDays.join(',') !== s.snapshot.recurringDays.join(',');

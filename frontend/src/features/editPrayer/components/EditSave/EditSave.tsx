@@ -6,6 +6,7 @@ import {
   selectIsPrayerDraftDirty,
   useEditPrayerDraftStore,
 } from '@/features/editPrayer/stores/useEditPrayerDraftStore';
+import { localToday } from '@/utils';
 import { useUpdatePrayerRequest } from '@/hooks/TanStack/prayerRequest/useUpdatePrayerRequestMutation';
 import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/prayerRequest/useCreatePrayerRequestMutation';
 
@@ -68,6 +69,7 @@ const EditSave = ({ prayerId }: EditSaveProp) => {
         frequencyType: draft.frequencyType,
         recurringDays: draft.recurringDays,
         answered: draft.answered,
+        ...(draft.prayAgain && { repeatOn: localToday() }),
       },
       {
         onSuccess: (updated) => {

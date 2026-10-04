@@ -14,6 +14,7 @@ type UpdatePrayerRequestBody = {
   frequencyType?: PrayerRequestFrequencyType;
   recurringDays?: string[];
   answered?: boolean;
+  repeatOn?: string | null;
 };
 
 type CreatePrayerRequestBody = {

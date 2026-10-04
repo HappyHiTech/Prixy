@@ -14,6 +14,7 @@ type UpdatePrayerRequestVariables = {
     | 'requestText'
     | 'frequencyType'
     | 'recurringDays'
+    | 'repeatOn'
   >
 >;
 
