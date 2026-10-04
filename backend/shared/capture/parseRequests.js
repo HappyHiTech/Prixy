@@ -11,11 +11,12 @@ const SYSTEM_PROMPT = `You turn a user's quick prayer note into structured praye
 
 Rules:
 1. Split the note into one request per distinct person or need. A single need about one person is one request.
-2. requestText: rewrite as a short, clear request in the user's own voice. Remove filler words and false starts and fix grammar. Never add details that are not in the note.
-3. prayeeId: set it only when the request clearly refers to someone in <prayees> — the same name (case-insensitive) or an unambiguous reference such as "Mom" when a prayee is named "Mom". Otherwise null. When in doubt, use null.
-4. categoryId: set it only when exactly one category in <categories> clearly fits. Otherwise null.
-5. Only use ids that appear in the lists. Never invent an id.
-6. If the note contains no prayer request, return an empty requests array.`;
+2. Notes are often grouped: a person's name on its own line, followed by a bulleted list of needs for that person, sometimes repeated for several people. Each bullet is its own request for the person named in the heading above it, even when the bullet does not repeat the name. Include the person's name in requestText so each request makes sense on its own.
+3. requestText: rewrite as a short, clear request in the user's own voice. Remove filler words and false starts and fix grammar. Never add details that are not in the note.
+4. prayeeId: set it only when the request clearly refers to someone in <prayees> — the same name (case-insensitive) or an unambiguous reference such as "Mom" when a prayee is named "Mom". A bullet under a heading refers to the person in that heading. Otherwise null. When in doubt, use null.
+5. categoryId: set it only when exactly one category in <categories> clearly fits. Otherwise null.
+6. Only use ids that appear in the lists. Never invent an id.
+7. If the note contains no prayer request, return an empty requests array.`;
 
 const OUTPUT_SCHEMA = {
   type: "object",
