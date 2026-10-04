@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { HandsPrayingIcon } from 'phosphor-react-native';
 
 import {
+  selectIsOnceDormant,
   selectIsPrayerDraftDirty,
   useEditPrayerDraftStore,
 } from '@/features/editPrayer/stores/useEditPrayerDraftStore';
@@ -69,7 +70,8 @@ const EditSave = ({ prayerId }: EditSaveProp) => {
         frequencyType: draft.frequencyType,
         recurringDays: draft.recurringDays,
         answered: draft.answered,
-        ...(draft.prayAgain && { repeatOn: localToday() }),
+        ...(selectIsOnceDormant(draft) &&
+          draft.prayAgain && { repeatOn: localToday() }),
       },
       {
         onSuccess: (updated) => {

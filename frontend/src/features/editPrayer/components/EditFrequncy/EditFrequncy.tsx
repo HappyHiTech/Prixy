@@ -2,7 +2,10 @@ import { View, Text, Pressable } from 'react-native';
 
 import { daysSince } from '@/utils';
 
-import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
+import {
+  selectIsOnceDormant,
+  useEditPrayerDraftStore,
+} from '../../stores/useEditPrayerDraftStore';
 
 import { styles } from './EditFrequncy.styles';
 
@@ -20,7 +23,7 @@ const EditFrequncy = () => {
   const frequencyType = useEditPrayerDraftStore((s) => s.frequencyType);
   const recurringDays = useEditPrayerDraftStore((s) => s.recurringDays);
   const setFrequency = useEditPrayerDraftStore((s) => s.setFrequency);
-  const isDormant = useEditPrayerDraftStore((s) => s.isDormant);
+  const isDormant = useEditPrayerDraftStore(selectIsOnceDormant);
   const lastPrayedAt = useEditPrayerDraftStore((s) => s.lastPrayedAt);
   const prayAgain = useEditPrayerDraftStore((s) => s.prayAgain);
   const togglePrayAgain = useEditPrayerDraftStore((s) => s.togglePrayAgain);

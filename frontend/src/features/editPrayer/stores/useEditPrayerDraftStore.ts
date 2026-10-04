@@ -19,7 +19,7 @@ type EditPrayerDraft = EditPrayerSnapshot & {
   prayerId: string;
   snapshot: EditPrayerSnapshot;
   // Read-only facts from the server (not part of the editable snapshot).
-  isDormant: boolean;
+  canPrayAgain: boolean;
   lastPrayedAt: string | null;
 
   setPrayeeId: (v: string) => void;
@@ -50,7 +50,7 @@ export const useEditPrayerDraftStore = create<EditPrayerDraft>((set) => ({
   ...EMPTY,
   prayerId: '',
   snapshot: EMPTY,
-  isDormant: false,
+  canPrayAgain: false,
   lastPrayedAt: null,
 
   setPrayeeId: (v) => set({ prayeeId: v }),
@@ -76,11 +76,7 @@ export const useEditPrayerDraftStore = create<EditPrayerDraft>((set) => ({
       ...saved,
       prayerId: prayer.id,
       snapshot: saved,
-      isDormant:
-        prayer.status === 'active' &&
-        prayer.frequencyType === 'one_time' &&
-        prayer.lastPrayedAt !== null &&
-        prayer.repeatOn === null,
+      canPrayAgain: prayer.lastPrayedAt !== null && prayer.repeatOn === null,
       lastPrayedAt: prayer.lastPrayedAt,
     });
   },
@@ -90,7 +86,7 @@ export const useEditPrayerDraftStore = create<EditPrayerDraft>((set) => ({
       ...EMPTY,
       prayerId: '',
       snapshot: EMPTY,
-      isDormant: false,
+      canPrayAgain: false,
       lastPrayedAt: null,
     }),
 }));
@@ -103,3 +99,6 @@ export const selectIsPrayerDraftDirty = (s: EditPrayerDraft) =>
   s.answered !== s.snapshot.answered ||
   s.prayAgain !== s.snapshot.prayAgain ||
   s.recurringDays.join(',') !== s.snapshot.recurringDays.join(',');
+
+export const selectIsOnceDormant = (s: EditPrayerDraft) =>
+  s.frequencyType === 'one_time' && !s.answered && s.canPrayAgain;
