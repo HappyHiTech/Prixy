@@ -69,4 +69,11 @@ export const styles = StyleSheet.create({
   },
 
   selections: {},
+
+  // NavBar is absolutely positioned over the bottom of the screen (85px tall,
+  // plus the raised add button), so pad the list so the last item can scroll
+  // clear of it.
+  selectionsContent: {
+    paddingBottom: 140,
+  },
 });

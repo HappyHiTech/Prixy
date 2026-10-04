@@ -96,7 +96,10 @@ const Sidebar = ({
             <Text style={styles.addText}>{addLabel}</Text>
           </Pressable>
         </View>
-        <ScrollView style={styles.selections}>
+        <ScrollView
+          style={styles.selections}
+          contentContainerStyle={styles.selectionsContent}
+        >
           {isError ? (
             <Text style={styles.addText}>{"Couldn't load"}</Text>
           ) : isPending ? (
