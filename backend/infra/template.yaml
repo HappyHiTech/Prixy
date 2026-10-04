@@ -572,6 +572,27 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  PrayPrayerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/prayers/pray/
+      Handler: index.handler
+      MemorySize: *dbFunctionMemory
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        PrayPrayer:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /prayers/{id}/pray
+            Method: post
+            Auth:
+              Authorizer: CognitoAuth
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
