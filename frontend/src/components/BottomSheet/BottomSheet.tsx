@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   View,
   Text,
@@ -45,8 +46,14 @@ const BottomSheet = ({
 }: BottomSheetProps) => {
   const { height } = useWindowDimensions();
   const translateY = useSharedValue(0);
+  const backdropOpacity = useSharedValue(0);
+
+  useEffect(() => {
+    backdropOpacity.set(withTiming(1, { duration: DURATION }));
+  }, [backdropOpacity]);
 
   const close = () => {
+    backdropOpacity.set(withTiming(0, { duration: DURATION }));
     translateY.value = withTiming(height, { duration: DURATION }, (done) => {
       if (done) scheduleOnRN(onClose);
     });
@@ -59,6 +66,7 @@ const BottomSheet = ({
     })
     .onEnd(() => {
       if (translateY.value > DISMISS_DISTANCE) {
+        backdropOpacity.set(withTiming(0, { duration: DURATION }));
         translateY.value = withTiming(
           height,
           { duration: DURATION },
@@ -75,11 +83,16 @@ const BottomSheet = ({
     transform: [{ translateY: translateY.value }],
   }));
 
+  const backdropStyle = useAnimatedStyle(() => ({
+    opacity: backdropOpacity.value,
+  }));
+
   const isSaveDisabled = !canSave || isSaving;
 
   return (
     <Modal visible transparent animationType="none" onRequestClose={close}>
       <Pressable style={styles.backdrop} onPress={isSaving ? undefined : close}>
+        <Animated.View style={[styles.backdropTint, backdropStyle]} />
         <KeyboardAvoidingView
           style={styles.keyboardView}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}

@@ -6,6 +6,11 @@ export const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
     justifyContent: 'flex-end',
+  },
+
+  backdropTint: {
+    position: 'absolute',
+    inset: 0,
     backgroundColor: COLORS.tint,
   },
 
