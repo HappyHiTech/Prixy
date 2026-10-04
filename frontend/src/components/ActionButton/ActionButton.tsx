@@ -3,7 +3,6 @@ import { View, Text, Pressable } from 'react-native';
 import { Mic, Pencil, NotebookPenIcon } from 'lucide-react-native';
 import Svg, { Path } from 'react-native-svg';
 
-import { useCreatePrayerRequestMutation } from '@/hooks/TanStack/prayerRequest/useCreatePrayerRequestMutation';
 import { useActionButtonStore } from '@/stores/useActionButtonStore';
 
 import { COLORS } from '@/constants';
@@ -22,18 +21,6 @@ const cardPath =
 const ActionButton = () => {
   const router = useRouter();
   const closeAction = useActionButtonStore((s) => s.closeAction);
-  const { mutate: createPrayer, isPending } = useCreatePrayerRequestMutation();
-
-  const handleManual = () => {
-    if (isPending) return;
-
-    createPrayer(undefined, {
-      onSuccess: (created) => {
-        router.push(`/edit-prayer?id=${created.id}`);
-        closeAction();
-      },
-    });
-  };
 
   return (
     <Pressable style={styles.container} onPress={closeAction}>
@@ -63,8 +50,10 @@ const ActionButton = () => {
           </Pressable>
           <Pressable
             style={styles.option}
-            onPress={handleManual}
-            disabled={isPending}
+            onPress={() => {
+              closeAction();
+              router.push('/edit-prayer');
+            }}
           >
             <Pencil />
             <Text style={styles.text}>Manual</Text>

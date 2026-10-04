@@ -16,6 +16,14 @@ type UpdatePrayerRequestBody = {
   answered?: boolean;
 };
 
+type CreatePrayerRequestBody = {
+  requestText: string;
+  prayeeId?: string | null;
+  categoryId?: string | null;
+  frequencyType?: PrayerRequestFrequencyType;
+  recurringDays?: string[];
+};
+
 export async function fetchPrayerRequests(
   status?: PrayerRequestStatus,
   filters?: PrayerRequestFilters,
@@ -33,9 +41,12 @@ export async function fetchPrayerRequest(id: string): Promise<PrayerRequest> {
   return apiFetch<PrayerRequest>(`/prayers/${id}`);
 }
 
-export async function createPrayerRequest(): Promise<PrayerRequest> {
+export async function createPrayerRequest(
+  body: CreatePrayerRequestBody,
+): Promise<PrayerRequest> {
   return apiFetch<PrayerRequest>('/prayers', {
     method: 'POST',
+    body: JSON.stringify(body),
   });
 }
 

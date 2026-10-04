@@ -29,6 +29,7 @@ import { styles } from './EditPrayerScreen.styles';
 
 const EditPrayerScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const isCreating = !id;
 
   const selectedEdit = useEditPrayerStore((s) => s.selectedEdit);
   const setSelectedEdit = useEditPrayerStore((s) => s.setSelectedEdit);
@@ -41,10 +42,11 @@ const EditPrayerScreen = () => {
     isPending,
     isError,
     error,
-  } = usePrayerRequestByIdQuery(id);
+  } = usePrayerRequestByIdQuery(id ?? '');
   const { data: prayees } = usePrayeeQuery();
 
   const draftPrayerId = useEditPrayerDraftStore((s) => s.prayerId);
+  const draftPrayeeId = useEditPrayerDraftStore((s) => s.prayeeId);
   const reset = useEditPrayerDraftStore((s) => s.reset);
   const setPrayeeId = useEditPrayerDraftStore((s) => s.setPrayeeId);
   const setCategoryId = useEditPrayerDraftStore((s) => s.setCategoryId);
@@ -56,7 +58,7 @@ const EditPrayerScreen = () => {
 
   useEffect(() => () => useEditPrayerDraftStore.getState().clear(), []);
 
-  if (isPending) {
+  if (!isCreating && isPending) {
     return (
       <View style={styles.container2}>
         <ActivityIndicator />
@@ -64,7 +66,7 @@ const EditPrayerScreen = () => {
     );
   }
 
-  if (isError) {
+  if (!isCreating && isError) {
     return (
       <View style={styles.container2}>
         <Text style={styles.errorText}>{error.message}</Text>
@@ -81,7 +83,7 @@ const EditPrayerScreen = () => {
     );
   }
 
-  const prayee = prayees?.find((p) => p.id === prayer.prayeeId);
+  const prayee = prayees?.find((p) => p.id === draftPrayeeId);
 
   return (
     <View style={styles.container}>
@@ -90,9 +92,9 @@ const EditPrayerScreen = () => {
         <EditPrayeeCategory />
         <EditPrayerRequest />
         <EditFrequncy />
-        <EditAnswered />
+        {!isCreating && <EditAnswered />}
         <View style={styles.buttons}>
-          <EditDeleteButton prayerId={id} />
+          {!isCreating && <EditDeleteButton prayerId={id} />}
           <EditSave prayerId={id} />
         </View>
       </ScrollView>
