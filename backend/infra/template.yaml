@@ -551,6 +551,27 @@ Resources:
             Auth:
               Authorizer: CognitoAuth
 
+  GetDeckFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      CodeUri: ../functions/deck/get/
+      Handler: index.handler
+      MemorySize: *dbFunctionMemory
+      VpcConfig: *dbVpcConfig
+      Environment: *dbEnvironment
+      Policies: *dbPolicies
+      Events:
+        GetDeck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PrixyApi
+            Path: /deck
+            Method: get
+            Auth:
+              Authorizer: CognitoAuth
+
 Outputs:
   ApiUrl:
     Description: Base URL for the deployed API
