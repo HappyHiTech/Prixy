@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
     ...dropShadow('#000000', 0.25, 4, 0),
     ...fontFamily(300),
 
+    maxHeight: 650,
     minHeight: 300,
     padding: 16,
 

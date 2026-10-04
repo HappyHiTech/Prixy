@@ -5,12 +5,12 @@ import { tabDepthTransition } from '@/components/TabBar/tabDepthTransition';
 import { useRefetchDeckOnForeground } from '@/hooks/TanStack/deck/useRefetchDeckOnForeground';
 
 export default function TabsLayout() {
-  // Here, not in a screen: tabs mount lazily and both read the deck.
   useRefetchDeckOnForeground();
 
   return (
     <Tabs
       tabBar={(props) => <TabBar {...props} />}
+      detachInactiveScreens={false}
       screenOptions={{ headerShown: false, ...tabDepthTransition }}
     >
       <Tabs.Screen name="home" />

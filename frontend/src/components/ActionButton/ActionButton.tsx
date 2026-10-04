@@ -93,11 +93,11 @@ const ActionButton = () => {
               router.push('/quick-capture');
             }}
           >
-            <NotebookPenIcon />
+            <NotebookPenIcon color={COLORS.secondary} />
             <Text style={styles.text}>Quick Capture</Text>
           </Pressable>
           <Pressable style={styles.option} onPress={() => {}}>
-            <Mic />
+            <Mic color={COLORS.secondary} />
             <Text style={styles.text}>Record</Text>
           </Pressable>
           <Pressable
@@ -107,7 +107,7 @@ const ActionButton = () => {
               router.push('/edit-prayer');
             }}
           >
-            <Pencil />
+            <Pencil color={COLORS.secondary} />
             <Text style={styles.text}>Manual</Text>
           </Pressable>
         </View>
