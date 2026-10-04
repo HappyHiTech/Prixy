@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback } from 'react';
+import { useMemo, useEffect, useCallback, useRef } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
@@ -31,9 +31,15 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
   const { data: inboxReqs, isFetching: isFetchingInbox } =
     usePrayerRequests('inbox');
 
+  const inboxReqsRef = useRef(inboxReqs);
+  inboxReqsRef.current = inboxReqs;
+
   useFocusEffect(
     useCallback(() => {
-      setActiveSegment('inbox');
+      const cachedInbox = inboxReqsRef.current;
+      setActiveSegment(
+        cachedInbox && cachedInbox.length === 0 ? 'active' : 'inbox',
+      );
     }, [setActiveSegment]),
   );
 
