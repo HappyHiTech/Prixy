@@ -101,7 +101,7 @@ into multiple `PrayerRequest`s.
 | ------ | -------------------------- | ------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------- |
 | POST   | `/recordings`              | —                                                                               | `{ recordingId, uploadUrl }`           | returns a presigned S3 URL for direct upload                        |
 | GET    | `/recordings/:id`          | —                                                                               | `Recording` incl. status               | app can poll this while processing                                  |
-| POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId? }`                                    | `PrayerRequest`                        | manual entry path                                                   |
+| POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId?, frequencyType?, recurringDays? }`      | `PrayerRequest`                        | manual entry path; created on Save, not on opening the screen. `status` derived like PATCH (`active` if prayee + category set, else `inbox`) |
 | POST   | `/prayers/capture`         | `{ text }`                                                                      | `PrayerRequest[]`                      | quick capture: LLM splits text, matches prayee/category — see `docs/quick-capture-spec.md` |
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
 | GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab / Prayer Mode queue                   |
@@ -206,7 +206,7 @@ endpoint (no NAT gateway, no stored API key).
 - **Inbox → Active Deck transition**: **resolved** — a request is `active`
   exactly when both `prayeeId` and `categoryId` are non-null, and returns to
   `inbox` if either is cleared. `frequencyType` is not part of the rule.
-  Derived server-side in `PATCH /prayers/:id`, never by the client.
+  Derived server-side in `POST /prayers` and `PATCH /prayers/:id`, never by the client.
   `answered` requests are exempt and never change status this way; the only way
   out of `answered` is an explicit `{ answered: false }` in the same PATCH,
   which re-applies the rule above.
