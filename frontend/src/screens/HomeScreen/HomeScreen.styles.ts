@@ -7,7 +7,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
 
-    // paddingHorizontal: 22,
     paddingTop: 70,
     backgroundColor: COLORS.primaryBg,
   },
@@ -20,7 +19,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 22,
 
-    // borderWidth: 2,
   },
 
   headerRight: {
@@ -41,7 +39,6 @@ export const styles = StyleSheet.create({
 
   bodyContent: {
     gap: 8,
-    // borderWidth: 2,
     paddingBottom: 140,
     paddingHorizontal: 22,
   },

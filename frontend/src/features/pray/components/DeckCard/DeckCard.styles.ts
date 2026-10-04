@@ -102,15 +102,10 @@ export const styles = StyleSheet.create({
     fontSize: 12,
   },
 
-  // flexShrink lets the text give up width (and truncate) instead of
-  // overflowing the row it sits in next to the icon.
   categoryText: {
     flexShrink: 1,
   },
 
-  // Both stamps share the top-right corner (only one is ever visible) and
-  // fade in while dragging so the user reads the outcome before letting go.
-  // The card-colored background masks a long prayee name underneath.
   stamp: {
     position: 'absolute',
     right: 16,

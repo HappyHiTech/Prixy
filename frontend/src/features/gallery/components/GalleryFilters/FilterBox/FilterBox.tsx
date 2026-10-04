@@ -38,7 +38,6 @@ const FilterBox = ({ type, onPress }: FilterBoxProp) => {
           ? STATUS_LABELS[status]
           : undefined;
 
-  // A filter with no selection falls back to showing its own type name.
   const isActive = label !== undefined;
 
   return (

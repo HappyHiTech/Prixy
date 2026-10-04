@@ -1,10 +1,7 @@
-// https://docs.expo.dev/guides/using-eslint/
 const { defineConfig } = require('eslint/config');
 const expoConfig = require("eslint-config-expo/flat");
 const perfectionist = require("eslint-plugin-perfectionist");
 
-// Mirrors the property-order groups used by stylelint-order in other
-// projects, adapted to React Native's StyleSheet property names.
 const positioning = ["position", "zIndex", "top", "right", "bottom", "left"];
 const layout = [
   "display",
@@ -78,9 +75,6 @@ const typeMisc = [
   "textTransform",
 ];
 
-// Every recognized RN/CSS style property, used to tell a style *rule*
-// object (e.g. `{ flex: 1, borderWidth: 2 }`) apart from the outer
-// `StyleSheet.create({...})` object whose keys are arbitrary rule names.
 const styleProperties = [
   ...positioning,
   ...layout,
@@ -108,8 +102,6 @@ module.exports = defineConfig([
             },
             allNamesMatchPattern: styleObjectKeyPattern,
           },
-          // Properties are grouped by category below; within each group,
-          // properties sort alphabetically rather than in a fixed order.
           type: "alphabetical",
           customGroups: [
             { groupName: "positioning", elementNamePattern: positioning },
@@ -128,8 +120,6 @@ module.exports = defineConfig([
           ],
         },
         {
-          // Fallback for every object that isn't a StyleSheet.create call:
-          // leave key order untouched.
           type: "unsorted",
         },
       ],

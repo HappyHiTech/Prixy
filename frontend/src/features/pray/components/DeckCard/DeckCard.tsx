@@ -25,20 +25,16 @@ import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './DeckCard.styles';
 
-// Right = "I prayed for this". Left = "prayed, and bring it back tomorrow".
 export type SwipeDecision = 'prayed' | 'again';
 
 type DeckCardProps = {
   prayer: DeckPrayer;
-  // 0 = top of the deck. Cards behind sit slightly lower and smaller.
   index: number;
   onSwiped: (prayer: DeckPrayer, decision: SwipeDecision) => void;
 };
 
 const MAX_ROTATION = 12;
 
-// Short requests read like a headline; long ones step down so they still fit
-// the fixed card height. Checked in order — first tier the text fits wins.
 const TEXT_TIERS = [
   { maxChars: 90, style: styles.requestTextLarge },
   { maxChars: 180, style: styles.requestTextMedium },
@@ -66,7 +62,6 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
   const stackIndex = useSharedValue(index);
   const isLeaving = useSharedValue(false);
 
-  // When the card in front leaves, this card springs forward one slot.
   useEffect(() => {
     stackIndex.set(withSpring(index, SPRING.snappy));
   }, [index, stackIndex]);
@@ -152,7 +147,6 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
 
   const CategoryIcon =
     (prayer.categoryIcon && CATEGORY_ICON_MAP[prayer.categoryIcon]) || Tag;
-  // "Once" reads more naturally on a card than the raw 'one_time' value.
   const isRecurring = prayer.frequencyType === 'recurring';
   const FrequencyIcon = isRecurring ? Repeat : CircleDot;
   const frequencyLabel = isRecurring ? 'Recurring' : 'Once';
@@ -195,8 +189,6 @@ const DeckCard = ({ prayer, index, onSwiped }: DeckCardProps) => {
           </Text>
         </View>
 
-        {/* Category gets its own line so a long name can't push the other
-            details off the card; anything past one line is truncated. */}
         <View style={styles.footer}>
           <View style={styles.footerItem}>
             <CategoryIcon size={13} color={DARK_COLORS.mutedText} />

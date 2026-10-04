@@ -40,7 +40,6 @@ const IconPicker = ({ value, onChange, disabled }: IconPickerProp) => {
             );
           })}
 
-          {/* Keep a short final row aligned to the grid instead of stretched. */}
           {Array.from({ length: COLUMNS - row.length }, (_, i) => (
             <View key={`spacer-${i}`} style={styles.spacer} />
           ))}

@@ -11,5 +11,5 @@ export const dropShadow = (
     shadowOffset: { width: 0, height: offsetY },
     shadowOpacity: opacity,
     shadowRadius: radius,
-    elevation: radius, // Android fallback
+    elevation: radius,
   }) satisfies ViewStyle;

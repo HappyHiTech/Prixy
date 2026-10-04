@@ -5,8 +5,6 @@ import type { DeckPrayer } from '@/types/deck';
 
 import { styles } from './SwipeDeck.styles';
 
-// Only the top few cards are mounted; the rest of the deck doesn't need to
-// exist until it's close to being seen.
 const VISIBLE_CARDS = 3;
 
 type SwipeDeckProps = {

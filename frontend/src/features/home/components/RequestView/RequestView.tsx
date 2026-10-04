@@ -31,16 +31,12 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
   const { data: inboxReqs, isFetching: isFetchingInbox } =
     usePrayerRequests('inbox');
 
-  // Every time Home regains focus, start on the Inbox; the effect below falls
-  // back to Active once the inbox is known to be empty.
   useFocusEffect(
     useCallback(() => {
       setActiveSegment('inbox');
     }, [setActiveSegment]),
   );
 
-  // Wait out any in-flight refetch: right after a capture the cached inbox can
-  // still be the old empty list, and switching on it would skip the new items.
   useEffect(() => {
     if (!isFetchingInbox && inboxReqs?.length === 0) setActiveSegment('active');
   }, [inboxReqs, isFetchingInbox, setActiveSegment]);

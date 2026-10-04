@@ -58,7 +58,6 @@ export default function TabLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
-        {/* Screens draw their own headers, so the native one stays off. */}
         <Stack
           screenOptions={{
             headerShown: false,
@@ -68,7 +67,7 @@ export default function TabLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
-         
+
           <Stack.Screen
             name="gallery"
             options={{ animation: 'slide_from_right' }}

@@ -66,7 +66,6 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     transform: [{ scale: 1 + tabProgress.value * 0.12 }],
   }));
 
-  // Pray mode is dark, so the bar fades with it instead of staying white.
   const barStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
       tabProgress.value,
@@ -75,8 +74,6 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     ),
   }));
 
-  // Capturing a new request mid-session would pull the user out of prayer,
-  // so the + shrinks away on the Pray tab (and can't be tapped).
   const isAddHidden = currentRoute === 'pray';
 
   const addRingStyle = useAnimatedStyle(() => ({
@@ -97,7 +94,6 @@ const NavBar = ({ state, navigation }: BottomTabBarProps) => {
     ),
   }));
 
-  // SVG icons can't take an animated color, so light/dark copies cross-fade.
   const lightIconStyle = useAnimatedStyle(() => ({
     opacity: 1 - tabProgress.value,
   }));

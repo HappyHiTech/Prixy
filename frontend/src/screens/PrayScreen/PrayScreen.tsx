@@ -40,7 +40,6 @@ const PrayScreen = () => {
   );
 
   const handleSwiped = (prayer: DeckPrayer, decision: SwipeDecision) => {
-    // Not mutate's per-call onSuccess: it only fires for the latest call.
     pray({
       id: prayer.id,
       action: decision === 'prayed' ? 'done' : 'repeat_tomorrow',
@@ -53,7 +52,6 @@ const PrayScreen = () => {
           count: prev.day === day ? prev.count + 1 : 1,
         }));
       })
-      // usePrayMutation's onError handles failures.
       .catch(() => {});
   };
 

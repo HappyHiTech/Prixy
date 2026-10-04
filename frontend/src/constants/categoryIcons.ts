@@ -14,9 +14,7 @@ import {
 import type { LucideIcon } from 'lucide-react-native';
 
 export type CategoryIcon = {
-  /** Stored verbatim in Category.icon. Never rename — it is persisted data. */
   name: string;
-  /** Accessibility label; not shown as visible text in the grid. */
   label: string;
   Icon: LucideIcon;
 };

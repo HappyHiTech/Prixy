@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft: 'auto',
   },
 
   card: {

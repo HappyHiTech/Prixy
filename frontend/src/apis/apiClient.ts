@@ -26,9 +26,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
       if (typeof parsed?.message === 'string' && parsed.message.length > 0) {
         message = parsed.message;
       }
-    } catch {
-      // Non-JSON error body (e.g. an API Gateway HTML page) — keep the default.
-    }
+    } catch {}
     throw new ApiError(response.status, message);
   }
 

@@ -37,8 +37,6 @@ const HomeScreen = () => {
     mutate({ id: selection.prayerId, ...updates }, { onSuccess: closeSidebar });
   };
 
-  // TEMPORARY: the profile screen doesn't exist yet, so this doubles as a
-  // sign-out so the auth flow can be re-run from the app.
   const handleProfilePress = async () => {
     await signOut();
     router.replace('/');

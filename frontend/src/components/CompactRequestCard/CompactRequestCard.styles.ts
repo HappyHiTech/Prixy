@@ -12,14 +12,11 @@ export const styles = StyleSheet.create({
     borderColor: COLORS.borderOne,
   },
 
-  leftOfCard: {
-    // borderWidth: 1,
-  },
+  leftOfCard: {},
 
   rightOfCard: {
     flex: 1,
     gap: 14,
-    // borderWidth: 1,
   },
 
   requestText: {

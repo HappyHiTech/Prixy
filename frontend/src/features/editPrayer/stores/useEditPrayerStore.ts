@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 
-// Which field's sidebar is open. The prayer being edited comes from the route,
-// not from here - this screen only ever edits one prayer.
 export type EditTarget = 'prayee' | 'category';
 
 type EditPrayerStore = {

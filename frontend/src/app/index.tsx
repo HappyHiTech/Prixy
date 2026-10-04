@@ -1,6 +1,5 @@
 import { Redirect } from 'expo-router';
 
-// import HomeScreen from "@/screens/HomeScreen/HomeScreen";
 import WelcomeScreen from '@/screens/WelcomeScreen/WelcomeScreen';
 import { useAuthStore } from '@/stores/useAuthStore';
 

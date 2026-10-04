@@ -3,8 +3,6 @@ import { StyleSheet } from 'react-native';
 import { DARK_COLORS, fontFamily } from '@/constants';
 
 export const styles = StyleSheet.create({
-  // paddingTop + header mirror HomeScreen so the stats pill doesn't jump
-  // when switching tabs.
   container: {
     alignItems: 'center',
     flex: 1,
@@ -39,7 +37,6 @@ export const styles = StyleSheet.create({
     borderRadius: 2,
   },
 
-  // Bottom padding clears the nav bar (85); the + button is hidden here.
   body: {
     alignSelf: 'stretch',
     flex: 1,

@@ -58,7 +58,6 @@ export const usePrayMutation = () => {
 
       const card: DeckPrayer | undefined = context?.card;
 
-      // Skip if a refetch during the save already brought the card back.
       if (card) {
         queryClient.setQueryData<Deck>(['deck'], (old) =>
           old && !old.cards.some((c) => c.id === card.id)
@@ -77,7 +76,6 @@ export const usePrayMutation = () => {
     },
 
     onSettled: () => {
-      // Deck is not refetched: the server reshuffles it on every fetch.
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
     },
   });
