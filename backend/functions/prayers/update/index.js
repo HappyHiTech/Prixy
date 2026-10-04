@@ -1,4 +1,5 @@
 const { withClient } = require("./shared/db");
+const { isIsoDate } = require("./shared/isIsoDate");
 
 
 const UPDATABLE_FIELDS = {
@@ -7,6 +8,7 @@ const UPDATABLE_FIELDS = {
   requestText: "request_text",
   frequencyType: "frequency_type",
   recurringDays: "recurring_days",
+  repeatOn: "repeat_on",
   answered: null,
 };
 
@@ -14,6 +16,7 @@ const ANSWERED_FIELD = "answered";
 
 const FIELD_CASTS = {
   recurringDays: "::text[]",
+  repeatOn: "::date",
 };
 
 const FREQUENCY_TYPES = ["one_time", "recurring"];
@@ -115,6 +118,15 @@ exports.handler = async (event) => {
     }
   }
 
+  if ("repeatOn" in body && body.repeatOn !== null && !isIsoDate(body.repeatOn)) {
+    return {
+      statusCode: 400,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: "repeatOn must be null or a date in YYYY-MM-DD format",
+      }),
+    };
+  }
 
   if (
     "frequencyType" in body &&

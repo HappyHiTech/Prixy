@@ -109,7 +109,7 @@ into multiple `PrayerRequest`s.
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/deck?tz=<IANA zone>`     | —                                                                               | `{ prayedToday, cards[] }`             | today's deck for Prayer Mode + Home header stats; cards are joined with prayee/category — see `docs/pray-mode-spec.md` |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
-| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays, answered }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule. `answered: true` sets `status=answered` + `answeredAt=now`; `answered: false` clears `answeredAt` and re-derives status |
+| PATCH  | `/prayers/:id`             | any of `{ requestText, prayeeId, categoryId, frequencyType, recurringDays, repeatOn, answered }` | `PrayerRequest`                        | edits from Individual Prayer Screen or inline inbox category select; response `status` is derived, not sent — see Inbox → Active Deck rule. `answered: true` sets `status=answered` + `answeredAt=now`; `answered: false` clears `answeredAt` and re-derives status. `repeatOn` (`YYYY-MM-DD` or null) puts a request back in the deck from that date — used to re-add a prayed one-time request |
 | POST   | `/prayers/:id/pray`        | `{ action: "done" \| "repeat_tomorrow", tz }`                                   | `PrayerRequest`                        | swipe right vs swipe left in Prayer Mode. Both set `lastPrayedAt=now`; `done` clears `repeatOn`, `repeat_tomorrow` sets it to the user's local tomorrow. `409` unless `active` — see `docs/pray-mode-spec.md` |
 | GET    | `/prayees`              | —                                                                               | `Prayee[]`                          | populates "Praying For" picker                                      |
 | POST   | `/prayees`              | `{ name }`                                                                      | `Prayee`                            | "Add a name"                                                        |
@@ -229,4 +229,6 @@ endpoint (no NAT gateway, no stored API key).
 - **"One time" vs recurring semantics**: **resolved** — `one_time` appears in
   the deck until prayed once, then never again (it stays `active` until
   answered). `recurring` appears on its `recurringDays` only; missed days
-  don't catch up.
+  don't catch up. A prayed one-time request can be put back in the deck from the Edit
+  screen (tap "Once"), which sets repeatOn to the user's local today; if it
+  was already prayed today it reappears tomorrow.
