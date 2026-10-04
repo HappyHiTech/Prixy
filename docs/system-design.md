@@ -105,7 +105,7 @@ into multiple `PrayerRequest`s.
 | POST   | `/prayers`                 | `{ requestText, prayeeId?, categoryId?, frequencyType?, recurringDays? }`      | `PrayerRequest`                        | manual entry path; created on Save, not on opening the screen. `status` derived like PATCH (`active` if prayee + category set, else `inbox`) |
 | POST   | `/prayers/capture`         | `{ text }`                                                                      | `PrayerRequest[]`                      | quick capture: LLM splits text, matches prayee/category — see `docs/quick-capture-spec.md` |
 | GET    | `/prayers?status=inbox`    | —                                                                               | `PrayerRequest[]`                      | Home Screen "Inbox" tab                                             |
-| GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | Home Screen "Active Deck" tab                   |
+| GET    | `/prayers?status=active`   | —                                                                               | `PrayerRequest[]`                      | all `status=active` rows; Home's Active Deck tab shows only those also in `GET /deck` |
 | GET    | `/prayers?status=answered` | —                                                                               | `PrayerRequest[]`                      | history/stats view                                                  |
 | GET    | `/deck?tz=<IANA zone>`     | —                                                                               | `{ prayedToday, cards[] }`             | today's deck for Prayer Mode + Home header stats; cards are joined with prayee/category — see `docs/pray-mode-spec.md` |
 | GET    | `/prayers/:id`             | —                                                                               | `PrayerRequest`                        | Individual Prayer Screen                                            |
@@ -153,7 +153,7 @@ endpoint (no NAT gateway, no stored API key).
 - Header stats: `GET /deck` (`prayedToday` → "Today", `cards.length` → "Deck")
 - Inbox tab: `GET /prayers?status=inbox` — each card shows `requestText` +
   a category selector (`PATCH /prayers/:id`)
-- Active Deck tab: `GET /prayers?status=active`
+- Active Deck tab: `GET /prayers?status=active`, shown only for ids that are also in `GET /deck` (the Active Deck is the same list as Prayer Mode's queue)
 - "+" button → Record or Manual → `POST /recordings` or `POST /prayers`
   **Individual Prayer Screen**
 - `GET /prayers/:id`
@@ -196,11 +196,11 @@ endpoint (no NAT gateway, no stored API key).
 
 ## 7. Open Questions
 
-- **Active Deck selection**: **resolved** — a daily deck, computed server-side
-  for the user's local date: `active` requests not yet prayed today that are
-  one-time and never prayed, recurring on today's weekday, or have
-  `repeatOn <= today`. Random order, grouped by prayee. See
-  `docs/pray-mode-spec.md`.
+- **Active Deck selection**: **resolved** — one list, computed server-side for
+  the user's local date and shown on both Home's Active Deck tab and in
+  Prayer Mode: `active` requests not yet prayed today that were never prayed,
+  or are recurring on today's weekday, or have `repeatOn <= today`. Random
+  order in Prayer Mode, grouped by prayee. See `docs/pray-mode-spec.md`.
 - **Database**: Postgres/RDS vs DynamoDB — leaning relational given the
   Prayee/Category/PrayerRequest relationships, pricing to be confirmed
   (see below)

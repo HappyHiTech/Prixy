@@ -25,9 +25,9 @@ local date.
 
 | # | Decision | Why |
 | - | -------- | --- |
-| D1 | **Deck rule.** A request is in today's deck when it is `status = 'active'`, has **not been prayed today**, and at least one of these is true: (a) `one_time` and never prayed (`last_prayed_at IS NULL`); (b) `recurring` and today's weekday is in `recurring_days`; (c) `repeat_on <= today`. | (a) also catches one-time requests the user never reached. "Made today" alone would lose a request created on a day Pray Mode wasn't opened, or one that sat in the Inbox before it was categorized. |
-| D2 | **A one-time request leaves the deck for good once it is prayed.** It keeps `status = 'active'` (still visible on Home's Active Deck tab) until it is marked answered. | "One time" means exactly that. A later feature may let the user re-queue a request from the edit screen; that is out of scope here. |
-| D3 | **Recurring means "on its days".** A Mon/Thu request is due Mondays and Thursdays only. Missed days do not catch up. | A missed Monday shouldn't pile up into Tuesday's deck. |
+| D1 | **Deck rule (the Active Deck).** A request is in the Active Deck when it is `status = 'active'`, has **not been prayed today**, and at least one of these is true: (a) it has **never been prayed** (`last_prayed_at IS NULL`), whatever its frequency; (b) it is `recurring` and today's weekday is in `recurring_days`; (c) `repeat_on <= today`. | (a) covers a request made today and anything the user never reached. "Made today" alone would lose a request created on a day Pray Mode wasn't opened, or one that sat in the Inbox before it was categorized. Including never-prayed recurring requests on any day means one created on a non-listed day isn't invisible until its next listed day. |
+| D2 | **A one-time request leaves the Active Deck for good once it is prayed.** It keeps `status = 'active'`, which only means it has a prayee and a category, but it is no longer in the deck on Home or in Pray Mode. | "One time" means exactly that. A later feature may let the user re-queue a request from the edit screen; that is out of scope here. |
+| D3 | **Once a recurring request has been prayed, it returns only on its days.** A Mon/Thu request is due Mondays and Thursdays. Missed days after the first prayer do not catch up. (Before its first prayer it is in the deck regardless, per D1a.) | A missed Monday shouldn't pile up into Tuesday's deck. |
 | D4 | **"Repeat tomorrow" sets a new `repeat_on date` column** to the user's local tomorrow. The request stays due from that day until it is prayed again (`repeat_on <= today`). Any swipe clears or resets it. | `date` rather than `timestamptz` because "tomorrow" is a calendar day in the user's timezone, not an instant. Carry-over matches D1(a): nothing the user asked to see again silently disappears. |
 | D5 | **"Today" is the phone's IANA timezone, resolved in Postgres.** The client sends `tz` (for example `America/Los_Angeles`). SQL computes `(now() AT TIME ZONE $tz)::date`. | Lambda runs in UTC. Sending the zone name (not a date) means the server uses its own clock and the one parameter gives the local date, the weekday, and "prayed today". |
 | D6 | **Dedicated `GET /deck` endpoint** that returns cards already joined with prayee and category, plus `prayedToday`. | The deck rule lives in one place, on the server. Overloading `GET /prayers` would mix a plain list (ordered by `created_at`) with a joined, shuffled selection. Filtering on the phone would duplicate the rule in every client. |
@@ -36,6 +36,7 @@ local date.
 | D9 | **Order: random, with each prayee's requests kept together.** One random key per prayee, then a random order within the group. | Praying through one person's requests back-to-back reads naturally; shuffling keeps the deck from feeling identical every day. |
 | D10 | **The deck is not refetched during a session.** A swipe removes the card from the cached deck immediately (optimistic update) and sends the POST. | The server reshuffles on every fetch. Refetching after each swipe would reorder the cards under the user's thumb. |
 | D11 | **Praying a request that isn't `active` returns `409`.** | Inbox and answered requests never appear in the deck, so a pray call for one is a stale client or a bug. |
+| D12 | **The Active Deck is one list.** Home's Active Deck tab and Pray Mode show the same requests, and the header's "Deck: N" counts them. `status = 'active'` only means the request has a prayee and a category; it does not mean the request is in the deck. | The user's mental model is a single deck. Two lists with the same name drift apart and confuse. |
 
 ---
 
@@ -198,7 +199,7 @@ due AS (
     AND (pr.last_prayed_at IS NULL
          OR (pr.last_prayed_at AT TIME ZONE $2)::date < today.d)
     AND (
-      (pr.frequency_type = 'one_time' AND pr.last_prayed_at IS NULL)
+      pr.last_prayed_at IS NULL
       OR (pr.frequency_type = 'recurring'
           AND to_char(today.d, 'Dy') = ANY (pr.recurring_days))
       OR pr.repeat_on <= today.d
@@ -376,6 +377,7 @@ reshuffle there is harmless.
   (`Today: prayedToday`, `Deck: cards.length`). Remove the mock props and the
   `usePrayerRequests('active')` fallback. Home's "Deck" now means "due today",
   not "all active".
+- `RequestView` (Home): the Active Deck tab keeps `usePrayerRequests('active')` for the full rows, but shows only the rows whose id is in `useDeckQuery().data.cards` (D12). The card, its edit buttons and the newest-first order are unchanged. Empty copy: "Nothing in your active deck today." While the deck query is loading or has failed, that tab shows the spinner or the error. The Inbox tab is unchanged.
 - Delete `src/features/pray/mockPrayers.ts`.
 
 ---
@@ -411,7 +413,8 @@ call `GET /deck`. Expected in today's deck:
 | active, one_time, prayed yesterday | out (D2) |
 | active, recurring, today's weekday listed, prayed yesterday | in |
 | active, recurring, today's weekday listed, prayed today | out |
-| active, recurring, today's weekday **not** listed | out |
+| active, recurring, today's weekday **not** listed, prayed before (not today) | out |
+| active, recurring, today's weekday **not** listed, never prayed | in (D1a) |
 | active, one_time, prayed yesterday, `repeat_on` = today | in |
 | active, any, `repeat_on` = 3 days ago, not prayed since | in (D4 carry-over) |
 | active, `repeat_on` = tomorrow | out |
@@ -430,6 +433,7 @@ prayed today) and with `tz=UTC` (prayed today).
    to simulate tomorrow, and refocus: it's back.
 4. Turn on airplane mode and swipe: the card comes back with an alert.
 5. Categorize an Inbox item on Home, switch to Pray: it's in the deck.
+6. Home's Active Deck tab lists exactly the requests Pray Mode shows. Swipe one in Pray, return to Home: it is gone from the tab, and "Deck: N" dropped by one.
 
 ---
 
@@ -440,7 +444,7 @@ In `docs/system-design.md`:
 - Data model: add `repeatOn | date (nullable) | set by "repeat tomorrow" in Pray Mode; due from this date until prayed`.
 - API table: add `GET /deck` and fill in `POST /prayers/:id/pray` with `tz`
   and the field effects. Remove `GET /stats/today`.
-- Screens: Home header stats and Prayer Mode queue → `GET /deck`.
+- Screens: Home header stats and Prayer Mode queue → `GET /deck`; Home's Active Deck tab → `GET /prayers?status=active` filtered to the ids in `GET /deck`.
 - Open Questions: mark **Active Deck selection** resolved (link this spec);
   mark **"One time" vs recurring semantics** resolved per D2/D3.
 
