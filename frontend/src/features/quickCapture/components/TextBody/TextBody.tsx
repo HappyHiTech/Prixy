@@ -2,6 +2,8 @@ import { View, TextInput } from 'react-native';
 
 import { useQCStore } from '@/stores/useQCStore';
 
+import { COLORS } from '@/constants';
+
 import { styles } from './TextBody.styles';
 
 const TextBody = () => {
@@ -14,6 +16,7 @@ const TextBody = () => {
         style={styles.textBody}
         multiline
         placeholder="What are you praying for?"
+        placeholderTextColor={COLORS.secondaryText}
         value={text}
         onChangeText={setText}
       />

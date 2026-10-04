@@ -50,6 +50,7 @@ const ActionButton = () => {
           <Pressable
             style={styles.option}
             onPress={() => {
+              closeAction();
               router.push('/quick-capture');
             }}
           >
