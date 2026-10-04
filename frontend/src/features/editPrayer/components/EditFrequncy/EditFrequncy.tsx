@@ -38,7 +38,7 @@ const EditFrequncy = () => {
       day: 'numeric',
     })}`;
   } else if (lastPrayedAt && onceState === 'rearmed') {
-    onceSubtext = `Back in deck ${daysSince(lastPrayedAt) === 0 ? 'tomorrow' : 'today'}`;
+    onceSubtext = `In deck ${daysSince(lastPrayedAt) === 0 ? 'tomorrow' : 'today'}`;
   }
 
   const selected: Option[] =
@@ -116,6 +116,9 @@ const EditFrequncy = () => {
               </Text>
               {subtext !== null && (
                 <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
                   style={[
                     styles.optionSubtext,
                     isSelected && styles.optionSubtextSelected,

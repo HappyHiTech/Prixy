@@ -80,6 +80,7 @@ export const styles = StyleSheet.create({
     marginTop: 2,
     color: COLORS.secondaryText,
     fontSize: 11,
+    textAlign: 'center',
   },
 
   optionSubtextSelected: {
