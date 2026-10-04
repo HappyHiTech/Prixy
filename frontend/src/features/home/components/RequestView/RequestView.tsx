@@ -1,5 +1,6 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 
 import CompactRequestcard from '@/components/CompactRequestCard/CompactRequestCard';
 import NoReq from '@/components/NoReq/NoReq';
@@ -27,11 +28,22 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
   } = usePrayerRequests(activeSegment);
 
   const setActiveSegment = useHomeStore((s) => s.setActiveSegment);
-  const { data: inboxReqs } = usePrayerRequests('inbox');
+  const { data: inboxReqs, isFetching: isFetchingInbox } =
+    usePrayerRequests('inbox');
 
+  // Every time Home regains focus, start on the Inbox; the effect below falls
+  // back to Active once the inbox is known to be empty.
+  useFocusEffect(
+    useCallback(() => {
+      setActiveSegment('inbox');
+    }, [setActiveSegment]),
+  );
+
+  // Wait out any in-flight refetch: right after a capture the cached inbox can
+  // still be the old empty list, and switching on it would skip the new items.
   useEffect(() => {
-    if (inboxReqs?.length === 0) setActiveSegment('active');
-  }, [inboxReqs, setActiveSegment]);
+    if (!isFetchingInbox && inboxReqs?.length === 0) setActiveSegment('active');
+  }, [inboxReqs, isFetchingInbox, setActiveSegment]);
 
   const { data: prayees } = usePrayeeQuery();
   const { data: categories } = useCategoriesQuery();
