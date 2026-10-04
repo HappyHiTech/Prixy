@@ -4,7 +4,7 @@ import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
 
 import { styles } from './EditFrequncy.styles';
 
-const ONE_TIME = 'One time';
+const ONE_TIME = 'Once';
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const;
 
