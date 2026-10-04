@@ -14,6 +14,7 @@ export const useDeletePrayerRequest = () => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
     },
   });
 };

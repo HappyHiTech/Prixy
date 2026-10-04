@@ -10,6 +10,7 @@ export const useCapturePrayersMutation = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
     },
   });
 };

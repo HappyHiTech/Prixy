@@ -14,6 +14,7 @@ export type PrayerRequest = {
   frequencyType: PrayerRequestFrequencyType;
   recurringDays: string[];
   lastPrayedAt: string | null;
+  repeatOn: string | null;
   answeredAt: string | null;
   createdAt: string;
 };

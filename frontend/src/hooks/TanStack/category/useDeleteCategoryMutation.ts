@@ -11,6 +11,7 @@ export const useDeleteCategoryMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
     },
   });
 };

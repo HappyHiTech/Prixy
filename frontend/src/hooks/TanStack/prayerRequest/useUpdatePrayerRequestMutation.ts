@@ -67,6 +67,7 @@ export const useUpdatePrayerRequest = () => {
 
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
     },
   });
 };

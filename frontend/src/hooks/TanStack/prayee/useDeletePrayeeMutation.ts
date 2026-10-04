@@ -11,6 +11,7 @@ export const useDeletePrayeeMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['prayees'] });
       queryClient.invalidateQueries({ queryKey: ['prayerRequests'] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
     },
   });
 };

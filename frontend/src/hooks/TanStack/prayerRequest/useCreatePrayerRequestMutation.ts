@@ -11,6 +11,7 @@ export const useCreatePrayerRequestMutation = () => {
 
     onSuccess: (created: PrayerRequest) => {
       queryClient.invalidateQueries({ queryKey: [`prayerRequests`] });
+      queryClient.invalidateQueries({ queryKey: ['deck'] });
       queryClient.setQueryData(['prayerRequest', created.id], created);
     },
   });
