@@ -1,5 +1,7 @@
 import { View, Text, Pressable } from 'react-native';
 
+import { daysSince } from '@/utils';
+
 import { useEditPrayerDraftStore } from '../../stores/useEditPrayerDraftStore';
 
 import { styles } from './EditFrequncy.styles';
@@ -12,10 +14,32 @@ const OPTIONS = [ONE_TIME, ...DAYS] as const;
 
 type Option = (typeof OPTIONS)[number];
 
+type OnceState = 'normal' | 'dormant' | 'rearmed' | 'unselected';
+
 const EditFrequncy = () => {
   const frequencyType = useEditPrayerDraftStore((s) => s.frequencyType);
   const recurringDays = useEditPrayerDraftStore((s) => s.recurringDays);
   const setFrequency = useEditPrayerDraftStore((s) => s.setFrequency);
+  const isDormant = useEditPrayerDraftStore((s) => s.isDormant);
+  const lastPrayedAt = useEditPrayerDraftStore((s) => s.lastPrayedAt);
+  const prayAgain = useEditPrayerDraftStore((s) => s.prayAgain);
+  const togglePrayAgain = useEditPrayerDraftStore((s) => s.togglePrayAgain);
+
+  let onceState: OnceState = 'unselected';
+  if (frequencyType === 'one_time') {
+    if (!isDormant) onceState = 'normal';
+    else onceState = prayAgain ? 'rearmed' : 'dormant';
+  }
+
+  let onceSubtext: string | null = null;
+  if (lastPrayedAt && onceState === 'dormant') {
+    onceSubtext = `Prayed ${new Date(lastPrayedAt).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    })}`;
+  } else if (lastPrayedAt && onceState === 'rearmed') {
+    onceSubtext = `Back in deck ${daysSince(lastPrayedAt) === 0 ? 'tomorrow' : 'today'}`;
+  }
 
   const selected: Option[] =
     frequencyType === 'one_time'
@@ -26,7 +50,10 @@ const EditFrequncy = () => {
 
   const toggle = (item: Option) => {
     if (item === ONE_TIME) {
-      if (frequencyType === 'one_time') return;
+      if (frequencyType === 'one_time') {
+        if (isDormant) togglePrayAgain();
+        return;
+      }
 
       setFrequency('one_time', []);
       return;
@@ -51,7 +78,12 @@ const EditFrequncy = () => {
       <Text style={styles.header}>Set Frequency</Text>
       <View style={styles.card}>
         {OPTIONS.map((item, index) => {
-          const isSelected = selected.includes(item);
+          const isOnce = item === ONE_TIME;
+          const isSelected = isOnce
+            ? onceState === 'normal' || onceState === 'rearmed'
+            : selected.includes(item);
+          const isDormantOnce = isOnce && onceState === 'dormant';
+          const subtext = isOnce ? onceSubtext : null;
 
           return (
             <Pressable
@@ -59,21 +91,39 @@ const EditFrequncy = () => {
               onPress={() => toggle(item)}
               accessibilityRole="button"
               accessibilityState={{ selected: isSelected }}
+              accessibilityHint={
+                isDormantOnce
+                  ? 'Adds this request back to your prayer deck'
+                  : undefined
+              }
               style={[
                 styles.option,
                 index % 4 !== 3 && styles.optionBorderRight,
                 index < 4 && styles.optionBorderBottom,
                 isSelected && styles.optionSelected,
+                isDormantOnce && styles.optionDormant,
+                subtext !== null && styles.optionWithSubtext,
               ]}
             >
               <Text
                 style={[
                   styles.optionText,
                   isSelected && styles.optionTextSelected,
+                  isDormantOnce && styles.optionTextDormant,
                 ]}
               >
                 {item}
               </Text>
+              {subtext !== null && (
+                <Text
+                  style={[
+                    styles.optionSubtext,
+                    isSelected && styles.optionSubtextSelected,
+                  ]}
+                >
+                  {subtext}
+                </Text>
+              )}
             </Pressable>
           );
         })}

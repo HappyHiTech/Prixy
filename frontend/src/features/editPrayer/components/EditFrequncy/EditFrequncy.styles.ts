@@ -44,6 +44,23 @@ export const styles = StyleSheet.create({
     backgroundColor: COLORS.accent,
   },
 
+  // Inset accent outline. Every side is set explicitly so it overrides the
+  // grid's per-side hairline borders.
+  optionDormant: {
+    borderLeftWidth: 1.5,
+    borderRightWidth: 1.5,
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: COLORS.accent,
+    borderRightColor: COLORS.accent,
+    borderBottomColor: COLORS.accent,
+  },
+
+  // The sublabel adds a line, so trim padding to keep both rows equal height.
+  optionWithSubtext: {
+    paddingVertical: 16,
+  },
+
   optionText: {
     ...fontFamily(800),
     color: COLORS.secondary,
@@ -51,6 +68,21 @@ export const styles = StyleSheet.create({
   },
 
   optionTextSelected: {
+    color: COLORS.primary,
+  },
+
+  optionTextDormant: {
+    color: COLORS.secondaryText,
+  },
+
+  optionSubtext: {
+    ...fontFamily(500),
+    marginTop: 2,
+    color: COLORS.secondaryText,
+    fontSize: 11,
+  },
+
+  optionSubtextSelected: {
     color: COLORS.primary,
   },
 });
