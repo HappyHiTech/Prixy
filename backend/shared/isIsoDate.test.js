@@ -14,6 +14,10 @@ test("rejects dates that do not exist", () => {
   assert.equal(isIsoDate("2026-10-32"), false);
 });
 
+test("rejects year 0000 (Postgres date cannot parse it)", () => {
+  assert.equal(isIsoDate("0000-01-01"), false);
+});
+
 test("rejects malformed strings", () => {
   assert.equal(isIsoDate("2026-1-4"), false);
   assert.equal(isIsoDate(""), false);
