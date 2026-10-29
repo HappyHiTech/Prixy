@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useEffect, useCallback, useState } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
@@ -23,6 +23,7 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
   const {
     data: prayReqs,
     isPending,
+    isFetching,
     isError,
     error,
   } = usePrayerRequests(activeSegment);
@@ -31,17 +32,30 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
   const { data: inboxReqs, isFetching: isFetchingInbox } =
     usePrayerRequests('inbox');
 
-  const inboxReqsRef = useRef(inboxReqs);
-  inboxReqsRef.current = inboxReqs;
+  const deckQuery = useDeckQuery();
+  const isActiveTab = activeSegment === 'active';
 
-  useFocusEffect(
-    useCallback(() => {
-      const cachedInbox = inboxReqsRef.current;
-      setActiveSegment(
-        cachedInbox && cachedInbox.length === 0 ? 'active' : 'inbox',
-      );
-    }, [setActiveSegment]),
-  );
+  // True from blur until the refetches kicked off elsewhere (pray, capture,
+  // edit) settle, so Home shows a spinner instead of stale data on return.
+  const [isReturning, setIsReturning] = useState(true);
+
+  useFocusEffect(useCallback(() => () => setIsReturning(true), []));
+
+  const returnSegment = inboxReqs?.length === 0 ? 'active' : 'inbox';
+
+  useEffect(() => {
+    if (isReturning && !isFetchingInbox) setActiveSegment(returnSegment);
+  }, [isReturning, isFetchingInbox, returnSegment, setActiveSegment]);
+
+  if (
+    isReturning &&
+    !isFetchingInbox &&
+    activeSegment === returnSegment &&
+    !isFetching &&
+    !(isActiveTab && deckQuery.isFetching)
+  ) {
+    setIsReturning(false);
+  }
 
   useEffect(() => {
     if (!isFetchingInbox && inboxReqs?.length === 0) setActiveSegment('active');
@@ -49,9 +63,6 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
 
   const { data: prayees } = usePrayeeQuery();
   const { data: categories } = useCategoriesQuery();
-
-  const deckQuery = useDeckQuery();
-  const isActiveTab = activeSegment === 'active';
 
   const deckIds = useMemo(
     () => new Set(deckQuery.data?.cards.map((card) => card.id)),
@@ -76,7 +87,7 @@ const RequestView = ({ onEditField }: RequestViewProps) => {
     [categories],
   );
 
-  if (isPending || (isActiveTab && deckQuery.isPending)) {
+  if (isReturning || isPending || (isActiveTab && deckQuery.isPending)) {
     return (
       <View style={styles.container}>
         <ActivityIndicator style={styles.stateIndicator} />
